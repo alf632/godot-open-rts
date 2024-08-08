@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://baeshrvg30aer"]
+[gd_scene load_steps=6 format=3 uid="uid://baeshrvg30aer"]
 
 [ext_resource type="Script" path="res://source/main-menu/Play.gd" id="1_o62d3"]
 [ext_resource type="PackedScene" uid="uid://dij5xr8swlfdx" path="res://source/main-menu/Background.tscn" id="2_xtk15"]
 [ext_resource type="Theme" uid="uid://c2kgsk4ffhbwo" path="res://source/resources/main_menu.theme" id="3_qwd67"]
+[ext_resource type="Script" path="res://source/main-menu/Multiplayer_UI.gd" id="4_dytx7"]
+[ext_resource type="PackedScene" uid="uid://dx5riv64xnbk6" path="res://source/main-menu/MultiPlay/slot.tscn" id="5_img31"]
 
 [node name="Play" type="Control"]
 layout_mode = 3
@@ -399,6 +401,31 @@ popup/item_1/text = "Human"
 popup/item_1/id = 1
 popup/item_2/text = "Simple AI"
 popup/item_2/id = 2
+
+[node name="Multiplayer_UI" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_dytx7")
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI"]
+layout_mode = 2
+text = "Multiplayer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI/Label"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Slots" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI"]
+layout_mode = 2
+
+[node name="Slot" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI/Slots" instance=ExtResource("5_img31")]
+layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

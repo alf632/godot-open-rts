@@ -9,6 +9,7 @@ var _map_paths = []
 @onready var _start_button = find_child("StartButton")
 @onready var _map_list = find_child("MapList")
 @onready var _map_details = find_child("MapDetailsLabel")
+@onready var _multiplayer_ui = find_child("Multiplayer_UI")
 
 
 func _ready():
@@ -66,12 +67,17 @@ func _on_start_button_pressed():
 	var new_scene = LoadingScene.instantiate()
 	new_scene.match_settings = _create_match_settings()
 	new_scene.map_path = _get_selected_map_path()
-	get_parent().add_child(new_scene)
-	get_tree().current_scene = new_scene
-	queue_free()
+	var multiplayer_controller = find_parent("Multiplayer")
+	if multiplayer_controller:
+		multiplayer_controller.change_scene(new_scene)
+	else:
+		get_parent().add_child(new_scene)
+		get_tree().current_scene = new_scene
+		queue_free()
 
 
 func _on_back_button_pressed():
+	multiplayer.multiplayer_peer = null
 	get_tree().change_scene_to_file("res://source/main-menu/Main.tscn")
 
 
@@ -83,8 +89,15 @@ func _align_player_controls_visibility_to_map(map):
 		option_nodes[node_id].visible = node_id < map["players"]
 		label_nodes[node_id].visible = node_id < map["players"]
 
-
+@rpc("call_remote", "authority", "reliable")
 func _on_player_selected(selected_option_id, selected_player_id):
+	var multiplayer_controller = find_parent("Multiplayer")
+	if multiplayer_controller:
+		if multiplayer.is_server():
+			_on_player_selected.rpc(selected_option_id, selected_player_id)
+		else:
+			var option_node = find_child("GridContainer").find_child("OptionButton"+str(selected_player_id))
+			option_node.selected = selected_option_id
 	_start_button.disabled = false
 	if selected_option_id == Constants.PlayerType.HUMAN:
 		var option_nodes = find_child("GridContainer").find_children("OptionButton*")
@@ -103,10 +116,17 @@ func _on_player_selected(selected_option_id, selected_player_id):
 		if option_nodes_with_player_controllers.size() < 2:
 			_start_button.disabled = true
 
-
+@rpc("call_remote", "authority", "reliable")
 func _on_map_list_item_selected(index):
+	var multiplayer_controller = find_parent("Multiplayer")
+	if multiplayer_controller:
+		if multiplayer.is_server():
+			_on_map_list_item_selected.rpc(index)
+		else:
+			_map_list.select(index)
 	var map = Constants.Match.MAPS[_map_paths[index]]
 	_map_details.text = "[u]Players:[/u] {0}\n[u]Size:[/u] {1}x{2}".format(
 		[map["players"], map["size"].x, map["size"].y]
 	)
 	_align_player_controls_visibility_to_map(map)
+	_multiplayer_ui.on_map_change(map["players"])

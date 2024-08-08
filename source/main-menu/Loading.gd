@@ -5,7 +5,7 @@ var map_path = null
 
 @onready var _label = find_child("Label")
 @onready var _progress_bar = find_child("ProgressBar")
-
+@onready var multiplayer_controller = find_parent("Multiplayer")
 
 func _ready():
 	_progress_bar.value = 0.0
@@ -34,10 +34,17 @@ func _ready():
 
 	_label.text = tr("LOADING_STEP_STARTING_MATCH")
 	await get_tree().physics_frame
-	get_parent().add_child(a_match)
-	get_tree().current_scene = a_match
-	queue_free()
+	if multiplayer_controller:
+		if multiplayer.is_server():
+			multiplayer_controller.all_players_loaded.connect("all_players_loaded", _on_all_clients_loaded.bind(a_match))
+		multiplayer_controller.player_loaded.rpc_id(1)
+	else:
+		get_parent().add_child(a_match)
+		get_tree().current_scene = a_match
+		queue_free()
 
+func _on_all_clients_loaded(a_match):
+	multiplayer_controller.change_scene(a_match)
 
 func _preload_scenes():
 	var scene_paths = []
