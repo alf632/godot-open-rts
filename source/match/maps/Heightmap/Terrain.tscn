@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://84ihwtcg8l5c"]
+
+[ext_resource type="Shader" path="res://source/match/maps/Heightmap/terrain-mat.gdshader" id="1_ggi8r"]
+
+[sub_resource type="Gradient" id="Gradient_mjnu4"]
+offsets = PackedFloat32Array(0, 0.191057, 0.256098, 0.479675, 0.95935, 1)
+colors = PackedColorArray(0, 0, 1, 1, 0.423529, 0.682353, 0.992157, 1, 0.557482, 0.540145, 0, 1, 0, 0.52354, 0.163903, 1, 0.234647, 0.115901, 0.0843278, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_3ygdt"]
+gradient = SubResource("Gradient_mjnu4")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0doed"]
+render_priority = 0
+shader = ExtResource("1_ggi8r")
+shader_parameter/height_ratio = 1.0
+shader_parameter/height_offset = 0.0
+shader_parameter/max_height = 20.0
+shader_parameter/src_size = Vector2(300, 300)
+shader_parameter/gsize = 1.0
+shader_parameter/gwidth = 2.0
+shader_parameter/_a = SubResource("GradientTexture1D_3ygdt")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_3l6hr"]
+subdivide_width = 3
+subdivide_depth = 3
+
+[sub_resource type="HeightMapShape3D" id="HeightMapShape3D_h7rrm"]
+
+[node name="Terrain" type="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 108.411, 0)
+material_override = SubResource("ShaderMaterial_0doed")
+extra_cull_margin = 100.0
+mesh = SubResource("PlaneMesh_3l6hr")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("HeightMapShape3D_h7rrm")

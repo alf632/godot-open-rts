@@ -15,6 +15,12 @@ const MAPS = {
 		"players": 8,
 		"size": Vector2i(100, 100),
 	},
+	"res://source/match/maps/Heightmap/Heightmap.tscn":
+	{
+		"name": "Heightmap",
+		"players": 8,
+		"size": Vector2i(300, 300),
+	},
 }
 
 
