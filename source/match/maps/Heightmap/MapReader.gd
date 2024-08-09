@@ -30,7 +30,7 @@ func _ready():
 	if not Engine.is_editor_hint():
 		var terrain = find_parent("Match").get_node("Terrain")
 		remove_child(colShape)
-		terrain.get_node("CollisionShape3D").replace_by(colShape)
+		terrain.find_child("CollisionShape3D").replace_by(colShape)
 		setupNavigation()
 	#terrainMesh.mesh = colShape.shape.get_debug_mesh()
 	MatchSignals.connect("unit_spawned", updateUnit)

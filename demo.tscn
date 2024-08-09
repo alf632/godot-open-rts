@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bj8c6tdt6o1yt" path="res://source/match/players/Player.tscn" id="8_go0lg"]
 [ext_resource type="PackedScene" uid="uid://btor1402wkw8k" path="res://source/match/decorations/RockLargeA.tscn" id="8_v2tc0"]
 [ext_resource type="PackedScene" uid="uid://i58ffvwxbbwm" path="res://source/match/units/Tank.tscn" id="11_r78re"]
-[ext_resource type="PackedScene" uid="uid://b7c1crf36x1li" path="res://source/match/Map.tscn" id="12_hatve"]
+[ext_resource type="PackedScene" uid="uid://bdjpk0nauwatl" path="res://source/match/maps/Heightmap/Heightmap.tscn" id="13_1enms"]
 
 [sub_resource type="Environment" id="Environment_g6rmh"]
 
@@ -93,7 +93,7 @@ navigation_mesh = SubResource("NavigationMesh_5tadr")
 [node name="Player" parent="Match/Units" instance=ExtResource("8_go0lg")]
 
 [node name="Unit" type="Node3D" parent="Match/Units/Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.718098, 2.80378, 2.95477)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.3415, 27.9773, 52.7677)
 script = ExtResource("5_4k75h")
 
 [node name="Pilotable" parent="Match/Units/Player/Unit" instance=ExtResource("4_f06un")]
@@ -103,19 +103,18 @@ current = true
 script = ExtResource("3_hsuq8")
 
 [node name="Tank" parent="Match/Units/Player" instance=ExtResource("11_r78re")]
-transform = Transform3D(0.496686, 0, 0.86793, 0, 1, 0, -0.86793, 0, 0.496686, 2.42704, 0.111101, -0.0127888)
+transform = Transform3D(0.496686, 0, 0.86793, 0, 1, 0, -0.86793, 0, 0.496686, 88.7504, 19.4699, 60.7309)
 
-[node name="Map" parent="Match" instance=ExtResource("12_hatve")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 20, 0)
-visible = false
+[node name="Map" parent="Match" instance=ExtResource("13_1enms")]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Terrain" type="MeshInstance3D" parent="Match"]
 mesh = SubResource("PlaneMesh_38qwv")
+skeleton = NodePath("../..")
 
-[node name="TerrainShape" type="StaticBody3D" parent="MeshInstance3D"]
+[node name="TerrainShape" type="StaticBody3D" parent="Match/Terrain"]
 collision_layer = 3
 
-[node name="ActualShape" type="CollisionShape3D" parent="MeshInstance3D/TerrainShape"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Match/Terrain/TerrainShape"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_bco6l")
 
