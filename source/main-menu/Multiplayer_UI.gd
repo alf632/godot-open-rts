@@ -5,7 +5,7 @@ const Slot = preload("res://source/main-menu/MultiPlay/slot.tscn")
 @onready var Play = find_parent("Play")
 @onready var multiplayer_controller = find_parent("Multiplayer")
 
-var _player_slot_mapping = {}
+var player_slot_mapping = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -42,12 +42,12 @@ func send_slot_selected(slotid):
 
 @rpc("authority", "reliable", "call_local")
 func sync_slot_selection(slotid, playerid):
-	if _player_slot_mapping.has(playerid):
-		var slot = $Slots.get_children()[_player_slot_mapping[playerid]]
+	if player_slot_mapping.has(playerid):
+		var slot = $Slots.get_children()[player_slot_mapping[playerid]]
 		slot.player_name = ""
 		slot.player_id = 0
 		
-	_player_slot_mapping[playerid] = slotid
+	player_slot_mapping[playerid] = slotid
 	var slot = $Slots.get_children()[slotid]
 	slot.player_name=multiplayer_controller.players[playerid].name
 	slot.player_id = playerid
@@ -67,5 +67,5 @@ func sync_name_changed(player_name, playerid):
 	multiplayer_controller.players[playerid].name = player_name
 	if playerid == multiplayer.get_unique_id():
 		multiplayer.player_info.name = player_name
-	var slot = $Slots.get_children()[_player_slot_mapping[playerid]]
+	var slot = $Slots.get_children()[player_slot_mapping[playerid]]
 	slot.player_name=multiplayer_controller.players[playerid].name

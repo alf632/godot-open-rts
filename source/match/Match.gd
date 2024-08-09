@@ -28,6 +28,7 @@ var visible_players = null:
 @onready var _players = $Players
 @onready var _terrain = $Terrain
 @onready var _SH = $Handlers/PlayModeSwitchHandler
+@onready var _multiplayer_controller = find_parent("Multiplayer")
 
 
 func _enter_tree():

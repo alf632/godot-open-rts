@@ -54,6 +54,10 @@ func _create_match_settings():
 			match_settings.visible_player = player_id
 	if match_settings.visible_player == -1:
 		match_settings.visibility = match_settings.Visibility.ALL_PLAYERS
+	
+	var multiplayer_controller = find_parent("Multiplayer")
+	if multiplayer_controller:
+		match_settings.player_slot_mapping = _multiplayer_ui.player_slot_mapping
 
 	return match_settings
 
