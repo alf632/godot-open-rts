@@ -24,7 +24,6 @@ func set_path(path):
 func remove_visualization():
 	if _marker_list != null:
 		for marker in _marker_list:
-			marker.get_parent().remove_child(marker)
 			marker.queue_free()
 		_marker_list = []
 
@@ -41,6 +40,6 @@ func update_visualization():
 			# Translate to world pos first:
 			pos = _hmnavmesh.offset_to_pos(item)
 		var dm = _debugmarker.instantiate()
-		_match.find_child("Units").add_child(dm)
+		_match.find_child("Debug").add_child(dm)
 		dm.global_position = pos
 		_marker_list.append(dm)

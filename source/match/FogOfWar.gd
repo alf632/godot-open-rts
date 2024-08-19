@@ -15,9 +15,15 @@ var _unit_to_circles_mapping = {}
 @onready var _fog_viewport_container = find_child("FogViewportContainer")
 @onready var _combined_viewport = find_child("CombinedViewport")
 @onready var _screen_overlay = find_child("ScreenOverlay")
+@onready var _match = find_parent("Match")
 
 
 func _ready():
+	if not _match.is_initialized:
+		set_process(false)
+		await _match.rcp_match_ready
+		set_process(true)
+		
 	if _fog_viewport.size == DEFAULT_SIZE:
 		resize(find_parent("Match").find_child("Map").size)
 	_screen_overlay.material_override.set_shader_parameter(

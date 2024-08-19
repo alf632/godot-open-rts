@@ -4,6 +4,7 @@ enum PlayerType {
 	NONE = 0,
 	HUMAN = 1,
 	SIMPLE_CLAIRVOYANT_AI = 2,
+	REMOTE = 3,
 }
 
 enum PlayModes {
@@ -20,6 +21,8 @@ class Match:
 			PlayerType.HUMAN: preload("res://source/match/players/human/Human.tscn"),
 			PlayerType.SIMPLE_CLAIRVOYANT_AI:
 			preload("res://source/match/players/simple-clairvoyant-ai/SimpleClairvoyantAI.tscn"),
+			PlayerType.REMOTE:
+			preload("res://source/match/players/remote/RemotePlayer.tscn"),
 		}
 
 

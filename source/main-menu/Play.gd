@@ -71,6 +71,7 @@ func _on_start_button_pressed():
 	var new_scene = LoadingScene.instantiate()
 	new_scene.match_settings = _create_match_settings()
 	new_scene.map_path = _get_selected_map_path()
+	_rcp_match_details.rpc({"settings": new_scene.match_settings.to_dict(), "map_path": new_scene.map_path})#details)
 	var multiplayer_controller = find_parent("Multiplayer")
 	if multiplayer_controller:
 		multiplayer_controller.change_scene(new_scene)
@@ -79,6 +80,10 @@ func _on_start_button_pressed():
 		get_tree().current_scene = new_scene
 		queue_free()
 
+@rpc("authority", "reliable", "call_remote")
+func _rcp_match_details(details):
+	Globals.cache["match_details"] = details
+	#print(Globals.cache["match_details"])
 
 func _on_back_button_pressed():
 	multiplayer.multiplayer_peer = null

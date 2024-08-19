@@ -94,12 +94,15 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="VehicleFactoryMenu" parent="MarginContainer" instance=ExtResource("4_ngnkq")]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 
 [node name="AircraftFactoryMenu" parent="MarginContainer" instance=ExtResource("5_jocca")]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 
 [node name="WorkerMenu" parent="MarginContainer" instance=ExtResource("4_1s3pp")]
+visible = false
 layout_mode = 2

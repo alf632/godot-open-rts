@@ -9,6 +9,8 @@
 script = ExtResource("1_7iu1j")
 color = Color(0.4, 0.694118, 1, 1)
 
+[node name="Units" type="Node3D" parent="."]
+
 [node name="StructurePlacementHandler" parent="." instance=ExtResource("2_bbqrb")]
 
 [node name="UnitActionsController" type="Node" parent="."]

@@ -11,6 +11,8 @@
 script = ExtResource("1_shcx6")
 color = Color(1, 0.360784, 0.45098, 1)
 
+[node name="Units" type="Node3D" parent="."]
+
 [node name="EconomyController" type="Node" parent="."]
 script = ExtResource("2_otp5l")
 

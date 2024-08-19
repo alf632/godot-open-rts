@@ -9,13 +9,17 @@ const Human = preload("res://source/match/players/human/Human.gd")
 
 func _ready():
 	await find_parent("Match").ready
+	if not _match.is_initialized:
+		set_process(false)
+		await _match.rcp_match_ready
+		set_process(true)
 	_hide_all_bars()
 	_setup_all_bars()
 	var human_players = get_tree().get_nodes_in_group("players").filter(
 		func(player): return player is Human
 	)
 	if (
-		_match.settings.visibility == _match.settings.Visibility.PER_PLAYER
+		_match.settings.visibility == _match.MatchSettings.Visibility.PER_PLAYER
 		and not human_players.is_empty()
 	):
 		_show_player_bars([human_players[0]])

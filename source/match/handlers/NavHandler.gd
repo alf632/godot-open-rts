@@ -6,19 +6,28 @@ const MapCollisionUtils = preload("res://source/match/utils/MapCollisionUtils.gd
 const _debugmarker = preload("res://source/DebugMarker3D.tscn")
 
 var _proplayers = {}
-@onready var _map = find_parent("Match").find_child("Map")
+@onready var _match = find_parent("Match")
 @onready var _gamematch = find_parent("Match")
 @onready var HeightMapNavMeshClass = load("res://source/match/utils/HeightMapNavMesh.gd")
 @onready var NavHandlerPathVisualizerClass = load("res://source/match/handlers/NavHandlerPathVisualizer.gd")
 var _hmnavmesh = null
 var _map_scanned = false
 
+func _ready() -> void:
+	var _match = find_parent("Match")
+	if not _match.is_initialized:
+		set_process(false)
+		set_physics_process(false)
+		await _match.rcp_match_ready
+		set_process(true)
+		set_physics_process(true)
+
 # Called when the node enters the scene tree for the first time.
 func _physics_process(delta):
 	if not _map_scanned:
 		_map_scanned = true
-		var extents = MapCollisionUtils.compute_terrain_extent(_map)
-		var terrain = _map.find_child("Terrain3D")
+		var extents = MapCollisionUtils.compute_terrain_extent(_match.map)
+		var terrain = _match.map.find_child("Terrain3D")
 		var world_3d = get_world_3d()
 		_hmnavmesh = HeightMapNavMeshClass.new()
 		var _spawn_marker_callback = _spawn_marker

@@ -3,7 +3,7 @@ extends Node
 signal player_connected(peer_id, player_info)
 signal player_disconnected(peer_id)
 signal server_disconnected
-signal all_players_loaded
+signal synced
 
 const Play = preload("res://source/main-menu/Play.tscn")
 
@@ -20,13 +20,13 @@ var players = {}
 # entered in a UI scene.
 var player_info = {"name": "Name"}
 
-var players_loaded = 0
+var queued_players = 0
 
 func _ready():
 	# Start paused.
 	#get_tree().paused = true
 	# You can save bandwidth by disabling server relay and peer notifications.
-	multiplayer.server_relay = false
+	#multiplayer.server_relay = false
 	
 	multiplayer.peer_connected.connect(_on_player_connected)
 	multiplayer.peer_disconnected.connect(_on_player_disconnected)
@@ -88,19 +88,37 @@ func change_scene(scene: Node):
 		c.queue_free()
 	# Add new activeScene.
 	activeScene.add_child(scene)
-	
-	# Every peer will call this when they have loaded the game scene.
+
+func sync_lock():
+	print("player {0} lock".format([str(multiplayer.get_unique_id())]))
+	_rpc_player_queued.rpc_id.call_deferred(1)
+	await synced
+	print("player {0} unlock".format([str(multiplayer.get_unique_id())]))
+
 @rpc("any_peer", "call_local", "reliable")
-func player_loaded():
+func _rpc_player_queued():
 	if multiplayer.is_server():
-		players_loaded += 1
-		if players_loaded == players.size():
-			all_players_loaded.emit()
-	
+		print("player {0} queued".format([str(multiplayer.get_remote_sender_id())]))
+		queued_players += 1
+		if queued_players == players.size():
+			print("sync complete")
+			queued_players = 0
+			
+			_rcp_synced.rpc()
+			return
+		print("{0} of {1}".format([queued_players,players.size()]))
+	else:
+		print("_rpc_player_queued should not be called on {0} by {1}".format([str(multiplayer.get_remote_sender_id()),str(multiplayer.get_unique_id())]))
+
+@rpc("authority", "call_local", "reliable")
+func _rcp_synced():
+	print("unlocking {0}".format([multiplayer.get_unique_id()]))
+	synced.emit()
 	# When a peer connects, send them my player info.
 # This allows transfer of all desired data for each player, not only the unique ID.
 func _on_player_connected(id):
 	_register_player.rpc_id(id, player_info)
+	print("player {0} connected".format([id]))
 
 @rpc("any_peer", "reliable")
 func _register_player(new_player_info):
@@ -111,18 +129,21 @@ func _register_player(new_player_info):
 func _on_player_disconnected(id):
 	players.erase(id)
 	player_disconnected.emit(id)
+	print("player {0} disconnected".format([id]))
 
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
 	players[peer_id] = player_info
 	player_connected.emit(peer_id, player_info)
-
+	print("connected ok as {0}".format([peer_id]))
 
 func _on_connected_fail():
 	multiplayer.multiplayer_peer = null
+	print("connection failed")
 
 
 func _on_server_disconnected():
 	multiplayer.multiplayer_peer = null
 	players.clear()
 	server_disconnected.emit()
+	print("server disconnected")

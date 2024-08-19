@@ -1,11 +1,10 @@
-[gd_scene load_steps=46 format=3 uid="uid://camns8fqod8d4"]
+[gd_scene load_steps=42 format=3 uid="uid://camns8fqod8d4"]
 
 [ext_resource type="Script" path="res://source/match/Match.gd" id="1_1555u"]
 [ext_resource type="Script" path="res://source/match/IsometricCamera3D.gd" id="1_qb2ry"]
 [ext_resource type="Script" path="res://source/match/FogOfWar.gd" id="5_eb52t"]
 [ext_resource type="PackedScene" uid="uid://co800e4shs7bh" path="res://source/generic-scenes-and-nodes/3d/RectangularSelection3D.tscn" id="5_yi0pu"]
 [ext_resource type="PackedScene" uid="uid://clbjgy724q2si" path="res://source/generic-scenes-and-nodes/2d/DynamicCircle2D.tscn" id="6_ux0ef"]
-[ext_resource type="Script" path="res://source/match/Navigation.gd" id="10_1wfp1"]
 [ext_resource type="PackedScene" uid="uid://b6n7cwv706x5n" path="res://source/match/debug/GodModeHud.tscn" id="10_p6gno"]
 [ext_resource type="Shader" path="res://source/shaders/3d/fog.gdshader" id="10_weh6c"]
 [ext_resource type="Shader" path="res://source/shaders/2d/blurr.gdshader" id="12_pow7t"]
@@ -14,10 +13,8 @@
 [ext_resource type="Shader" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="13_jo8b7"]
 [ext_resource type="PackedScene" uid="uid://nnsih72ih7qr" path="res://source/match/hud/ProductionQueue.tscn" id="13_qv3xn"]
 [ext_resource type="PackedScene" uid="uid://dk7sa3fkyxks5" path="res://source/generic-scenes-and-nodes/control/RectangularSelection2D.tscn" id="16_ccb0o"]
-[ext_resource type="Script" path="res://source/match/AirNavigation.gd" id="16_ravsv"]
 [ext_resource type="Script" path="res://source/match/hud/Resources.gd" id="16_vjwpn"]
 [ext_resource type="Script" path="res://source/match/hud/Minimap.gd" id="17_0bfte"]
-[ext_resource type="Script" path="res://source/match/TerrainNavigation.gd" id="17_6fprk"]
 [ext_resource type="Shader" path="res://source/shaders/2d/white_transparent.gdshader" id="19_m1b2v"]
 [ext_resource type="PackedScene" uid="uid://c0uxy26e4qs4w" path="res://source/match/handlers/MouseClickAnimationsHandler.tscn" id="22_438pb"]
 [ext_resource type="PackedScene" uid="uid://1rby73ckmk7b" path="res://source/match/Menu.tscn" id="22_ofmlu"]
@@ -31,6 +28,8 @@
 [ext_resource type="PackedScene" uid="uid://c2n4fxmgkv0vn" path="res://source/match/handlers/ProjectileSystemHandler.tscn" id="31_fbp3e"]
 [ext_resource type="PackedScene" uid="uid://b373fjcto1l4h" path="res://source/match/handlers/NavHandler.tscn" id="32_coyxa"]
 [ext_resource type="PackedScene" uid="uid://b8p6lcwubx1tp" path="res://source/match/handlers/UnitVisibilityHandler.tscn" id="32_fci1c"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7oyh"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ysb0j"]
 sun_angle_max = 200.0
@@ -85,27 +84,6 @@ shader_parameter/world_visibility_texture = SubResource("ViewportTexture_7yqgo")
 flip_faces = true
 size = Vector2(2, 2)
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_8emvl"]
-geometry_source_geometry_mode = 2
-geometry_source_group_name = &"air_navigation_input"
-cell_size = 0.4
-cell_height = 0.4
-agent_height = 2.0
-agent_radius = 0.8
-agent_max_climb = 0.0
-
-[sub_resource type="NavigationMesh" id="NavigationMesh_exfwj"]
-geometry_parsed_geometry_type = 2
-geometry_collision_mask = 4278190082
-geometry_source_geometry_mode = 2
-geometry_source_group_name = &"terrain_navigation_input"
-cell_size = 0.3
-cell_height = 0.3
-agent_height = 1.8
-agent_radius = 0.9
-agent_max_climb = 0.0
-edge_max_error = 1.0
-
 [sub_resource type="ViewportTexture" id="ViewportTexture_vu2gm"]
 viewport_path = NodePath("FogOfWar/CombinedViewport")
 
@@ -119,6 +97,9 @@ viewport_path = NodePath("HUD/MarginContainer/Minimap/MarginContainer/MinimapVie
 
 [node name="Match" type="Node3D"]
 script = ExtResource("1_1555u")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_c7oyh")
 
 [node name="Players" type="Node3D" parent="."]
 
@@ -211,47 +192,6 @@ material_override = SubResource("ShaderMaterial_5rcuq")
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_xttrh")
-
-[node name="Navigation" type="Node3D" parent="."]
-script = ExtResource("10_1wfp1")
-
-[node name="Air" type="Node3D" parent="Navigation"]
-script = ExtResource("16_ravsv")
-
-[node name="ReferenceMesh" type="MeshInstance3D" parent="Navigation/Air" groups=["air_navigation_input"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-visible = false
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Navigation/Air"]
-navigation_mesh = SubResource("NavigationMesh_8emvl")
-
-[node name="Terrain" type="Node3D" parent="Navigation"]
-script = ExtResource("17_6fprk")
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Navigation/Terrain"]
-navigation_mesh = SubResource("NavigationMesh_exfwj")
-
-[node name="Units" type="Node3D" parent="."]
-
-[node name="Player0" type="Node3D" parent="Units"]
-
-[node name="Player1" type="Node3D" parent="Units"]
-
-[node name="Player2" type="Node3D" parent="Units"]
-
-[node name="Player3" type="Node3D" parent="Units"]
-
-[node name="Player4" type="Node3D" parent="Units"]
-
-[node name="Player5" type="Node3D" parent="Units"]
-
-[node name="Player6" type="Node3D" parent="Units"]
-
-[node name="Player7" type="Node3D" parent="Units"]
-
-[node name="Player8" type="Node3D" parent="Units"]
-
-[node name="Player9" type="Node3D" parent="Units"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

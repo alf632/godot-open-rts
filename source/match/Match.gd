@@ -1,16 +1,16 @@
 extends Node3D
 
+signal rcp_match_ready
+
 const Unit = preload("res://source/match/units/Unit.gd")
-const Structure = preload("res://source/match/units/Structure.gd")
 const Player = preload("res://source/match/players/Player.gd")
 const Human = preload("res://source/match/players/human/Human.gd")
 
-const CommandCenter = preload("res://source/match/units/CommandCenter.tscn")
-const Drone = preload("res://source/match/units/Drone.tscn")
-const Worker = preload("res://source/match/units/Worker.tscn")
 const Pilot = preload("res://source/match/units/Pilot.tscn")
 
-@export var settings: Resource = null
+const MatchSettings = preload("res://source/data-model/MatchSettings.gd")
+
+@export var settings: Dictionary = {}
 
 var map:
 	set = _set_map,
@@ -28,23 +28,61 @@ var visible_players = null:
 @onready var _SH = $Handlers/PlayModeSwitchHandler
 @onready var _multiplayer_controller = find_parent("Multiplayer")
 
+var is_initialized = false
 
-func _enter_tree():
-	assert(settings != null, "match cannot start without settings, see examples in tests/manual/")
-	assert(map != null, "match cannot start without map, see examples in tests/manual/")
+
+#func _enter_tree():
+	#assert(settings != null, "match cannot start without settings, see examples in tests/manual/")
+	#assert(map != null, "match cannot start without map, see examples in tests/manual/")
 
 
 func _ready():
-	MatchSignals.setup_and_spawn_unit.connect(_setup_and_spawn_unit)
-	_setup_subsystems_dependent_on_map()
-	_setup_players()
-	_setup_player_units()
-	visible_player = get_tree().get_nodes_in_group("players")[settings.visible_player]
-	_move_camera_to_initial_position()
-	if settings.visibility == settings.Visibility.FULL:
-		fog_of_war.reveal()
-	MatchSignals.match_started.emit()
+	if not _multiplayer_controller or multiplayer.is_server():
+		print("waiting for initial sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		
+		print("waiting for map sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		
+		MatchSignals.setup_and_spawn_unit.connect(_spawn_unit)
+		_setup_subsystems_dependent_on_map()
+		_setup_players()
+		_setup_player_units()
+		visible_player = get_tree().get_nodes_in_group("players")[settings.visible_player]
+		_move_camera_to_initial_position()
+		if settings.visibility == MatchSettings.Visibility.FULL:
+			fog_of_war.reveal()
+		print("waiting for units sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		_rcp_match_ready.rpc()
+		is_initialized = true
+		MatchSignals.match_started.emit()
+	else:
+		print("waiting for initial sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		
+		_set_map(Globals.cache["map"])
+		#Globals.cache.erase("map")
+		settings = Globals.cache["match_details"].settings
+		#Globals.cache.erase("match_details")
+		_setup_subsystems_dependent_on_map()
+		print("waiting for map sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		
+		print("waiting for units sync")
+		await _multiplayer_controller.sync_lock()
+		print("synced")
+		is_initialized = true
+		
 
+@rpc("authority", "reliable", "call_remote")
+func _rcp_match_ready():
+	rcp_match_ready.emit()
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -52,6 +90,8 @@ func _unhandled_input(event):
 			return
 		MatchSignals.deselect_all_units.emit()
 
+func _spawn_unit(unit_to_spawn, target_transform, _player):
+	_player.setup_and_spawn_unit(unit_to_spawn, target_transform, true)
 
 func _set_map(a_map):
 	assert(get_node_or_null("Map") == null, "map already set")
@@ -75,7 +115,7 @@ func _set_visible_player(player):
 
 
 func _get_visible_players():
-	if settings.visibility == settings.Visibility.PER_PLAYER:
+	if settings.visibility == MatchSettings.Visibility.PER_PLAYER:
 		return [visible_player]
 	return get_tree().get_nodes_in_group("players")
 
@@ -118,54 +158,15 @@ func _setup_player_units():
 	for player in _players.get_children():
 		if not player is Player:
 			continue
-		var player_index = player.get_index()
-		var predefined_units = player.get_children().filter(func(child): return child is Unit)
-		if not predefined_units.is_empty():
-			predefined_units.map(func(unit): _setup_unit_groups(unit, unit.player))
-		else:
-			_spawn_player_units(
-				player, map.find_child("SpawnPoints").get_child(player_index).global_transform
-			)
 		if player is Human:
+			var player_spawn = map.find_child("SpawnPoints").get_child(player.id)
 			Globals.player = player
 			var pilot = Pilot.instantiate()
-			_setup_and_spawn_unit(pilot, map.find_child("SpawnPoints").get_child(player_index).global_transform.translated(Vector3(-3, 0, -3)), player)
+			player.setup_and_spawn_unit(pilot, player_spawn.global_transform.translated(Vector3(-3, 0, -3)))
 			_SH.pilot_unit(pilot)
 
 
-func _spawn_player_units(player, spawn_transform):
-	_setup_and_spawn_unit(CommandCenter.instantiate(), spawn_transform, player, false)
-	_setup_and_spawn_unit(
-		Drone.instantiate(), spawn_transform.translated(Vector3(-2, 0, -2)), player
-	)
-	_setup_and_spawn_unit(
-		Worker.instantiate(), spawn_transform.translated(Vector3(-3, 0, 3)), player
-	)
-	_setup_and_spawn_unit(
-		Worker.instantiate(), spawn_transform.translated(Vector3(3, 0, 3)), player
-	)
-
-
-func _setup_and_spawn_unit(unit, a_transform, player, mark_structure_under_construction = true):
-	unit.global_transform = a_transform
-	if unit is Structure and mark_structure_under_construction:
-		unit.mark_as_under_construction()
-	_setup_unit_groups(unit, player)
-	player.add_child(unit)
-	MatchSignals.unit_spawned.emit(unit)
-
-
-func _setup_unit_groups(unit, player):
-	unit.add_to_group("units")
-	if player == _get_human_player():
-		unit.add_to_group("controlled_units")
-	else:
-		unit.add_to_group("adversary_units")
-	if player in visible_players:
-		unit.add_to_group("revealed_units")
-
-
-func _get_human_player():
+func get_human_player():
 	var human_players = get_tree().get_nodes_in_group("players").filter(
 		func(player): return player is Human
 	)
@@ -176,7 +177,7 @@ func _get_human_player():
 
 
 func _move_camera_to_initial_position():
-	var human_player = _get_human_player()
+	var human_player = get_human_player()
 	if human_player != null:
 		_move_camera_to_player_units_crowd_pivot(human_player)
 	else:

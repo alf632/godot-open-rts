@@ -20,7 +20,6 @@ var _resource_requests = {
 }
 var _call_to_perform_during_process = null
 
-@onready var _match = find_parent("Match")
 
 @onready var _economy_controller = find_child("EconomyController")
 @onready var _defense_controller = find_child("DefenseController")

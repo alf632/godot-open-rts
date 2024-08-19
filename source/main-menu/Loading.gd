@@ -17,8 +17,16 @@ func _ready():
 
 	_label.text = tr("LOADING_STEP_LOADING_MAP")
 	await get_tree().physics_frame
+	if multiplayer_controller and not multiplayer.is_server():
+		var map = load(Globals.cache["match_details"].map_path).instantiate()
+		Globals.cache["map"] = map
+		_label.text += " - Sync"
+		await multiplayer_controller.sync_lock()
+		print("client waiting for server scene switch")
+		return
+		
 	var map = load(map_path).instantiate()
-	_progress_bar.value = 0.4
+	_progress_bar.value = 0.4	
 
 	_label.text = tr("LOADING_STEP_LOADING_MATCH")
 	await get_tree().physics_frame
@@ -28,16 +36,16 @@ func _ready():
 	_label.text = tr("LOADING_STEP_INSTANTIATING_MATCH")
 	await get_tree().physics_frame
 	var a_match = match_prototype.instantiate()
-	a_match.settings = match_settings
+	a_match.settings = match_settings.to_dict()
 	a_match.map = map
 	_progress_bar.value = 0.9
 
 	_label.text = tr("LOADING_STEP_STARTING_MATCH")
 	await get_tree().physics_frame
 	if multiplayer_controller:
-		if multiplayer.is_server():
-			multiplayer_controller.all_players_loaded.connect("all_players_loaded", _on_all_clients_loaded.bind(a_match))
-		multiplayer_controller.player_loaded.rpc_id(1)
+		await multiplayer_controller.sync_lock()
+		print("server switches scene")
+		_on_all_clients_loaded(a_match)
 	else:
 		get_parent().add_child(a_match)
 		get_tree().current_scene = a_match

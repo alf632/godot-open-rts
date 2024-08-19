@@ -66,6 +66,6 @@ func send_name_changed(player_name):
 func sync_name_changed(player_name, playerid):
 	multiplayer_controller.players[playerid].name = player_name
 	if playerid == multiplayer.get_unique_id():
-		multiplayer.player_info.name = player_name
+		multiplayer_controller.player_info.name = player_name
 	var slot = $Slots.get_children()[player_slot_mapping[playerid]]
 	slot.player_name=multiplayer_controller.players[playerid].name

@@ -48,6 +48,10 @@ alignment = 1
 layout_mode = 2
 text = "PLAY"
 
+[node name="Button5" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "MULTIPLAYER"
+
 [node name="Button2" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "OPTIONS"
@@ -61,6 +65,7 @@ layout_mode = 2
 text = "QUIT"
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button5" to="." method="_on_multiplay_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button2" to="." method="_on_options_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button3" to="." method="_on_credits_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button4" to="." method="_on_quit_button_pressed"]

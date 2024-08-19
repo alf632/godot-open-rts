@@ -7,9 +7,13 @@ extends PanelContainer
 
 func _ready():
 	await _match.ready
+	if not _match.is_initialized:
+		set_process(false)
+		await _match.rcp_match_ready
+		set_process(true)
 	if (
 		_match.settings.visibility
-		in [_match.settings.Visibility.FULL, _match.settings.Visibility.ALL_PLAYERS]
+		in [_match.MatchSettings.Visibility.FULL, _match.MatchSettings.Visibility.ALL_PLAYERS]
 	):
 		_visible_player.editable = false
 	_visible_player.value = get_tree().get_nodes_in_group("players").find(_match.visible_player)

@@ -34,7 +34,7 @@ func _toggle_play_mode():
 		else:
 			# exit ship
 			var new_pilot = PilotScene.instantiate()
-			_match._setup_and_spawn_unit(new_pilot, _piloted.global_transform.translated(Vector3(-1, 0, -1)), Globals.player)
+			MatchSignals.setup_and_spawn_unit.emit(new_pilot, _piloted.global_transform.translated(Vector3(-1, 0, -1)), Globals.player)
 			_piloted.find_child("Movement").piloted = false
 			pilot_unit(new_pilot)
 			
@@ -43,7 +43,7 @@ func _toggle_play_mode():
 		# exit commandCenter
 		if _last_command_center != null:
 			var new_pilot = PilotScene.instantiate()
-			_match._setup_and_spawn_unit(new_pilot, _last_command_center.global_transform.translated(Vector3(-1, 0, -1)), Globals.player)
+			MatchSignals.setup_and_spawn_unit.emit(new_pilot, _last_command_center.global_transform.translated(Vector3(-1, 0, -1)), Globals.player)
 			pilot_unit(new_pilot)
 			Globals.play_mode = Constants.PlayModes.Pilot
 

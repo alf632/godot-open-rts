@@ -9,6 +9,9 @@ signal action_updated
 const MATERIAL_ALBEDO_TO_REPLACE = Color(0.99, 0.81, 0.48)
 const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
 
+@onready var _multiplayer_controller = find_parent("Multiplayer")
+@onready var _match = find_parent("Match")
+
 var hp = null:
 	set = _set_hp
 var hp_max = null:
@@ -27,7 +30,7 @@ var movement_speed = null
 var sight_range = null
 var player:
 	get:
-		return get_parent()
+		return get_parent().get_parent()
 var color:
 	get:
 		return player.color
@@ -41,8 +44,15 @@ var type:
 
 var _action_locked = false
 
-@onready var _match = find_parent("Match")
 
+func setup_unit_groups(player):
+	add_to_group("units")
+	if _match.get_human_player() and player.id == _match.get_human_player().id:
+		add_to_group("controlled_units")
+	else:
+		add_to_group("adversary_units")
+	if player in _match.visible_players:
+		add_to_group("revealed_units")
 
 func _ready():
 	if not _match.is_node_ready():
@@ -164,12 +174,10 @@ func _handle_unit_death():
 
 
 func _setup_default_properties_from_constants():
-	print("setting up unit properties for "+str(get_script().resource_path))
 	var default_properties = Constants.Match.Units.DEFAULT_PROPERTIES[
 		get_script().resource_path.replace(".gd", ".tscn")
 	]
 	for property in default_properties:
-		print(property, str(default_properties[property]))
 		set(property, default_properties[property])
 
 
