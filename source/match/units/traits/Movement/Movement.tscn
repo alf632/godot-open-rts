@@ -1,0 +1,12 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7keq2sgw7dew"]
+
+[ext_resource type="Script" path="res://source/match/units/traits/Movement/movement.gd" id="1_4xcf5"]
+[ext_resource type="PackedScene" uid="uid://bem5u20vcnnd7" path="res://source/match/units/traits/Movement/DirectMovement.tscn" id="2_8bhxe"]
+[ext_resource type="PackedScene" uid="uid://cimnqhlthmxf0" path="res://source/match/units/traits/Movement/NavMovement.tscn" id="3_yofp5"]
+
+[node name="Movement" type="Node3D"]
+script = ExtResource("1_4xcf5")
+
+[node name="DirectMovement" parent="." instance=ExtResource("2_8bhxe")]
+
+[node name="NavMovement" parent="." instance=ExtResource("3_yofp5")]

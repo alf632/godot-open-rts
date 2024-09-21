@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://coufpkev4rxwe"]
+
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/ai.gd" id="1_ra268"]
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/EconomyController.gd" id="2_eybhi"]
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/DefenseController.gd" id="3_j8hr6"]
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/OffenseController.gd" id="4_yna4s"]
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/IntelligenceController.gd" id="5_hpqoi"]
+[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/ConstructionWorksController.gd" id="6_gxa1m"]
+
+[node name="AI" type="Node3D"]
+script = ExtResource("1_ra268")
+
+[node name="EconomyController" type="Node" parent="."]
+script = ExtResource("2_eybhi")
+
+[node name="DefenseController" type="Node" parent="."]
+script = ExtResource("3_j8hr6")
+
+[node name="OffenseController" type="Node" parent="."]
+script = ExtResource("4_yna4s")
+
+[node name="IntelligenceController" type="Node" parent="."]
+script = ExtResource("5_hpqoi")
+
+[node name="ConstructionWorksController" type="Node" parent="."]
+script = ExtResource("6_gxa1m")

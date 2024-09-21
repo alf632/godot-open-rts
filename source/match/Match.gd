@@ -6,11 +6,13 @@ const Unit = preload("res://source/match/units/Unit.gd")
 const Player = preload("res://source/match/players/Player.gd")
 const Human = preload("res://source/match/players/human/Human.gd")
 
+const Remote = preload("res://source/match/players/remote/RemotePlayer.tscn")
 const Pilot = preload("res://source/match/units/Pilot.tscn")
+const PilotScript = preload("res://source/match/units/Pilot.gd")
 
 const MatchSettings = preload("res://source/data-model/MatchSettings.gd")
 
-@export var settings: Dictionary = {}
+@export var settings: MatchSettings
 
 var map:
 	set = _set_map,
@@ -38,46 +40,69 @@ var is_initialized = false
 
 func _ready():
 	if not _multiplayer_controller or multiplayer.is_server():
-		print("waiting for initial sync")
+		print("server waiting for initial sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("server synced")
 		
-		print("waiting for map sync")
+		print("server waiting for map sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("server synced")
 		
 		MatchSignals.setup_and_spawn_unit.connect(_spawn_unit)
 		_setup_subsystems_dependent_on_map()
 		_setup_players()
+		
+		print("server waiting for players sync")
+		await _multiplayer_controller.sync_lock()
+		print("server synced")
+		
 		_setup_player_units()
 		visible_player = get_tree().get_nodes_in_group("players")[settings.visible_player]
 		_move_camera_to_initial_position()
+		_initial_pilot()
 		if settings.visibility == MatchSettings.Visibility.FULL:
 			fog_of_war.reveal()
-		print("waiting for units sync")
+		print("server waiting for units sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("server synced")
 		_rcp_match_ready.rpc()
 		is_initialized = true
 		MatchSignals.match_started.emit()
+		print("server init done")
 	else:
-		print("waiting for initial sync")
+		print("client waiting for initial sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("client synced")
 		
 		_set_map(Globals.cache["map"])
 		#Globals.cache.erase("map")
-		settings = Globals.cache["match_details"].settings
+		settings = str_to_var(Globals.cache["match_details"].settings)
 		#Globals.cache.erase("match_details")
 		_setup_subsystems_dependent_on_map()
-		print("waiting for map sync")
+		if settings.visibility == MatchSettings.Visibility.FULL:
+			fog_of_war.reveal()
+		print("client waiting for map sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("client synced")
 		
-		print("waiting for units sync")
+		while not get_human_player():
+			await _players.child_order_changed
+		
+		print("client waiting for players sync")
 		await _multiplayer_controller.sync_lock()
-		print("synced")
+		print("client synced")
+		
+		while $Units.get_children().is_empty():
+			await get_tree().physics_frame
+		
+		print("client waiting for units sync")
+		await _multiplayer_controller.sync_lock()
+		print("client synced")
+		_move_camera_to_initial_position()
+		_initial_pilot()
 		is_initialized = true
+		MatchSignals.match_started.emit()
+		print("client init done")
 		
 
 @rpc("authority", "reliable", "call_remote")
@@ -145,36 +170,53 @@ func _setup_players():
 
 func _create_players_from_settings():
 	for player_settings in settings.players:
-		var player_scene = Constants.Match.Player.CONTROLLER_SCENES[player_settings.controller]
-		var player = player_scene.instantiate()
+		var player
+		if multiplayer:
+			player = Remote.instantiate()
+			player.name = "{0}_{1}".format([player_settings.player_id, str(player_settings.controller)])
+		else:
+			var player_scene = Constants.Match.Player.CONTROLLER_SCENES[player_settings.controller]
+			player = player_scene.instantiate()
 		player.color = player_settings.color
-		if player_settings.spawn_index_offset > 0:
-			for _i in range(player_settings.spawn_index_offset):
-				_players.add_child(Node.new())
+		player.spawn = player_settings.spawn
 		_players.add_child(player)
 
 
 func _setup_player_units():
+	var spawns_populated = []
 	for player in _players.get_children():
 		if not player is Player:
 			continue
-		if player is Human:
-			var player_spawn = map.find_child("SpawnPoints").get_child(player.id)
-			Globals.player = player
+		
+		if player is Human or multiplayer and player.type == Constants.PlayerType.HUMAN:
+			var player_spawn = map.find_child("SpawnPoints").get_child(player.spawn)
 			var pilot = Pilot.instantiate()
-			player.setup_and_spawn_unit(pilot, player_spawn.global_transform.translated(Vector3(-3, 0, -3)))
-			_SH.pilot_unit(pilot)
+			player.setup_and_spawn_unit(pilot, player_spawn.global_transform.translated(Vector3(-randf_range(0.0,5.0), 0, -randf_range(0.0,5.0))))
+			if not multiplayer:
+				Globals.player = player
 
 
 func get_human_player():
-	var human_players = get_tree().get_nodes_in_group("players").filter(
-		func(player): return player is Human
-	)
-	assert(human_players.size() <= 1, "more than one human player is not allowed")
+	var human_players
+	if multiplayer:
+		human_players = _players.get_children().filter(
+			func(player): return player.playerid == multiplayer.get_unique_id()
+		)
+	else:
+		human_players = get_tree().get_nodes_in_group("players").filter(
+			func(player): return player is Human
+		)
+	assert(human_players.size() <= 1, "only one local human player is allowed")
 	if not human_players.is_empty():
 		return human_players[0]
 	return null
 
+func _initial_pilot():
+	var playerUnits = get_tree().get_nodes_in_group("units_{0}".format([multiplayer.get_unique_id()]))
+	for unit in playerUnits:
+		if unit is PilotScript:
+			_SH.pilot_unit(unit)
+			return
 
 func _move_camera_to_initial_position():
 	var human_player = get_human_player()
@@ -185,9 +227,7 @@ func _move_camera_to_initial_position():
 
 
 func _move_camera_to_player_units_crowd_pivot(player):
-	var player_units = get_tree().get_nodes_in_group("units").filter(
-		func(unit): return unit.player == player
-	)
+	var player_units = get_tree().get_nodes_in_group("units_{0}".format([multiplayer.get_unique_id()]))
 	assert(not player_units.is_empty(), "player must have at least one initial unit")
 	var crowd_pivot = Utils.Match.Unit.Movement.calculate_aabb_crowd_pivot_yless(player_units)
 	_camera.set_position_safely(crowd_pivot)

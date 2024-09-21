@@ -6,7 +6,8 @@ signal passive_movement_finished
 
 @onready var _Match = find_parent("Match")
 @onready var _NavHandler = _Match.find_child("NavHandler")
-@onready var _Unit = get_parent()
+@onready var _moveTrait = get_parent()
+@onready var _Unit = _moveTrait.get_parent()
 @onready var _Terrain = _Match.find_child("Terrain3D")
 
 @export var altitude = 2.0
@@ -18,11 +19,12 @@ var target = Vector3()
 var path = []
 var path_index = 0
 var path_visualizer = null
-var domain = Constants.Match.Navigation.Domain.TERRAIN
 
 var _moving = false
-var piloted = false
-var radius = 0.5
+
+var piloted: bool:
+	get():
+		return _moveTrait.pilotID > 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,11 +46,12 @@ func stop():
 func _physics_process(delta):
 	if piloted:
 		return
+		
 	var _dir = Vector3()
 	if _moving:
 		_dir = _calculate_path_dir()
 	
-	if domain == Constants.Match.Navigation.Domain.AIR:
+	if _moveTrait.domain == Constants.Match.Navigation.Domain.AIR:
 		_dir.y = _calculate_hold_altitude_dir().y
 		
 	_Unit.velocity = _dir.normalized() * _Unit.movement_speed * delta

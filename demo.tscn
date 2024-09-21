@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://b373fjcto1l4h" path="res://source/match/handlers/NavHandler.tscn" id="8_1k210"]
 [ext_resource type="PackedScene" uid="uid://bj8c6tdt6o1yt" path="res://source/match/players/Player.tscn" id="8_go0lg"]
 [ext_resource type="PackedScene" uid="uid://dmlef1nchuam4" path="res://source/match/maps/3Dmap/3Dmap.tscn" id="12_kfcua"]
-[ext_resource type="PackedScene" uid="uid://bem5u20vcnnd7" path="res://source/match/units/traits/DirectMovement.tscn" id="13_qthh1"]
+[ext_resource type="PackedScene" uid="uid://bem5u20vcnnd7" path="res://source/match/units/traits/Movement/DirectMovement.tscn" id="13_qthh1"]
 [ext_resource type="PackedScene" uid="uid://dg66oaqsqty53" path="res://source/DebugMarker3D.tscn" id="13_x4ese"]
 [ext_resource type="PackedScene" uid="uid://i58ffvwxbbwm" path="res://source/match/units/Tank.tscn" id="14_vdgu8"]
 

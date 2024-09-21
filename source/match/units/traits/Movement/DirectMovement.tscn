@@ -1,9 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bem5u20vcnnd7"]
+[gd_scene load_steps=3 format=3 uid="uid://bem5u20vcnnd7"]
 
-[ext_resource type="Script" path="res://source/match/units/traits/DirectMovement.gd" id="1_404f0"]
+[ext_resource type="Script" path="res://source/match/units/traits/Movement/DirectMovement.gd" id="1_404f0"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_mmfs6"]
+properties/0/path = NodePath(".:dir")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="DirectMovement" type="Node3D"]
 script = ExtResource("1_404f0")
+
+[node name="dirSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_mmfs6")
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3

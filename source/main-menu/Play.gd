@@ -3,22 +3,48 @@ extends Control
 const MatchSettings = preload("res://source/data-model/MatchSettings.gd")
 const PlayerSettings = preload("res://source/data-model/PlayerSettings.gd")
 const LoadingScene = preload("res://source/main-menu/Loading.tscn")
+const PlayerScene = preload("res://source/main-menu/Play_player.tscn")
 
 var _map_paths = []
 
 @onready var _start_button = find_child("StartButton")
 @onready var _map_list = find_child("MapList")
 @onready var _map_details = find_child("MapDetailsLabel")
-@onready var _multiplayer_ui = find_child("Multiplayer_UI")
-
+@onready var multiplayer_controller = find_parent("Multiplayer")
+@onready var _players = find_child("Players")
 
 func _ready():
+	if multiplayer_controller and multiplayer.is_server():
+		multiplayer_controller.player_connected.connect(_on_player_connected)
+		multiplayer_controller.player_disconnected.connect(_on_player_disconnected)
+		var newPlayer = PlayerScene.instantiate()
+		newPlayer.name = "1"
+		newPlayer.type = Constants.PlayerType.HUMAN
+		_players.add_child(newPlayer)
 	_setup_map_list()
 	_on_map_list_item_selected(0)
-	var option_nodes = find_child("GridContainer").find_children("OptionButton*")
-	for option_node_id in range(option_nodes.size()):
-		option_nodes[option_node_id].item_selected.connect(_on_player_selected.bind(option_node_id))
 
+func _on_player_connected(playerId, playerDetails):
+	var newPlayer = PlayerScene.instantiate()
+	newPlayer.name = str(playerId)
+	newPlayer.type = Constants.PlayerType.HUMAN
+	_players.add_child(newPlayer, true)
+
+func _on_player_disconnected(playerId):
+	for player in _players.get_children():
+		if player.playerId == playerId:
+			player.queue_free()
+
+func _on_add_ai_pressed() -> void:
+	var newPlayer = PlayerScene.instantiate()
+	var playerId = 2
+	var used_IDs = _players.get_children().map(func(element): return element.playerId)
+	while playerId in used_IDs:
+		playerId += 1
+	newPlayer.name = "AI_"+str(playerId)
+	newPlayer.find_child("Name").text = "AI"
+	newPlayer.type = Constants.PlayerType.SIMPLE_CLAIRVOYANT_AI
+	_players.add_child(newPlayer, true)
 
 func _setup_map_list():
 	var maps = Utils.Dict.items(Constants.Match.MAPS)
@@ -32,7 +58,19 @@ func _setup_map_list():
 
 func _create_match_settings():
 	var match_settings = MatchSettings.new()
-
+	
+	for player in _players.get_children():
+		var player_settings = PlayerSettings.new()
+		player_settings.controller = player.type
+		player_settings.player_id = player.playerId
+		player_settings.spawn = player.spawn
+		#player_settings.color = Constants.Player.COLORS[option_node_id]
+		
+		match_settings.players.append(player_settings)
+		
+		
+	return match_settings
+	
 	var option_nodes = find_child("GridContainer").find_children("OptionButton*")
 	var spawn_index_offset = 0
 	for option_node_id in range(option_nodes.size()):
@@ -55,9 +93,9 @@ func _create_match_settings():
 	if match_settings.visible_player == -1:
 		match_settings.visibility = match_settings.Visibility.ALL_PLAYERS
 	
-	var multiplayer_controller = find_parent("Multiplayer")
-	if multiplayer_controller:
-		match_settings.player_slot_mapping = _multiplayer_ui.player_slot_mapping
+	#var multiplayer_controller = find_parent("Multiplayer")
+	#if multiplayer_controller:
+	#	match_settings.player_slot_mapping = _multiplayer_ui.player_slot_mapping
 
 	return match_settings
 
@@ -71,7 +109,9 @@ func _on_start_button_pressed():
 	var new_scene = LoadingScene.instantiate()
 	new_scene.match_settings = _create_match_settings()
 	new_scene.map_path = _get_selected_map_path()
-	_rcp_match_details.rpc({"settings": new_scene.match_settings.to_dict(), "map_path": new_scene.map_path})#details)
+	
+	_rcp_match_details.rpc({"settings": var_to_str(new_scene.match_settings), "map_path": new_scene.map_path})#details)
+	
 	var multiplayer_controller = find_parent("Multiplayer")
 	if multiplayer_controller:
 		multiplayer_controller.change_scene(new_scene)
@@ -90,13 +130,13 @@ func _on_back_button_pressed():
 	get_tree().change_scene_to_file("res://source/main-menu/Main.tscn")
 
 
-func _align_player_controls_visibility_to_map(map):
-	var option_nodes = find_child("GridContainer").find_children("OptionButton*")
-	var label_nodes = find_child("GridContainer").find_children("Label*")
-	assert(option_nodes.size() == label_nodes.size())
-	for node_id in range(option_nodes.size()):
-		option_nodes[node_id].visible = node_id < map["players"]
-		label_nodes[node_id].visible = node_id < map["players"]
+#func _align_player_controls_visibility_to_map(map):
+#	var option_nodes = find_child("GridContainer").find_children("OptionButton*")
+#	var label_nodes = find_child("GridContainer").find_children("Label*")
+#	assert(option_nodes.size() == label_nodes.size())
+#	for node_id in range(option_nodes.size()):
+#		option_nodes[node_id].visible = node_id < map["players"]
+#		label_nodes[node_id].visible = node_id < map["players"]
 
 @rpc("call_remote", "authority", "reliable")
 func _on_player_selected(selected_option_id, selected_player_id):
@@ -134,8 +174,6 @@ func _on_map_list_item_selected(index):
 		else:
 			_map_list.select(index)
 	var map = Constants.Match.MAPS[_map_paths[index]]
-	_map_details.text = "[u]Players:[/u] {0}\n[u]Size:[/u] {1}x{2}".format(
+	_map_details.text = "[u]Slots:[/u] {0}\n[u]Size:[/u] {1}x{2}".format(
 		[map["players"], map["size"].x, map["size"].y]
 	)
-	_align_player_controls_visibility_to_map(map)
-	_multiplayer_ui.on_map_change(map["players"])

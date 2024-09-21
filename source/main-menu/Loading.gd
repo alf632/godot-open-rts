@@ -36,7 +36,7 @@ func _ready():
 	_label.text = tr("LOADING_STEP_INSTANTIATING_MATCH")
 	await get_tree().physics_frame
 	var a_match = match_prototype.instantiate()
-	a_match.settings = match_settings.to_dict()
+	a_match.settings = match_settings
 	a_match.map = map
 	_progress_bar.value = 0.9
 

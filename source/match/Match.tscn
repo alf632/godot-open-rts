@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://camns8fqod8d4"]
+[gd_scene load_steps=41 format=3 uid="uid://camns8fqod8d4"]
 
 [ext_resource type="Script" path="res://source/match/Match.gd" id="1_1555u"]
 [ext_resource type="Script" path="res://source/match/IsometricCamera3D.gd" id="1_qb2ry"]
@@ -28,8 +28,6 @@
 [ext_resource type="PackedScene" uid="uid://c2n4fxmgkv0vn" path="res://source/match/handlers/ProjectileSystemHandler.tscn" id="31_fbp3e"]
 [ext_resource type="PackedScene" uid="uid://b373fjcto1l4h" path="res://source/match/handlers/NavHandler.tscn" id="32_coyxa"]
 [ext_resource type="PackedScene" uid="uid://b8p6lcwubx1tp" path="res://source/match/handlers/UnitVisibilityHandler.tscn" id="32_fci1c"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7oyh"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ysb0j"]
 sun_angle_max = 200.0
@@ -98,10 +96,17 @@ viewport_path = NodePath("HUD/MarginContainer/Minimap/MarginContainer/MinimapVie
 [node name="Match" type="Node3D"]
 script = ExtResource("1_1555u")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_c7oyh")
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://source/match/players/remote/RemotePlayer.tscn")
+spawn_path = NodePath("../Players")
 
 [node name="Players" type="Node3D" parent="."]
+
+[node name="UnitSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://source/match/units/AircraftFactory.tscn", "res://source/match/units/AntiAirTurret.tscn", "res://source/match/units/AntiGroundTurret.tscn", "res://source/match/units/CommandCenter.tscn", "res://source/match/units/Drone.tscn", "res://source/match/units/Helicopter.tscn", "res://source/match/units/Pilot.tscn", "res://source/match/units/Tank.tscn", "res://source/match/units/VehicleFactory.tscn", "res://source/match/units/Worker.tscn")
+spawn_path = NodePath("../Units")
+
+[node name="Units" type="Node3D" parent="."]
 
 [node name="IsometricCamera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 49.5996, 12.4465, 65.9216)
@@ -124,8 +129,6 @@ directional_shadow_pancake_size = 100.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_qxcnu")
-
-[node name="RectangularSelection3D" parent="." instance=ExtResource("5_yi0pu")]
 
 [node name="Fog" type="MeshInstance3D" parent="."]
 visible = false
@@ -375,8 +378,10 @@ visible = false
 
 [node name="Handlers" type="Node3D" parent="."]
 
+[node name="RectangularSelection3D" parent="Handlers" instance=ExtResource("5_yi0pu")]
+
 [node name="ArealUnitSelectionHandler" parent="Handlers" instance=ExtResource("24_aug7m")]
-rectangular_selection_3d = NodePath("../../RectangularSelection3D")
+rectangular_selection_3d = NodePath("../RectangularSelection3D")
 
 [node name="DoubleClickUnitSelectionHandler" parent="Handlers" instance=ExtResource("25_ldkhw")]
 

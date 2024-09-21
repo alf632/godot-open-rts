@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dl8b86e0ms3f8"]
+
+[ext_resource type="PackedScene" uid="uid://q5w474dvts3f" path="res://source/match/players/human/StructurePlacementHandler.tscn" id="1_x7grx"]
+[ext_resource type="Script" path="res://source/match/players/human/UnitActionsController.gd" id="2_qqrrr"]
+[ext_resource type="Script" path="res://source/match/players/human/VoiceNarratorController.gd" id="3_e4chk"]
+
+[node name="HumanHandler" type="Node3D"]
+
+[node name="StructurePlacementHandler" parent="." instance=ExtResource("1_x7grx")]
+
+[node name="UnitActionsController" type="Node" parent="."]
+script = ExtResource("2_qqrrr")
+
+[node name="VoiceNarratorController" type="Node" parent="."]
+script = ExtResource("3_e4chk")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="VoiceNarratorController"]
+process_mode = 3

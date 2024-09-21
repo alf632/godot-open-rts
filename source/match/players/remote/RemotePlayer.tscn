@@ -2,11 +2,5 @@
 
 [ext_resource type="Script" path="res://source/match/players/remote/remote_player.gd" id="2_6jm32"]
 
-[node name="RemotePlayer" type="Node3D"]
+[node name="Remote" type="Node3D"]
 script = ExtResource("2_6jm32")
-
-[node name="Units" type="Node3D" parent="."]
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://source/match/units/AircraftFactory.tscn", "res://source/match/units/AntiAirTurret.tscn", "res://source/match/units/AntiGroundTurret.tscn", "res://source/match/units/CommandCenter.tscn", "res://source/match/units/Drone.tscn", "res://source/match/units/Helicopter.tscn", "res://source/match/units/Pilot.tscn", "res://source/match/units/Tank.tscn", "res://source/match/units/VehicleFactory.tscn", "res://source/match/units/Worker.tscn")
-spawn_path = NodePath("../Units")

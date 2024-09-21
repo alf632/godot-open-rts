@@ -11,21 +11,26 @@ signal finished(topdown_polygon_2d)
 @export var changed_signal_interval_lower_bound = 1.0 / 60.0 * 5.0  # s
 
 @onready var _match = find_parent("Match")
+@onready var _multiplayer_controller = _match.find_parent("Multiplayer")
 @onready var terrain :Terrain3D = _match.find_child("Terrain3D") 
 
 var _rect_on_screen = null
 var _time_since_last_update = 0.0  # s
 
+func _ready() -> void:
+	set_physics_process(false)
+	MatchSignals.match_started.connect(func():set_physics_process(true))
 
 func _physics_process(delta):
-	if Globals.play_mode == Constants.PlayModes.Operator:
+	if _multiplayer_controller.players[multiplayer.get_unique_id()].player.play_mode == Constants.PlayModes.Operator:
 		_throttle_update(delta)
 		if _screen_margin_hit():
 			_interrupt()
 
 
 func _unhandled_input(event):
-	if Globals.play_mode == Constants.PlayModes.Operator:
+	var playerInfo = _multiplayer_controller.players[multiplayer.get_unique_id()]
+	if playerInfo.has("player") and playerInfo.player.play_mode == Constants.PlayModes.Operator:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			_start()
 		if (

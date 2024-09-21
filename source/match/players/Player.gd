@@ -17,7 +17,14 @@ const Worker = preload("res://source/match/units/Worker.tscn")
 		emit_changed()
 @export var color = Color.WHITE
 
+@export var spawn := 0
+
 @onready var _match = find_parent("Match")
+@onready var _units = _match.find_child("Units")
+
+var play_mode = Constants.PlayModes.Pilot
+var piloted_unit = null
+var last_command_center = null
 
 var id:
 	get():
@@ -26,7 +33,8 @@ var id:
 var _color_material = null
 
 func _ready() -> void:
-	var spawn_transform = _match.map.find_child("SpawnPoints").get_child(get_index()).global_transform
+	add_to_group("players")
+	var spawn_transform = _match.map.find_child("SpawnPoints").get_child(spawn).global_transform
 	spawn_player_units(spawn_transform)
 
 func add_resources(resources):
@@ -72,9 +80,12 @@ func spawn_player_units(spawn_transform):
 func setup_and_spawn_unit(unit, a_transform, mark_structure_under_construction = true):
 	if unit is Structure and mark_structure_under_construction:
 		unit.mark_as_under_construction()
-	$Units.add_child(unit)
-	unit.global_transform = a_transform
-	unit.setup_unit_groups(self)
+	unit.name = "unit_{0}_{1}".format([unit.get_instance_id(),self.id])
+	print(unit.name)
+	_units.add_child(unit)
+	unit.global_transform = a_transform.translated(Vector3(0, _match.map.terrain.storage.get_height(a_transform.origin)+1, 0))
+	
 	MatchSignals.unit_spawned.emit(unit)
+	
 func emit_changed():
 	changed.emit()

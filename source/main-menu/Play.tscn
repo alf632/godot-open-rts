@@ -1,10 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://baeshrvg30aer"]
+[gd_scene load_steps=4 format=3 uid="uid://baeshrvg30aer"]
 
 [ext_resource type="Script" path="res://source/main-menu/Play.gd" id="1_o62d3"]
 [ext_resource type="PackedScene" uid="uid://dij5xr8swlfdx" path="res://source/main-menu/Background.tscn" id="2_xtk15"]
 [ext_resource type="Theme" uid="uid://c2kgsk4ffhbwo" path="res://source/resources/main_menu.theme" id="3_qwd67"]
-[ext_resource type="Script" path="res://source/main-menu/Multiplayer_UI.gd" id="4_dytx7"]
-[ext_resource type="PackedScene" uid="uid://dx5riv64xnbk6" path="res://source/main-menu/MultiPlay/slot.tscn" id="5_img31"]
 
 [node name="Play" type="Control"]
 layout_mode = 3
@@ -101,21 +99,25 @@ theme_override_constants/margin_bottom = 4
 [node name="MapDetailsLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[u]Players:[/u] 4
+text = "[u]Spawns:[/u] 4
 [u]Size:[/u] 50x50"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PlayerSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection"]
+_spawnable_scenes = PackedStringArray("res://source/main-menu/Play_player.tscn")
+spawn_path = NodePath("../Players")
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection"]
 layout_mode = 2
-text = "Players"
+text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Label"]
+[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection/Label"]
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 15
@@ -124,292 +126,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 556)
-layout_mode = 2
-theme_override_constants/h_separation = 5
-columns = 2
-
-[node name="Label0" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "1."
-
-[node name="OptionButton0" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 1
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label1" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "2."
-
-[node name="OptionButton1" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "3."
-
-[node name="OptionButton2" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 2
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label3" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "4."
-
-[node name="OptionButton3" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label4" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "5."
-
-[node name="OptionButton4" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label5" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "6."
-
-[node name="OptionButton5" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label6" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "7."
-
-[node name="OptionButton6" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label7" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "8."
-
-[node name="OptionButton7" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label8" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "9."
-
-[node name="OptionButton8" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label9" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "10."
-
-[node name="OptionButton9" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label10" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "11."
-
-[node name="OptionButton10" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label11" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "12."
-
-[node name="OptionButton11" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label12" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "13."
-
-[node name="OptionButton12" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label13" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "14."
-
-[node name="OptionButton13" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label14" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "15."
-
-[node name="OptionButton14" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Label15" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "16."
-
-[node name="OptionButton15" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-selected = 0
-item_count = 3
-popup/item_0/text = "None"
-popup/item_1/text = "Human"
-popup/item_1/id = 1
-popup/item_2/text = "Simple AI"
-popup/item_2/id = 2
-
-[node name="Multiplayer_UI" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-script = ExtResource("4_dytx7")
-
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI"]
-layout_mode = 2
-text = "Multiplayer"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI/Label"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Slots" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI"]
+[node name="Players" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection"]
 layout_mode = 2
 
-[node name="Slot" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Multiplayer_UI/Slots" instance=ExtResource("5_img31")]
+[node name="AddAI" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection"]
 layout_mode = 2
+text = "+"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -424,5 +146,6 @@ layout_mode = 2
 text = "BACK"
 
 [connection signal="item_selected" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/MapList" to="." method="_on_map_list_item_selected"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerSection/AddAI" to="." method="_on_add_ai_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

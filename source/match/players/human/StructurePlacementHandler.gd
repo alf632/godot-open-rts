@@ -21,7 +21,7 @@ var _pending_structure_navmap_rid = null
 var _pending_structure_prototype = null
 var _blueprint_rotating = false
 
-@onready var _player = get_parent()
+@onready var _player = get_parent().get_parent()
 @onready var _match = find_parent("Match")
 @onready var _feedback_label = find_child("FeedbackLabel3D")
 

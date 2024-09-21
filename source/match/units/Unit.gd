@@ -28,9 +28,8 @@ var movement_domain:
 	get = _get_movement_domain
 var movement_speed = null
 var sight_range = null
-var player:
-	get:
-		return get_parent().get_parent()
+var player
+var playerID
 var color:
 	get:
 		return player.color
@@ -42,10 +41,13 @@ var global_position_yless:
 var type:
 	get = _get_type
 
+
 var _action_locked = false
 
 
-func setup_unit_groups(player):
+func setup_unit_groups():
+	add_to_group("units_{0}".format([player.playerid]))
+	
 	add_to_group("units")
 	if _match.get_human_player() and player.id == _match.get_human_player().id:
 		add_to_group("controlled_units")
@@ -57,9 +59,13 @@ func setup_unit_groups(player):
 func _ready():
 	if not _match.is_node_ready():
 		await _match.ready
+	playerID = name.split("_")[2].to_int()
+	player = _match.find_child("Players").get_child(playerID)
+	setup_unit_groups()
 	_setup_color()
 	_setup_default_properties_from_constants()
 	assert(_safety_checks())
+	
 
 
 func is_revealing():

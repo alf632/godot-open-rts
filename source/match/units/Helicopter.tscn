@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://d1ekv61cse3bl" path="res://assets/models/kenney-spacekit/craft_racer.glb" id="6_3gekj"]
 [ext_resource type="PackedScene" uid="uid://b1r67ex7h3veu" path="res://source/match/units/traits/AirToTerrainMarker.tscn" id="7_5wh2l"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="8_ib4xd"]
-[ext_resource type="PackedScene" uid="uid://cimnqhlthmxf0" path="res://source/match/units/traits/NavMovement.tscn" id="9_53o6q"]
+[ext_resource type="PackedScene" uid="uid://cimnqhlthmxf0" path="res://source/match/units/traits/Movement/NavMovement.tscn" id="9_53o6q"]
 [ext_resource type="Script" path="res://source/match/FpsCamera3D.gd" id="9_sbnro"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_io5xm"]

@@ -12,7 +12,7 @@ const DEFAULT_SERVER_IP = "127.0.0.1"
 
 # This will contain player info for every player,
 # with the keys being each player's unique IDs.
-var players = {}
+@export var players = {}
 
 # This is the local player info. This should be modified locally
 # before the connection is made. It will be passed to every other peer.
@@ -95,6 +95,9 @@ func sync_lock():
 	await synced
 	print("player {0} unlock".format([str(multiplayer.get_unique_id())]))
 
+func map_player(id, obj):
+	players[id].player = obj
+
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_player_queued():
 	if multiplayer.is_server():
@@ -114,7 +117,8 @@ func _rpc_player_queued():
 func _rcp_synced():
 	print("unlocking {0}".format([multiplayer.get_unique_id()]))
 	synced.emit()
-	# When a peer connects, send them my player info.
+	
+# When a peer connects, send them my player info.
 # This allows transfer of all desired data for each player, not only the unique ID.
 func _on_player_connected(id):
 	_register_player.rpc_id(id, player_info)
