@@ -4,5 +4,3 @@
 
 [node name="Player" type="Node3D" groups=["players"]]
 script = ExtResource("1_po52i")
-
-[node name="Units" type="Node3D" parent="."]

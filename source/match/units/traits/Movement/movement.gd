@@ -25,7 +25,7 @@ func stop():
 
 func pilot():
 	_unit.find_child("Camera3D").make_current()
-	_direct.rpc_handoff_authority.rpc(pilotID)
+	_direct.request_authority()
 	_direct.set_physics_process(true)
 	_nav.set_physics_process(false)
 
