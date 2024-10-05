@@ -151,22 +151,23 @@ func find_path_with_max_climb_angle(passability_check_func,
 		start, target, true, angle)
 
 func find_path_ex(passability_check_func,
-		start, target, get_world_coords, max_climb_angle):
+		start, target, get_world_coords: bool, max_climb_angle):
 	if typeof(start) == TYPE_VECTOR2:
 		start = Vector3(start.x, 0, start.y)
 	if typeof(target) == TYPE_VECTOR2:
 		target = Vector3(target.x, 0, target.y)
+	print("START FROM: " + str(start) + " TO END: " + str(target))
 	var checkobj = passability_check_func
 	const hFactor = 0.7
 
-	var x
-	var z
+	var x: int
+	var z: int
 	var _startoffset = pos_to_offset(start)
 	x = _startoffset[0]
 	z = _startoffset[1]
-	var target_x
-	var target_z
-	var mapWidth = float(_field_size_x)
+	var target_x: int
+	var target_z: int
+	var mapWidth: int = float(_field_size_x)
 	var _targetoffset = pos_to_offset(target)
 	target_x = max(0, min(_field_size_x - 1, _targetoffset[0]))
 	target_z = max(0, min(_field_size_z - 1, _targetoffset[1]))
@@ -181,11 +182,11 @@ func find_path_ex(passability_check_func,
 
 	# Set up a few variables:
 	var step_distance = _slices_width
-	var _goalIsNonpassableResult = true
-	var _passablesrcx = -1
-	var _passablesrcy = -1
-	var startX = int(_startoffset[0])
-	var startZ = int(_startoffset[1])
+	var _goalIsNonpassableResult: bool = true
+	var _passablesrcx: int = -1
+	var _passablesrcy: int = -1
+	var startX: int = int(_startoffset[0])
+	var startZ: int = int(_startoffset[1])
 	x = -1
 	while x <= 1:
 		z = -1
@@ -227,9 +228,9 @@ func find_path_ex(passability_check_func,
 			"Goal not passable: " + str(goalIsNonpassable)
 		)
 	
-	var bestNodeX = int(_startoffset[0])
-	var bestNodeZ = int(_startoffset[1])
-	var bestNodeScore = (
+	var bestNodeX: int = int(_startoffset[0])
+	var bestNodeZ: int = int(_startoffset[1])
+	var bestNodeScore: float = (
 		Vector2(startX - target_x, startZ - target_z).length()
 	)
 	var openListHeap = _max_heap_class.new()
@@ -241,19 +242,19 @@ func find_path_ex(passability_check_func,
 	]
 
 	# Add initial open list entry:
-	var i = 0
+	var i: int = 0
 	while i < 8:
 		var offset = dir_to_offset(i)
-		var tx = startX + offset[0]
-		var tz = startZ + offset[1]
+		var tx: int = startX + offset[0]
+		var tz: int = startZ + offset[1]
 		if tx < 0 or tx >= _field_size_x or \
 				tz < 0 or tz >= _field_size_z:
 			i += 1
 			continue
-		var src_height = _height_field[
+		var src_height: float = _height_field[
 			startX + startZ * mapWidth
 		]
-		var target_height = _height_field[
+		var target_height: float = _height_field[
 			tx + tz * mapWidth
 		]
 		var cost = 1.0
@@ -277,18 +278,18 @@ func find_path_ex(passability_check_func,
 			)
 		i += 1
 
-	var maxRuntime = max(
+	var maxRuntime: int = max(
 		100, 0  # FIXME: Make this configurable
-	);
+	)
 	while not openListHeap.is_empty() and maxRuntime > 0:
-		var bestDist = -1.0
-		var bestHeuristic = -1.0
+		var bestDist: float = -1.0
+		var bestHeuristic: float = -1.0
 		var prevCount = null
 		var _bestItemDebugScore = null
 		if _debug:
 			prevCount = openListHeap.count()
 			var heapAsList = openListHeap.to_list()
-			var i2 = 0
+			var i2: int = 0
 			while i2 < heapAsList.size() - 1:
 				if (heapAsList[i2][1] > heapAsList[i2 + 1][1]):
 					OS.alert("heap has wrong sorting")
@@ -327,15 +328,15 @@ func find_path_ex(passability_check_func,
 			# Nonsense, don't go there
 			continue
 
-		var fromX = openListEntry[3]
-		var fromZ = openListEntry[4]
-		var dist = bestDist
-		var heuristic = bestHeuristic
+		var fromX: int = openListEntry[3]
+		var fromZ: int = openListEntry[4]
+		var dist: float = bestDist
+		var heuristic: float = bestHeuristic
 		if (visitedSet.has(x + z * mapWidth) and
 				visitedSet[x + z * mapWidth][2] <= heuristic):
 			continue
 
-		var reachedDestination = false;
+		var reachedDestination: bool = false;
 		# Check if we reached goal, or if goal is not passable
 		# then a neighbor of our goal:
 		if (x == target_x and z == target_z):
@@ -347,35 +348,39 @@ func find_path_ex(passability_check_func,
 
 		# Add new open list entries if not at destination yet:
 		if not reachedDestination or true:
-			var i2 = 0
+			var i2: int = 0
 			while i2 < 8:
 				var offset = dir_to_offset(i2)
-				var tx = x + offset[0]
-				var tz = z + offset[1]
+				var tx: int = x + offset[0]
+				var tz: int = z + offset[1]
 				if tx < 0 or tx >= _field_size_x or \
 						tz < 0 or tz >= _field_size_z:
 					i2 += 1
 					continue
-				var src_height = _height_field[
+				var src_height: float = _height_field[
 					x + z * mapWidth
 				]
-				var target_height = _height_field[
+				var target_height: float = _height_field[
 					tx + tz * mapWidth
 				]
-				var cost = 1.0
+				var cost: float = 1.0
 				if (max_climb_angle != null and
 						abs(Vector2(step_distance,
 							target_height - src_height).angle()) >
 							max_climb_angle):
 					cost = INF
-				elif passability_check_func != null:
+				elif passability_check_func != null and false:
 					cost = passability_check_func.call(
 						 self, Vector2(x, z), Vector2(tx, tz),
 						 step_distance, src_height, target_height)
 				if cost != INF:
-					var _heuristic = (
-						hFactor * cost * (
-							Vector2(target_x - tx, target_z - tz).length()) +
+					var xlenf: float = target_x - tx
+					var zlenf: float = target_z - tz
+					var _heuristic: float = (
+						hFactor * cost * sqrt(
+							(xlenf * xlenf) +
+							(zlenf * zlenf)
+						) +
 						1
 					)
 					if _debug:
@@ -391,7 +396,7 @@ func find_path_ex(passability_check_func,
 			var t = ("HeightMapNavMesh.gd: " +
 				"find_path: openList entries -> [")
 			var heapEntries = openListHeap.to_list()
-			var j = 0;
+			var j: int = 0
 			while j < heapEntries.size():
 				if j > 0:
 					t += ", "
@@ -406,7 +411,7 @@ func find_path_ex(passability_check_func,
 			t = (
 				"HeightMapNavMesh.gd: find_path: " +
 				"visitedSet entries -> ["
-			);
+			)
 			var firstEntry = true 
 			for key in visitedSet:
 				if firstEntry:
@@ -474,7 +479,7 @@ func find_path_ex(passability_check_func,
 
 	# Construct final path in proper order:
 	var path = []
-	var i3 = reverse_path.size() - 1
+	var i3: int = reverse_path.size() - 1
 	while i3 >= 0:
 		path.append(reverse_path[i3])
 		i3 -= 1
