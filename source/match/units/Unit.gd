@@ -7,6 +7,8 @@ signal action_changed(new_action)
 signal action_updated
 
 const Faction = preload("res://source/match/players/faction/Faction.gd")
+const Player = preload("res://source/match/players/Player.gd")
+const Unit = preload("res://source/match/units/Unit.gd")
 
 const MATERIAL_ALBEDO_TO_REPLACE = Color(0.99, 0.81, 0.48)
 const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
@@ -217,3 +219,38 @@ func _setup_default_properties_from_constants():
 func _on_action_node_tree_exited(action_node):
 	assert(action_node == action, "unexpected action released")
 	action = null
+
+func is_friendly_towards(entity):
+	if "friendly_units" in entity.get_groups():
+		return true
+	
+	var players = []
+	if entity is Unit:
+		players.append(entity.player)
+	elif entity is Faction:
+		for p in entity.members:
+			players.append(p)
+	elif entity is Player:
+		players.append(entity)
+	else:
+		printerr("unexpected flow")
+		return
+	
+	var friendly = false
+	for p in players:
+		if p.id == player.id:
+			friendly = true
+			break
+
+	return friendly
+
+func is_controllable_by(other_player):
+	if other_player.id == player.id:
+		return true
+	
+	if player is Faction:
+		for p in player.members:
+			if p.id == other_player.id:
+				return true
+	
+	return false

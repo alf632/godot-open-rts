@@ -15,20 +15,24 @@ func _ready():
 	
 func _on_area_entered(area):
 	var _other_unit = area.get_parent()
-	if _other_unit == _unit or _other_unit not in get_tree().get_nodes_in_group("controlled_units"):
+	if _other_unit == _unit or not _other_unit.is_controllable_by(_unit.player):
 		return
 	elif _other_unit is CommandCenter:
-		_SH.command_center = _other_unit
-		_UI.find_child("CC").text = "CommandCenter: "+str(_other_unit)
+		_unit.player.command_center = _other_unit
+		if _unit.player.id == Globals.player.id:
+			_UI.find_child("CC").text = "CommandCenter: "+str(_other_unit)
 	else:
-		_SH.pilotable = _other_unit
-		_UI.find_child("Pilotable").text = "Pilotable: "+str(_other_unit)
+		_unit.player.pilotable = _other_unit
+		if _unit.player.id == Globals.player.id:
+			_UI.find_child("Pilotable").text = "Pilotable: "+str(_other_unit)
 
 func _on_area_exited(area):
 	var _other_unit = area.get_parent()
-	if _other_unit == _SH.command_center:
-		_SH.command_center = null
-		_UI.find_child("CC").text = "CommandCenter: "
-	elif _other_unit == _SH.pilotable:
-		_SH.pilotable = null
-		_UI.find_child("Pilotable").text = "Pilotable: "
+	if _other_unit == _unit.player.command_center:
+		_unit.player.command_center = null
+		if _unit.player.id == Globals.player.id:
+			_UI.find_child("CC").text = "CommandCenter: "
+	elif _other_unit == _unit.player.pilotable:
+		_unit.player.pilotable = null
+		if _unit.player.id == Globals.player.id:
+			_UI.find_child("Pilotable").text = "Pilotable: "

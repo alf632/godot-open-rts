@@ -19,9 +19,17 @@ signal changed
 @onready var _unit_spawner = _match.find_child("UnitSpawner")
 
 var play_mode = Constants.PlayModes.Pilot
+var pilotable = null
 var piloted_unit = null
 var last_command_center = null
 var factions = []
+
+var command_center = null: set = _set_command_center
+func _set_command_center(value):
+	if value != null:
+		last_command_center = value
+	command_center = value
+	
 
 var id:
 	get():

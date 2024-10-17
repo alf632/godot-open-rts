@@ -13,14 +13,6 @@ signal passive_movement_finished
 var domain = Constants.Match.Navigation.Domain.TERRAIN
 var radius = 0.5
 
-var pilotID :int:
-	set(playerID):
-		pilotID = playerID
-		if playerID:
-			pilot()
-		else:
-			unpilot()
-
 var target := Vector3()
 
 func _ready() -> void:
