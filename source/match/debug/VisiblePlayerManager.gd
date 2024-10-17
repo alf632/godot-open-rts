@@ -9,7 +9,7 @@ func _ready():
 	await _match.ready
 	if not _match.is_initialized:
 		set_process(false)
-		await _match.rcp_match_ready
+		await MatchSignals.match_started
 		set_process(true)
 	if (
 		_match.settings.visibility

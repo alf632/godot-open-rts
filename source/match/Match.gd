@@ -1,10 +1,9 @@
 extends Node3D
 
-signal rcp_match_ready
-
 const Unit = preload("res://source/match/units/Unit.gd")
 const Player = preload("res://source/match/players/Player.gd")
 const Human = preload("res://source/match/players/human/Human.gd")
+const Faction = preload("res://source/match/players/faction/Faction.gd")
 
 const Remote = preload("res://source/match/players/remote/RemotePlayer.tscn")
 const Pilot = preload("res://source/match/units/Pilot.tscn")
@@ -29,6 +28,7 @@ var visible_players = null:
 @onready var _players = $Players
 @onready var _SH = $Handlers/PlayModeSwitchHandler
 @onready var _multiplayer_controller = find_parent("Multiplayer")
+@onready var _faction_handler = $Handlers/FactionHandler
 
 var is_initialized = false
 
@@ -51,6 +51,7 @@ func _ready():
 		MatchSignals.setup_and_spawn_unit.connect(_spawn_unit)
 		_setup_subsystems_dependent_on_map()
 		_setup_players()
+		_faction_handler.setup_factions()
 		
 		print("server waiting for players sync")
 		await _multiplayer_controller.sync_lock()
@@ -65,7 +66,6 @@ func _ready():
 		print("server waiting for units sync")
 		await _multiplayer_controller.sync_lock()
 		print("server synced")
-		_rcp_match_ready.rpc()
 		is_initialized = true
 		MatchSignals.match_started.emit()
 		print("server init done")
@@ -92,7 +92,7 @@ func _ready():
 		await _multiplayer_controller.sync_lock()
 		print("client synced")
 		
-		while $Units.get_children().is_empty():
+		while get_tree().get_nodes_in_group("units_{0}".format([Globals.player.id])).is_empty():
 			await get_tree().physics_frame
 		
 		print("client waiting for units sync")
@@ -104,10 +104,6 @@ func _ready():
 		MatchSignals.match_started.emit()
 		print("client init done")
 		
-
-@rpc("authority", "reliable", "call_remote")
-func _rcp_match_ready():
-	rcp_match_ready.emit()
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -188,12 +184,14 @@ func _setup_player_units():
 		if not player is Player:
 			continue
 		
-		if player is Human or multiplayer and player.type == Constants.PlayerType.HUMAN:
-			var player_spawn = map.find_child("SpawnPoints").get_child(player.spawn)
-			var pilot = Pilot.instantiate()
-			player.setup_and_spawn_unit(pilot, player_spawn.global_transform.translated(Vector3(-randf_range(0.0,5.0), 0, -randf_range(0.0,5.0))))
+		var player_spawn = map.find_child("SpawnPoints").get_child(player.spawn).global_transform
+		if player is Faction:
+			player.spawn_base_units(player_spawn)
+		elif player is Human or multiplayer and player.type == Constants.PlayerType.HUMAN:
+			player.setup_and_spawn_unit("Pilot", player_spawn.translated(Vector3(-randf_range(0.0,5.0), 0, -randf_range(0.0,5.0))))
 			if not multiplayer:
 				Globals.player = player
+		
 
 
 func get_human_player():
@@ -212,22 +210,33 @@ func get_human_player():
 	return null
 
 func _initial_pilot():
-	var playerUnits = get_tree().get_nodes_in_group("units_{0}".format([multiplayer.get_unique_id()]))
+	var playerUnits = get_tree().get_nodes_in_group("units_{0}".format([Globals.player.id]))
 	for unit in playerUnits:
 		if unit is PilotScript:
-			_SH.pilot_unit(unit)
-			return
+			_SH.pilot_unit(unit.name)
+			Globals.player.piloted_unit = unit
+			break
+	# server needs to know who pilots which unit to do propper cleanup on vehicle exit
+	if multiplayer.is_server():
+		for player in _players.get_children():
+			if player.id == Globals.player.id or player is Faction:
+				continue
+			if player is Human or multiplayer and player.type == Constants.PlayerType.HUMAN:
+				playerUnits = get_tree().get_nodes_in_group("units_{0}".format([player.id]))
+				for unit in playerUnits:
+					if unit is PilotScript:
+						player.piloted_unit = unit
+						break
 
 func _move_camera_to_initial_position():
-	var human_player = get_human_player()
-	if human_player != null:
-		_move_camera_to_player_units_crowd_pivot(human_player)
+	if Globals.player != null:
+		_move_camera_to_player_units_crowd_pivot(Globals.player)
 	else:
 		_move_camera_to_player_units_crowd_pivot(get_tree().get_nodes_in_group("players")[0])
 
 
 func _move_camera_to_player_units_crowd_pivot(player):
-	var player_units = get_tree().get_nodes_in_group("units_{0}".format([multiplayer.get_unique_id()]))
+	var player_units = get_tree().get_nodes_in_group("units_{0}".format([player.id]))
 	assert(not player_units.is_empty(), "player must have at least one initial unit")
 	var crowd_pivot = Utils.Match.Unit.Movement.calculate_aabb_crowd_pivot_yless(player_units)
 	_camera.set_position_safely(crowd_pivot)

@@ -14,11 +14,11 @@ func _ready() -> void:
 	var split = name.split("_")
 	playerid = split[0].to_int()
 	type = split[1].to_int()
+	_multiplayer_controller.map_player(playerid, self)
 	
 	if type == Constants.PlayerType.HUMAN and playerid == multiplayer.get_unique_id():
 		var newHumanControls = Human.instantiate()
 		add_child(newHumanControls)
-		_multiplayer_controller.map_player(playerid, self)
 		Globals.player = self
 	
 	if type == Constants.PlayerType.SIMPLE_CLAIRVOYANT_AI and multiplayer.is_server():

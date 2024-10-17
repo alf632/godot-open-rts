@@ -23,7 +23,7 @@ func _ready():
 	await _match.ready  # make sure Match is ready as it may change map on setup
 	if not _match.is_initialized:
 		set_process(false)
-		await _match.rcp_match_ready
+		await MatchSignals.match_started
 		set_process(true)
 	find_child("MinimapViewport").size = (
 		_match.find_child("Map").size * MINIMAP_PIXELS_PER_WORLD_METER

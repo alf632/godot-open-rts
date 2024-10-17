@@ -9,15 +9,13 @@ const CommandCenter = preload("res://source/match/units/CommandCenter.gd")
 @onready var _SH = find_parent("Match").find_child("PlayModeSwitchHandler")
 
 func _ready():
-	print("setup pilotable")
 	if _unit is Pilot:
 		connect("area_entered", _on_area_entered)
 		connect("area_exited", _on_area_exited)
-		print("pilot connected")
 	
 func _on_area_entered(area):
 	var _other_unit = area.get_parent()
-	if _other_unit == _unit or _other_unit.player != Globals.player:
+	if _other_unit == _unit or _other_unit not in get_tree().get_nodes_in_group("controlled_units"):
 		return
 	elif _other_unit is CommandCenter:
 		_SH.command_center = _other_unit
@@ -31,6 +29,6 @@ func _on_area_exited(area):
 	if _other_unit == _SH.command_center:
 		_SH.command_center = null
 		_UI.find_child("CC").text = "CommandCenter: "
-	else:
+	elif _other_unit == _SH.pilotable:
 		_SH.pilotable = null
 		_UI.find_child("Pilotable").text = "Pilotable: "

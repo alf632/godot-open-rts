@@ -18,7 +18,8 @@ func _ready():
 
 
 func _update_material():
-	if _unit.is_in_group("controlled_units"):
+	var groups = _unit.get_groups()
+	if _unit.is_in_group("friendly_units"):
 		_mesh_instance.material_override = CONTROLLED_UNIT_MATERIAL
 	elif _unit.is_in_group("adversary_units"):
 		_mesh_instance.material_override = ADVERSARY_UNIT_MATERIAL

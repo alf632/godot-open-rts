@@ -12,14 +12,16 @@ signal finished(topdown_polygon_2d)
 
 @onready var _match = find_parent("Match")
 @onready var _multiplayer_controller = _match.find_parent("Multiplayer")
-@onready var terrain :Terrain3D = _match.find_child("Terrain3D") 
+@onready var terrain :Terrain3D
 
 var _rect_on_screen = null
 var _time_since_last_update = 0.0  # s
 
 func _ready() -> void:
 	set_physics_process(false)
-	MatchSignals.match_started.connect(func():set_physics_process(true))
+	MatchSignals.match_started.connect(func():
+		terrain = _match.find_child("Terrain3D") 
+		set_physics_process(true))
 
 func _physics_process(delta):
 	if _multiplayer_controller.players[multiplayer.get_unique_id()].player.play_mode == Constants.PlayModes.Operator:

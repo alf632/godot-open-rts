@@ -11,7 +11,7 @@ func _ready():
 	await find_parent("Match").ready
 	if not _match.is_initialized:
 		set_process(false)
-		await _match.rcp_match_ready
+		await MatchSignals.match_started
 		set_process(true)
 	_hide_all_bars()
 	_setup_all_bars()

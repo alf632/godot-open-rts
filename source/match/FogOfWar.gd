@@ -21,7 +21,7 @@ var _unit_to_circles_mapping = {}
 func _ready():
 	if not _match.is_initialized:
 		set_process(false)
-		await _match.rcp_match_ready
+		await MatchSignals.match_started
 		set_process(true)
 		
 	if _fog_viewport.size == DEFAULT_SIZE:

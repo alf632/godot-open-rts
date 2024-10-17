@@ -1,7 +1,8 @@
-[gd_scene load_steps=41 format=3 uid="uid://camns8fqod8d4"]
+[gd_scene load_steps=43 format=3 uid="uid://camns8fqod8d4"]
 
 [ext_resource type="Script" path="res://source/match/Match.gd" id="1_1555u"]
 [ext_resource type="Script" path="res://source/match/IsometricCamera3D.gd" id="1_qb2ry"]
+[ext_resource type="Script" path="res://source/match/units/unit_spawner.gd" id="2_h7ebm"]
 [ext_resource type="Script" path="res://source/match/FogOfWar.gd" id="5_eb52t"]
 [ext_resource type="PackedScene" uid="uid://co800e4shs7bh" path="res://source/generic-scenes-and-nodes/3d/RectangularSelection3D.tscn" id="5_yi0pu"]
 [ext_resource type="PackedScene" uid="uid://clbjgy724q2si" path="res://source/generic-scenes-and-nodes/2d/DynamicCircle2D.tscn" id="6_ux0ef"]
@@ -25,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://yn470qvc3eak" path="res://source/match/handlers/MatchEndHandler.tscn" id="26_4d7im"]
 [ext_resource type="PackedScene" uid="uid://ck6vrgdyg7hja" path="res://source/match/handlers/UnitGroupSelectionHandler.tscn" id="27_j2drv"]
 [ext_resource type="PackedScene" uid="uid://cq6ebbwygfl6" path="res://source/match/handlers/PlayModeSwitchHandler.tscn" id="30_aft50"]
+[ext_resource type="Script" path="res://source/match/handlers/faction_handler.gd" id="30_f10a8"]
 [ext_resource type="PackedScene" uid="uid://c2n4fxmgkv0vn" path="res://source/match/handlers/ProjectileSystemHandler.tscn" id="31_fbp3e"]
 [ext_resource type="PackedScene" uid="uid://b373fjcto1l4h" path="res://source/match/handlers/NavHandler.tscn" id="32_coyxa"]
 [ext_resource type="PackedScene" uid="uid://b8p6lcwubx1tp" path="res://source/match/handlers/UnitVisibilityHandler.tscn" id="32_fci1c"]
@@ -97,7 +99,7 @@ viewport_path = NodePath("HUD/MarginContainer/Minimap/MarginContainer/MinimapVie
 script = ExtResource("1_1555u")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://source/match/players/remote/RemotePlayer.tscn")
+_spawnable_scenes = PackedStringArray("res://source/match/players/remote/RemotePlayer.tscn", "res://source/match/players/faction/Faction.tscn")
 spawn_path = NodePath("../Players")
 
 [node name="Players" type="Node3D" parent="."]
@@ -105,6 +107,7 @@ spawn_path = NodePath("../Players")
 [node name="UnitSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://source/match/units/AircraftFactory.tscn", "res://source/match/units/AntiAirTurret.tscn", "res://source/match/units/AntiGroundTurret.tscn", "res://source/match/units/CommandCenter.tscn", "res://source/match/units/Drone.tscn", "res://source/match/units/Helicopter.tscn", "res://source/match/units/Pilot.tscn", "res://source/match/units/Tank.tscn", "res://source/match/units/VehicleFactory.tscn", "res://source/match/units/Worker.tscn")
 spawn_path = NodePath("../Units")
+script = ExtResource("2_h7ebm")
 
 [node name="Units" type="Node3D" parent="."]
 
@@ -399,3 +402,6 @@ visible = false
 [node name="ProjectileSystemHandler" parent="Handlers" instance=ExtResource("31_fbp3e")]
 
 [node name="NavHandler" parent="Handlers" instance=ExtResource("32_coyxa")]
+
+[node name="FactionHandler" type="Node3D" parent="Handlers"]
+script = ExtResource("30_f10a8")

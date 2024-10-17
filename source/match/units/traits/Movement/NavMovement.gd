@@ -24,11 +24,11 @@ var _moving = false
 
 var piloted: bool:
 	get():
-		return _moveTrait.pilotID > 0
+		return "pilotID" in _moveTrait and _moveTrait.pilotID > 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	set_physics_process(false)
 
 func _exit_tree():
 	if path_visualizer != null:
@@ -37,6 +37,7 @@ func _exit_tree():
 func move(movement_target: Vector3):
 	target = movement_target
 	_moving = true
+	set_physics_process(true)
 
 func stop():
 	target = _Unit.global_position

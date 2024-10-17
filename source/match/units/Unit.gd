@@ -6,6 +6,8 @@ signal hp_changed
 signal action_changed(new_action)
 signal action_updated
 
+const Faction = preload("res://source/match/players/faction/Faction.gd")
+
 const MATERIAL_ALBEDO_TO_REPLACE = Color(0.99, 0.81, 0.48)
 const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
 
@@ -29,7 +31,6 @@ var movement_domain:
 var movement_speed = null
 var sight_range = null
 var player
-var playerID
 var color:
 	get:
 		return player.color
@@ -41,30 +42,56 @@ var global_position_yless:
 var type:
 	get = _get_type
 
+var groups_str
 
 var _action_locked = false
 
 
-func setup_unit_groups():
-	add_to_group("units_{0}".format([player.playerid]))
-	
+func _setup_unit_groups():
 	add_to_group("units")
-	if _match.get_human_player() and player.id == _match.get_human_player().id:
+	
+	var controlled = false
+	var friendly = false
+	var revealed = false
+	if player is Faction:
+		for P in player.members:
+			add_to_group("units_{0}".format([P.id]))
+			if P.id == Globals.player.id:
+				controlled = true
+				revealed = true
+	else:
+		add_to_group("units_{0}".format([player.id]))
+		if player.id == Globals.player.id:
+			controlled = true
+			revealed = true
+		else:
+			for F in player.factions:
+				for P in F.members:
+					if P.id == Globals.player.id:
+						revealed = true
+						friendly = true
+		
+		
+	
+	if controlled:
 		add_to_group("controlled_units")
+		add_to_group("friendly_units")
+	elif friendly:
+		add_to_group("friendly_units")
 	else:
 		add_to_group("adversary_units")
-	if player in _match.visible_players:
+		
+	if revealed:
 		add_to_group("revealed_units")
 
 func _ready():
 	if not _match.is_node_ready():
 		await _match.ready
-	playerID = name.split("_")[2].to_int()
-	player = _match.find_child("Players").get_child(playerID)
-	setup_unit_groups()
+	_setup_unit_groups()
 	_setup_color()
 	_setup_default_properties_from_constants()
-	assert(_safety_checks())
+	global_position = _match.map.get_pos_floored(global_position)
+	#assert(_safety_checks())
 	
 
 

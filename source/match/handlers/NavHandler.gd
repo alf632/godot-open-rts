@@ -18,7 +18,7 @@ func _ready() -> void:
 	if not _match.is_initialized:
 		set_process(false)
 		set_physics_process(false)
-		await _match.rcp_match_ready
+		await MatchSignals.match_started
 		set_process(true)
 		set_physics_process(true)
 
