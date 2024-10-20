@@ -114,4 +114,4 @@ func _finalize_production(former_queue_element):
 		var rally_point = _unit.get_node("RallyPoint").global_position
 
 		if rally_point != _unit.global_position:
-			produced_unit.action = Moving.new(rally_point)
+			produced_unit.set_action_string("Moving", rally_point)

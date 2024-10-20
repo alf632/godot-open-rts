@@ -48,6 +48,8 @@ func _unhandled_input(event):
 		_handle_rmb_event(event)
 	if event is InputEventMouseMotion:
 		_handle_mouse_motion_event(event)
+	if event.is_action_pressed("switch_current_player"):
+		switch_player()
 
 
 func _handle_lmb_down_event(_event):
@@ -79,6 +81,16 @@ func _handle_mouse_motion_event(_event):
 	_update_feedback_label(blueprint_position_validity)
 	_update_blueprint_color(blueprint_position_validity == BlueprintPositionValidity.VALID)
 
+func switch_player():
+	var players = [Globals.player]
+	for faction in Globals.player.factions:
+		players.append(faction)
+		
+	var current = players.find(_player)
+	if current >= len(players)-1:
+		_player = players[0]
+	else:
+		_player = players[current+1]
 
 func _structure_placement_started():
 	return _active_blueprint_node != null
@@ -131,13 +143,13 @@ func _update_feedback_label(blueprint_position_validity):
 	_feedback_label.visible = (blueprint_position_validity != BlueprintPositionValidity.VALID)
 	match blueprint_position_validity:
 		BlueprintPositionValidity.COLLIDES_WITH_OBJECT:
-			_feedback_label.text = tr("BLUEPRINT_COLLIDES_WITH_OBJECT")
+			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_COLLIDES_WITH_OBJECT")
 		BlueprintPositionValidity.NOT_NAVIGABLE:
-			_feedback_label.text = tr("BLUEPRINT_NOT_NAVIGABLE")
+			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_NOT_NAVIGABLE")
 		BlueprintPositionValidity.NOT_ENOUGH_RESOURCES:
-			_feedback_label.text = tr("BLUEPRINT_NOT_ENOUGH_RESOURCES")
+			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_NOT_ENOUGH_RESOURCES")
 		BlueprintPositionValidity.OUT_OF_MAP:
-			_feedback_label.text = tr("BLUEPRINT_OUT_OF_MAP")
+			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_OUT_OF_MAP")
 
 
 func _start_structure_placement(structure_prototype):
@@ -202,11 +214,8 @@ func _finish_structure_placement():
 			_pending_structure_prototype.resource_path
 		]
 		_player.subtract_resources(construction_cost)
-		MatchSignals.setup_and_spawn_unit.emit(
-			_pending_structure_prototype.instantiate(),
-			_active_blueprint_node.global_transform,
-			_player
-		)
+		_match._spawn_unit(_pending_structure_prototype.get_state().get_node_name(0), _active_blueprint_node.global_transform, _player)
+		
 	_cancel_structure_placement()
 
 

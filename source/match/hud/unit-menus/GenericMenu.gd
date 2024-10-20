@@ -10,4 +10,4 @@ func _on_cancel_action_button_pressed():
 		units[0].cancel_construction()
 		return
 	for unit in units:
-		unit.action = null
+		unit.clear_action()

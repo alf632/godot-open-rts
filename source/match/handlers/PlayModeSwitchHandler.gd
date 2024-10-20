@@ -28,8 +28,9 @@ func _toggle_play_mode():
 				player.piloted_unit = player.pilotable
 			# enter commandCenter
 			elif player.command_center != null:
-				enter_command_center.rpc_id(remoteID)
 				player.piloted_unit.queue_free()
+				player.play_mode = Constants.PlayModes.Operator
+				enter_command_center.rpc_id(remoteID)
 				player.piloted_unit = null
 		else:
 			# exit ship
@@ -44,6 +45,7 @@ func _toggle_play_mode():
 			var new_pilot = player.setup_and_spawn_unit("Pilot", player.last_command_center.global_transform.translated(Vector3(-1, 0, -1)))
 			pilot_unit.rpc_id(remoteID,new_pilot.name)
 			player.piloted_unit = new_pilot
+			player.play_mode = Constants.PlayModes.Pilot
 			
 
 @rpc("authority", "reliable", "call_local")

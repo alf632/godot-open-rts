@@ -6,6 +6,7 @@ var player = null
 @onready var _resource_b_label = find_child("ResourceBLabel")
 @onready var _resource_a_color_rect = find_child("ResourceAColorRect")
 @onready var _resource_b_color_rect = find_child("ResourceBColorRect")
+@onready var _name = find_child("Name")
 
 
 func _ready():
@@ -18,6 +19,7 @@ func setup(a_player):
 	player = a_player
 	_on_player_resource_changed()
 	player.changed.connect(_on_player_resource_changed)
+	_name.text = a_player.name
 
 
 func _on_player_resource_changed():

@@ -6,6 +6,17 @@ signal hp_changed
 signal action_changed(new_action)
 signal action_updated
 
+const Actions = {
+	"Moving" = preload("res://source/match/units/actions/Moving.gd"),
+	"MovingToUnit" = preload("res://source/match/units/actions/MovingToUnit.gd"),
+	"Following" = preload("res://source/match/units/actions/Following.gd"),
+	"CollectingResourcesSequentially" = preload(
+		"res://source/match/units/actions/CollectingResourcesSequentially.gd"
+	),
+	"AutoAttacking" = preload("res://source/match/units/actions/AutoAttacking.gd"),
+	"Constructing" = preload("res://source/match/units/actions/Constructing.gd"),
+}
+
 const Faction = preload("res://source/match/players/faction/Faction.gd")
 const Player = preload("res://source/match/players/Player.gd")
 const Unit = preload("res://source/match/units/Unit.gd")
@@ -15,6 +26,8 @@ const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
 
 @onready var _multiplayer_controller = find_parent("Multiplayer")
 @onready var _match = find_parent("Match")
+@onready var _units = _match.find_child("Units")
+@onready var _resources = _match.find_child("Map").find_child("Resources")
 
 var hp = null:
 	set = _set_hp
@@ -151,7 +164,40 @@ func _setup_color():
 	)
 
 
-func _set_action(action_node):
+func _set_action(new_action):
+	action = new_action
+
+func clear_action():
+	set_action_string(null)
+
+func set_action_string(action_string, args=null, targetUnitName="", targetResourceName=""):
+	if multiplayer.is_server():
+		_do_set_action(action_string, args, targetUnitName, targetResourceName)
+	else:
+		request_set_action.rpc_id(1, action_string, args, targetUnitName, targetResourceName)
+
+@rpc("any_peer", "reliable", "call_remote")
+func request_set_action(action_string, args, targetUnitName, targetResourceName):
+	_do_set_action.rpc(action_string, args, targetUnitName, targetResourceName)
+
+@rpc("authority", "reliable", "call_local")
+func _do_set_action(action_string, args=null, targetUnitName="", targetResourceName=""):
+	# if args is a string it is most probably a targetUnit
+	if not args:
+		if targetUnitName:
+			var targetUnit = _units.find_child(targetUnitName,false,false)
+			if targetUnit:
+				args = targetUnit
+		elif targetResourceName:
+			var targetResource = _resources.find_child(targetResourceName)
+			if targetResource:
+				args = targetResource
+	var action_node
+	if not action_string:
+		action_node=null
+	else:
+		action_node = Actions[action_string].new(args)
+	
 	if not is_inside_tree() or _action_locked:
 		if action_node != null:
 			action_node.queue_free()

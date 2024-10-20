@@ -29,7 +29,6 @@ func _set_command_center(value):
 	if value != null:
 		last_command_center = value
 	command_center = value
-	
 
 var id:
 	get():
@@ -44,7 +43,6 @@ func _ready() -> void:
 func add_resources(resources):
 	for resource in resources:
 		set(resource, get(resource) + resources[resource])
-
 
 func has_resources(resources):
 	if FeatureFlags.allow_resources_deficit_spending:
@@ -69,8 +67,18 @@ func get_color_material():
 	return _color_material
 
 
-func setup_and_spawn_unit(unitType, a_transform, mark_structure_under_construction = true):
-	var data = {"unitType": unitType, "transform": a_transform, "playerID": get_index(), "constructing": mark_structure_under_construction}
+func setup_and_spawn_unit(unitType, a_transform, constructing = true):
+	var data = {"unitType": unitType, "transform": a_transform, "playerID": get_index(), "constructing": constructing}
+	if multiplayer.is_server():
+		return _do_spawn(data)
+	else:
+		_request_spawn.rpc_id(get_multiplayer_authority(), data)
+
+@rpc("any_peer", "reliable", "call_remote")
+func _request_spawn(data):
+	_do_spawn(data)
+
+func _do_spawn(data):
 	return _unit_spawner.spawn(data)
 	
 func emit_changed():

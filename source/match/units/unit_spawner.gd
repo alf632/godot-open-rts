@@ -1,10 +1,18 @@
 extends MultiplayerSpawner
 
 const Structure = preload("res://source/match/units/Structure.gd")
-const CommandCenter = preload("res://source/match/units/CommandCenter.tscn")
-const Drone = preload("res://source/match/units/Drone.tscn")
-const Worker = preload("res://source/match/units/Worker.tscn")
-const Pilot = preload("res://source/match/units/Pilot.tscn")
+const SpawnableUnits = {
+"CommandCenter" = preload("res://source/match/units/CommandCenter.tscn"),
+"VehicleFactory" = preload("res://source/match/units/VehicleFactory.tscn"),
+"AircraftFactory" = preload("res://source/match/units/AircraftFactory.tscn"),
+"AntiAirTurret" = preload("res://source/match/units/AntiAirTurret.tscn"),
+"AntiGroundTurret" = preload("res://source/match/units/AntiGroundTurret.tscn"),
+"Drone" = preload("res://source/match/units/Drone.tscn"),
+"Worker" = preload("res://source/match/units/Worker.tscn"),
+"Pilot" = preload("res://source/match/units/Pilot.tscn"),
+"Helicopter" = preload("res://source/match/units/Helicopter.tscn"),
+"Tank" = preload("res://source/match/units/Tank.tscn"),
+}
 
 @onready var _match = get_parent()
 @onready var _players = _match.find_child("Players")
@@ -22,14 +30,8 @@ func _process(delta: float) -> void:
 # data= {"unitType": "CommandCenter", "transform": Ventor3(), "playerID": 1, "constructing": true}
 func spawn_unit(data):
 	var unit
-	if data.unitType == "CommandCenter":
-		unit = CommandCenter.instantiate()
-	elif data.unitType == "Drone":
-		unit = Drone.instantiate()
-	elif data.unitType == "Worker":
-		unit = Worker.instantiate()
-	elif data.unitType == "Pilot":
-		unit = Pilot.instantiate()
+	if data.unitType in  SpawnableUnits.keys():
+		unit = SpawnableUnits[data.unitType].instantiate()
 	else:
 		printerr("unitType \"{0}\" not supported by spawner".format([data.unitType]))
 		return

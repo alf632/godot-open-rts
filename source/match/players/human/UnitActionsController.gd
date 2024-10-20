@@ -46,7 +46,7 @@ func _try_navigating_selected_units_towards_position(target_point):
 	for tuple in new_unit_targets:
 		var unit = tuple[0]
 		var new_target = tuple[1]
-		unit.action = Actions.Moving.new(new_target)
+		unit.set_action_string("Moving", new_target)
 
 
 func _try_setting_rally_points(target_point: Vector3):
@@ -72,7 +72,7 @@ func _try_ordering_selected_workers_to_construct_structure(potential_structure):
 		)
 	)
 	for unit in selected_constructors:
-		unit.action = Actions.Constructing.new(structure)
+		unit.set_action_string("Constructing", structure.name)
 
 
 func _navigate_selected_units_towards_unit(target_unit):
@@ -81,13 +81,13 @@ func _navigate_selected_units_towards_unit(target_unit):
 		if not unit.is_in_group("controlled_units"):
 			continue
 		if Actions.CollectingResourcesSequentially.is_applicable(unit, target_unit):
-			unit.action = Actions.CollectingResourcesSequentially.new(target_unit)
+			unit.set_action_string("CollectingResourcesSesquentially", null, null, target_unit.name)
 			units_navigated += 1
 		elif Actions.AutoAttacking.is_applicable(unit, target_unit):
-			unit.action = Actions.AutoAttacking.new(target_unit)
+			unit.set_action_string("AutoAttacking", null, target_unit.name)
 			units_navigated += 1
 		elif Actions.Constructing.is_applicable(unit, target_unit):
-			unit.action = Actions.Constructing.new(target_unit)
+			unit.set_action_string("Constructing", null, target_unit.name)
 			units_navigated += 1
 		elif (
 			(
@@ -96,10 +96,10 @@ func _navigate_selected_units_towards_unit(target_unit):
 			)
 			and Actions.Following.is_applicable(unit)
 		):
-			unit.action = Actions.Following.new(target_unit)
+			unit.set_action_string("Following", null, target_unit.name)
 			units_navigated += 1
 		elif Actions.MovingToUnit.is_applicable(unit):
-			unit.action = Actions.MovingToUnit.new(target_unit)
+			unit.set_action_string("MovingToUnit", null, target_unit.name)
 			units_navigated += 1
 	return units_navigated > 0
 

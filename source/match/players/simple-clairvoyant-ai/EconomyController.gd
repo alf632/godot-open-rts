@@ -9,6 +9,7 @@ const WorkerScene = preload("res://source/match/units/Worker.tscn")
 const CollectingResourcesSequentially = preload(
 	"res://source/match/units/actions/CollectingResourcesSequentially.gd"
 )
+const Faction = preload("res://source/match/players/faction/Faction.gd")
 
 var _player = null
 var _ccs = []
@@ -61,7 +62,7 @@ func _attach_cc(cc):
 
 func _attach_current_ccs():
 	var ccs = get_tree().get_nodes_in_group("units").filter(
-		func(unit): return unit is CommandCenter and unit.player == _player
+		func(unit): return unit is CommandCenter and unit.player == _player or unit.player == Faction and _player in unit.player.members
 	)
 	if not ccs.is_empty():
 		_cc_base_position = ccs[0].global_position
@@ -82,7 +83,7 @@ func _attach_worker(worker):
 
 func _attach_current_workers():
 	var workers = get_tree().get_nodes_in_group("units").filter(
-		func(unit): return unit is Worker and unit.player == _player
+		func(unit): return unit is Worker and unit.player == _player or unit.player == Faction and _player in unit.player.members
 	)
 	for worker in workers:
 		_attach_worker(worker)

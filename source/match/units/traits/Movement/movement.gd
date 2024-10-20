@@ -22,6 +22,10 @@ func _ready() -> void:
 
 
 func move(movement_target: Vector3):
+	target = movement_target
+	_nav.move(target)
+	return
+	
 	if is_multiplayer_authority():
 		rpc_move.rpc(movement_target)
 	else:

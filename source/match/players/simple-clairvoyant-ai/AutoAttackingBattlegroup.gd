@@ -70,9 +70,9 @@ func _attack_next_adversary_unit():
 			target_unit.tree_exited.connect(_on_target_unit_died)
 			for attached_unit in _attached_units:
 				if Actions.AutoAttacking.is_applicable(attached_unit, target_unit):
-					attached_unit.action = Actions.AutoAttacking.new(target_unit)
+					attached_unit.set_action_string("AutoAttacking", target_unit.name)
 				else:
-					attached_unit.action = Actions.MovingToUnit.new(target_unit)
+					attached_unit.set_action_string("MovingToUnit", target_unit.name)
 			return
 	# if not possible to attack remaining units:
 	_attack_next_player()
