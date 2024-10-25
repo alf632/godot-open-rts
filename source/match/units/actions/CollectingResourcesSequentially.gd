@@ -17,6 +17,9 @@ var _cc_unit = null
 var _sub_action = null
 
 @onready var _unit = Utils.NodeEx.find_parent_with_group(self, "units")
+@onready var _match = find_parent("Match")
+@onready var _resources = _match.find_child("Map").find_child("Resources")
+@onready var _units = _match.find_child("Units")
 
 
 static func is_applicable(source_unit, target_unit):
@@ -49,6 +52,11 @@ func get_resource_unit():
 
 
 func _change_state_to(new_state):
+	if multiplayer.is_server():
+		_do_change_state_to.rpc(new_state)
+
+@rpc("authority", "reliable", "call_local")
+func _do_change_state_to(new_state):
 	assert(not _state_locked, "changing state during transition is not implemented")
 	_state_locked = true
 	_exit_state(_state)
@@ -92,6 +100,12 @@ func _enter_state(state):
 
 
 func _set_resource_unit(resource_unit):
+	if multiplayer.is_server():
+		_do_set_resource_unit.rpc(resource_unit.name)
+
+@rpc("authority", "reliable", "call_local")
+func _do_set_resource_unit(resource_unit_name):
+	var resource_unit = _resources.find_child(resource_unit_name)
 	if resource_unit == null:
 		queue_free()
 		return false
@@ -102,6 +116,11 @@ func _set_resource_unit(resource_unit):
 
 
 func _set_cc_unit(cc_unit):
+	_do_set_cc_unit.rpc(cc_unit.name)
+
+@rpc("authority", "reliable", "call_local")
+func _do_set_cc_unit(cc_unit_name):
+	var cc_unit = _units.find_child(cc_unit_name)
 	if cc_unit == null:
 		queue_free()
 		return false
@@ -177,7 +196,8 @@ func _handle_sub_action_finished_while_moving_to_cc():
 		if _set_cc_unit(_find_cc_closest_to_unit(_unit)):
 			_change_state_to(State.MOVING_TO_CC)
 		return
-	_transfer_collected_resources_to_player()
+	if multiplayer.is_server():
+		_transfer_collected_resources_to_player()
 	_change_state_to(State.MOVING_TO_RESOURCE)
 
 
@@ -186,6 +206,9 @@ func _on_sub_action_finished():
 		return
 	_sub_action = null
 	_unit.action_updated.emit()
+	if not multiplayer.is_server():
+		return
+	
 	match _state:
 		State.MOVING_TO_RESOURCE:
 			_handle_sub_action_finished_while_moving_to_resource()

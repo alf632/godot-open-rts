@@ -80,3 +80,17 @@ class RouletteWheel:
 				return value
 		assert(false, "unexpected flow")
 		return -1
+
+class Vec3:
+	static func serialize(vec: Vector3) -> String:
+		var packedFloat = PackedFloat32Array([vec.x,vec.y,vec.z])
+		var returnstring = Marshalls.variant_to_base64(packedFloat)
+		return returnstring
+		#print("serialize {0},{1},{2}".format(packedFloat.to_byte_array()))
+		#return "{0},{1},{2}".format([vec.x,vec.y,vec.z])
+	static func deserialize(str: String) -> Vector3:
+		var packedFloat = Marshalls.base64_to_variant(str)
+		return Vector3(packedFloat[0],packedFloat[1],packedFloat[2])
+		#var split = str.split(",")
+		#var packedFloat = PackedByteArray()
+		#return Vector3(split[0].to_float(),split[1].to_float(),split[2].to_float())

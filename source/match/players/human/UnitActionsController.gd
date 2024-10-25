@@ -2,9 +2,15 @@ extends Node
 
 const Structure = preload("res://source/match/units/Structure.gd")
 
+class Orders:
+	const MoveToPosition = preload("res://source/match/units/orders/MoveToPosition.gd")
+	const MoveToUnit = preload("res://source/match/units/orders/MoveToUnit.gd")
+	const FollowUnit = preload("res://source/match/units/orders/FollowUnit.gd")
+	const Construct = preload("res://source/match/units/orders/Construct.gd")
+	const CollectResource = preload("res://source/match/units/orders/CollectResource.gd")
+
 
 class Actions:
-	const Moving = preload("res://source/match/units/actions/Moving.gd")
 	const MovingToUnit = preload("res://source/match/units/actions/MovingToUnit.gd")
 	const Following = preload("res://source/match/units/actions/Following.gd")
 	const CollectingResourcesSequentially = preload(
@@ -27,14 +33,14 @@ func _try_navigating_selected_units_towards_position(target_point):
 		func(unit): return (
 			unit.is_in_group("controlled_units")
 			and unit.movement_domain == Constants.Match.Navigation.Domain.TERRAIN
-			and Actions.Moving.is_applicable(unit)
+			and Orders.MoveToPosition.is_applicable(unit)
 		)
 	)
 	var air_units_to_move = get_tree().get_nodes_in_group("selected_units").filter(
 		func(unit): return (
 			unit.is_in_group("controlled_units")
 			and unit.movement_domain == Constants.Match.Navigation.Domain.AIR
-			and Actions.Moving.is_applicable(unit)
+			and Orders.MoveToPosition.is_applicable(unit)
 		)
 	)
 	var new_unit_targets = Utils.Match.Unit.Movement.crowd_moved_to_new_pivot(
@@ -46,7 +52,7 @@ func _try_navigating_selected_units_towards_position(target_point):
 	for tuple in new_unit_targets:
 		var unit = tuple[0]
 		var new_target = tuple[1]
-		unit.set_action_string("Moving", new_target)
+		unit.order = Orders.MoveToPosition.new(new_target)
 
 
 func _try_setting_rally_points(target_point: Vector3):
@@ -68,11 +74,11 @@ func _try_ordering_selected_workers_to_construct_structure(potential_structure):
 	var selected_constructors = get_tree().get_nodes_in_group("selected_units").filter(
 		func(unit): return (
 			unit.is_in_group("controlled_units")
-			and Actions.Constructing.is_applicable(unit, structure)
+			and Orders.Construct.is_applicable(unit, structure)
 		)
 	)
 	for unit in selected_constructors:
-		unit.set_action_string("Constructing", structure.name)
+		unit.order = Orders.Construct.new(structure)
 
 
 func _navigate_selected_units_towards_unit(target_unit):
@@ -81,13 +87,13 @@ func _navigate_selected_units_towards_unit(target_unit):
 		if not unit.is_in_group("controlled_units"):
 			continue
 		if Actions.CollectingResourcesSequentially.is_applicable(unit, target_unit):
-			unit.set_action_string("CollectingResourcesSesquentially", null, null, target_unit.name)
+			unit.order = Orders.CollectResource.new(target_unit)
 			units_navigated += 1
-		elif Actions.AutoAttacking.is_applicable(unit, target_unit):
-			unit.set_action_string("AutoAttacking", null, target_unit.name)
-			units_navigated += 1
+		#elif Actions.AutoAttacking.is_applicable(unit, target_unit):
+		#	unit.set_action_string("AutoAttacking", null, target_unit.name)
+		#	units_navigated += 1
 		elif Actions.Constructing.is_applicable(unit, target_unit):
-			unit.set_action_string("Constructing", null, target_unit.name)
+			unit.order = Orders.Construct.new(target_unit)
 			units_navigated += 1
 		elif (
 			(
@@ -96,10 +102,10 @@ func _navigate_selected_units_towards_unit(target_unit):
 			)
 			and Actions.Following.is_applicable(unit)
 		):
-			unit.set_action_string("Following", null, target_unit.name)
+			unit.order = Orders.FollowUnit.new(target_unit)
 			units_navigated += 1
 		elif Actions.MovingToUnit.is_applicable(unit):
-			unit.set_action_string("MovingToUnit", null, target_unit.name)
+			unit.order = Orders.FollowUnit.new(target_unit)
 			units_navigated += 1
 	return units_navigated > 0
 

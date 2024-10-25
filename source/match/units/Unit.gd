@@ -3,19 +3,9 @@ extends CollisionObject3D
 signal selected
 signal deselected
 signal hp_changed
-signal action_changed(new_action)
-signal action_updated
 
-const Actions = {
-	"Moving" = preload("res://source/match/units/actions/Moving.gd"),
-	"MovingToUnit" = preload("res://source/match/units/actions/MovingToUnit.gd"),
-	"Following" = preload("res://source/match/units/actions/Following.gd"),
-	"CollectingResourcesSequentially" = preload(
-		"res://source/match/units/actions/CollectingResourcesSequentially.gd"
-	),
-	"AutoAttacking" = preload("res://source/match/units/actions/AutoAttacking.gd"),
-	"Constructing" = preload("res://source/match/units/actions/Constructing.gd"),
-}
+
+
 
 const Faction = preload("res://source/match/players/faction/Faction.gd")
 const Player = preload("res://source/match/players/Player.gd")
@@ -28,6 +18,7 @@ const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
 @onready var _match = find_parent("Match")
 @onready var _units = _match.find_child("Units")
 @onready var _resources = _match.find_child("Map").find_child("Resources")
+@onready var _behavior = find_child("UnitBehaviorManager")
 
 var hp = null:
 	set = _set_hp
@@ -50,7 +41,11 @@ var color:
 	get:
 		return player.color
 var action = null:
-	set = _set_action
+	set = _set_action,
+	get = _get_action
+var order = null:
+	set = _set_order,
+	get = _get_order
 var global_position_yless:
 	get:
 		return global_position * Vector3(1, 0, 1)
@@ -58,8 +53,6 @@ var type:
 	get = _get_type
 
 var groups_str
-
-var _action_locked = false
 
 
 func _setup_unit_groups():
@@ -163,54 +156,18 @@ func _setup_color():
 		material
 	)
 
+func _get_order():
+	return _behavior.current_order
+
+func _set_order(new_order):
+	_behavior.set_order(new_order)
+
+
+func _get_action():
+	return _behavior.current_action
 
 func _set_action(new_action):
-	action = new_action
-
-func clear_action():
-	set_action_string(null)
-
-func set_action_string(action_string, args=null, targetUnitName="", targetResourceName=""):
-	if multiplayer.is_server():
-		_do_set_action(action_string, args, targetUnitName, targetResourceName)
-	else:
-		request_set_action.rpc_id(1, action_string, args, targetUnitName, targetResourceName)
-
-@rpc("any_peer", "reliable", "call_remote")
-func request_set_action(action_string, args, targetUnitName, targetResourceName):
-	_do_set_action.rpc(action_string, args, targetUnitName, targetResourceName)
-
-@rpc("authority", "reliable", "call_local")
-func _do_set_action(action_string, args=null, targetUnitName="", targetResourceName=""):
-	# if args is a string it is most probably a targetUnit
-	if not args:
-		if targetUnitName:
-			var targetUnit = _units.find_child(targetUnitName,false,false)
-			if targetUnit:
-				args = targetUnit
-		elif targetResourceName:
-			var targetResource = _resources.find_child(targetResourceName)
-			if targetResource:
-				args = targetResource
-	var action_node
-	if not action_string:
-		action_node=null
-	else:
-		action_node = Actions[action_string].new(args)
-	
-	if not is_inside_tree() or _action_locked:
-		if action_node != null:
-			action_node.queue_free()
-		return
-	_action_locked = true
-	_teardown_current_action()
-	action = action_node
-	if action != null:
-		var action_copy = action  # bind() performs copy itself, but lets force copy just in case
-		action.tree_exited.connect(_on_action_node_tree_exited.bind(action_copy))
-		add_child(action_node)
-	_action_locked = false
-	action_changed.emit(action)
+	_behavior.set_action(new_action)
 
 
 func _get_type():
@@ -218,12 +175,6 @@ func _get_type():
 	var unit_file_name = unit_script_path.substr(unit_script_path.rfind("/") + 1)
 	var unit_name = unit_file_name.split(".")[0]
 	return unit_name
-
-
-func _teardown_current_action():
-	if action != null and action.is_inside_tree():
-		action.queue_free()
-		remove_child(action)  # triggers _on_action_node_tree_exited immediately
 
 
 func _safety_checks():

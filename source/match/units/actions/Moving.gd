@@ -1,4 +1,5 @@
 extends "res://source/match/units/actions/Action.gd"
+class_name Moving
 
 var _target_position = null
 
@@ -26,3 +27,9 @@ func _exit_tree():
 
 func _on_movement_finished():
 	queue_free()
+
+func _to_string() -> String:
+	return "{0};{1}".format(["Moving",  Utils.Vec3.serialize(_target_position)])
+
+static func new_from_string(action_string: String):
+	return Moving.new(Utils.Vec3.deserialize(action_string.split(";")[1]))

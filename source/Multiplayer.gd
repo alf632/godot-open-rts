@@ -61,7 +61,9 @@ func _on_connect_pressed():
 	if address.is_empty():
 		address = DEFAULT_SERVER_IP
 	var peer = ENetMultiplayerPeer.new()
-	peer.create_client(address, PORT)
+	var error = peer.create_client(address, PORT)
+	if error != OK:
+		OS.alert("Failed to start multiplayer client.")
 	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 		OS.alert("Failed to start multiplayer client.")
 		return
