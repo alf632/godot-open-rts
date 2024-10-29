@@ -18,7 +18,7 @@ func _init(target_unit :Unit) -> void:
 func _to_string() -> String:
 	return "{0};{1}".format(["FollowUnit", _target_unit])
 
-func new_from_string(order_string: String, ctx: OrderContext):
+static func new_from_string(order_string: String, ctx: OrderContext):
 	var split = order_string.split(";")
 	var targetUnit = ctx.unit.get_parent().find_child(split[1])
 	return FollowUnit.new(targetUnit)

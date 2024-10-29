@@ -10,6 +10,9 @@ const UNDER_CONSTRUCTION_MATERIAL = preload(
 
 var _construction_progress = 1.0
 
+var in_base
+var base_territory_radius = 25
+
 @onready var production_queue = find_child("ProductionQueue"):
 	set(_value):
 		pass

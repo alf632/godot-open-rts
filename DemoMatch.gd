@@ -3,6 +3,8 @@ extends Node3D
 @onready var navigation = $Navigation
 @onready var map = $Map
 
+var is_initialized = true
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var tank = find_child("Tank")

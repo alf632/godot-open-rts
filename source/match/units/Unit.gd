@@ -164,6 +164,8 @@ func _set_order(new_order):
 
 
 func _get_action():
+	if not _behavior:
+		return null
 	return _behavior.current_action
 
 func _set_action(new_action):

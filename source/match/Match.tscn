@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://camns8fqod8d4"]
+[gd_scene load_steps=44 format=3 uid="uid://camns8fqod8d4"]
 
 [ext_resource type="Script" path="res://source/match/Match.gd" id="1_1555u"]
 [ext_resource type="Script" path="res://source/match/IsometricCamera3D.gd" id="1_qb2ry"]
@@ -25,9 +25,10 @@
 [ext_resource type="PackedScene" uid="uid://pi813oou7xim" path="res://source/match/handlers/DoubleClickUnitSelectionHandler.tscn" id="25_ldkhw"]
 [ext_resource type="PackedScene" uid="uid://yn470qvc3eak" path="res://source/match/handlers/MatchEndHandler.tscn" id="26_4d7im"]
 [ext_resource type="PackedScene" uid="uid://ck6vrgdyg7hja" path="res://source/match/handlers/UnitGroupSelectionHandler.tscn" id="27_j2drv"]
+[ext_resource type="PackedScene" uid="uid://dwdjo4yg6rq0l" path="res://source/match/handlers/faction_handler.tscn" id="30_1jur7"]
 [ext_resource type="PackedScene" uid="uid://cq6ebbwygfl6" path="res://source/match/handlers/PlayModeSwitchHandler.tscn" id="30_aft50"]
-[ext_resource type="Script" path="res://source/match/handlers/faction_handler.gd" id="30_f10a8"]
 [ext_resource type="PackedScene" uid="uid://c2n4fxmgkv0vn" path="res://source/match/handlers/ProjectileSystemHandler.tscn" id="31_fbp3e"]
+[ext_resource type="PackedScene" uid="uid://bdfx6tk6g336j" path="res://source/match/handlers/BaseHandler.tscn" id="31_qpjeg"]
 [ext_resource type="PackedScene" uid="uid://b373fjcto1l4h" path="res://source/match/handlers/NavHandler.tscn" id="32_coyxa"]
 [ext_resource type="PackedScene" uid="uid://b8p6lcwubx1tp" path="res://source/match/handlers/UnitVisibilityHandler.tscn" id="32_fci1c"]
 
@@ -291,6 +292,7 @@ theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 
 [node name="Resources" type="VBoxContainer" parent="HUD/MarginContainer2"]
+visible = false
 layout_mode = 2
 script = ExtResource("16_vjwpn")
 
@@ -403,5 +405,6 @@ visible = false
 
 [node name="NavHandler" parent="Handlers" instance=ExtResource("32_coyxa")]
 
-[node name="FactionHandler" type="Node3D" parent="Handlers"]
-script = ExtResource("30_f10a8")
+[node name="FactionHandler" parent="Handlers" instance=ExtResource("30_1jur7")]
+
+[node name="BaseHandler" parent="Handlers" instance=ExtResource("31_qpjeg")]

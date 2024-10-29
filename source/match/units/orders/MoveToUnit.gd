@@ -18,7 +18,7 @@ func _init(target_unit :Unit) -> void:
 func _to_string() -> String:
 	return "{0};{1}".format(["MoveToUnit", _target_unit.name])
 
-func new_from_string(order_string: String, ctx: OrderContext):
+static func new_from_string(order_string: String, ctx: OrderContext):
 	var unit = ctx.unit.get_parent().find_node(order_string.split(";")[1])
 	return MoveToUnit.new(unit)
 

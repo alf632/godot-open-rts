@@ -5,6 +5,10 @@ const Structure = preload("res://source/match/units/Structure.gd")
 const Order = preload("res://source/match/units/orders/Order.gd")
 const Orders = {
 	"MoveToPosition" = preload("res://source/match/units/orders/MoveToPosition.gd"),
+	"MoveToUnit" = preload("res://source/match/units/orders/MoveToUnit.gd"),
+	"FollowUnit" = preload("res://source/match/units/orders/FollowUnit.gd"),
+	"Construct" = preload("res://source/match/units/orders/Construct.gd"),
+	"CollectResource" = preload("res://source/match/units/orders/CollectResource.gd"),
 }
 
 const Actions = {

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq4lgaqe4owfp"]
+
+[ext_resource type="Script" path="res://source/match/base_structure_overlay.gd" id="1_74bmi"]
+
+[node name="BaseStructure" type="ColorRect"]
+color = Color(1, 0, 0, 1)
+script = ExtResource("1_74bmi")

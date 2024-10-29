@@ -23,6 +23,7 @@ var pilotable = null
 var piloted_unit = null
 var last_command_center = null
 var factions = []
+var bases = []
 
 var command_center = null: set = _set_command_center
 func _set_command_center(value):

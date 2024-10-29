@@ -6,6 +6,7 @@ enum BlueprintPositionValidity {
 	NOT_NAVIGABLE,
 	NOT_ENOUGH_RESOURCES,
 	OUT_OF_MAP,
+	NOT_IN_BASE
 }
 
 const ROTATION_BY_KEY_STEP = 45.0
@@ -24,6 +25,7 @@ var _blueprint_rotating = false
 @onready var _player = get_parent().get_parent()
 @onready var _match = find_parent("Match")
 @onready var _feedback_label = find_child("FeedbackLabel3D")
+@onready var _base_handler = _match.find_child("BaseHandler")
 
 
 func _ready():
@@ -107,6 +109,9 @@ func _blueprint_rotation_started():
 func _calculate_blueprint_position_validity():
 	if _active_bluprint_out_of_map():
 		return BlueprintPositionValidity.OUT_OF_MAP
+	var base = _base_handler.get_base_at(Vector2(_active_blueprint_node.global_position.x, _active_blueprint_node.global_position.z))
+	if not base or base.command_center.player != _player:
+		return BlueprintPositionValidity.NOT_IN_BASE
 	if not _player_has_enough_resources():
 		return BlueprintPositionValidity.NOT_ENOUGH_RESOURCES
 	var placement_validity = Utils.Match.Unit.Placement.validate_agent_placement_position(
@@ -150,6 +155,8 @@ func _update_feedback_label(blueprint_position_validity):
 			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_NOT_ENOUGH_RESOURCES")
 		BlueprintPositionValidity.OUT_OF_MAP:
 			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_OUT_OF_MAP")
+		BlueprintPositionValidity.NOT_IN_BASE:
+			_feedback_label.text = _player.name+" "+tr("BLUEPRINT_NOT_IN_BASE")
 
 
 func _start_structure_placement(structure_prototype):

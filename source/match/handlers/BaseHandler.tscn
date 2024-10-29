@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://bdfx6tk6g336j"]
+
+[ext_resource type="Script" path="res://source/match/handlers/base_handler.gd" id="1_vo8te"]
+[ext_resource type="Shader" path="res://source/shaders/3d/territory.gdshader" id="3_6kakv"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_hagxg"]
+viewport_path = NodePath("Territories")
+
+[sub_resource type="QuadMesh" id="QuadMesh_sev25"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_rw8mj"]
+viewport_path = NodePath("Territories")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cl2c2"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_6kakv")
+shader_parameter/overlay = SubResource("ViewportTexture_rw8mj")
+
+[node name="BaseHandler" type="Node3D"]
+script = ExtResource("1_vo8te")
+
+[node name="Bases" type="Node3D" parent="."]
+
+[node name="Territories" type="SubViewport" parent="."]
+size = Vector2i(1024, 1024)
+
+[node name="Background" type="ColorRect" parent="Territories"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TerritoriesTexture" type="TextureRect" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("ViewportTexture_hagxg")
+stretch_mode = 2
+
+[node name="TerritoriesOverlay" type="MeshInstance3D" parent="."]
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_sev25")
+surface_material_override/0 = SubResource("ShaderMaterial_cl2c2")
