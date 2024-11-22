@@ -1,15 +1,20 @@
 extends Node3D
 
+signal map_scanned
+
 @export var debugNavMesh = false
 
+const HeightMapNavMeshClass = preload("res://source/match/utils/HeightMapNavMesh.gd")
+const NavHandlerPathVisualizerClass = preload("res://source/match/handlers/NavHandlerPathVisualizer.gd")
 const MapCollisionUtils = preload("res://source/match/utils/MapCollisionUtils.gd")
 const _debugmarker = preload("res://source/DebugMarker3D.tscn")
 
 var _proplayers = {}
 @onready var _match = find_parent("Match")
 @onready var _gamematch = find_parent("Match")
-@onready var HeightMapNavMeshClass = load("res://source/match/utils/HeightMapNavMesh.gd")
-@onready var NavHandlerPathVisualizerClass = load("res://source/match/handlers/NavHandlerPathVisualizer.gd")
+@onready var _ground_obstacles = find_child("GroundObstacles")
+
+
 var _hmnavmesh = null
 var _map_scanned = false
 
@@ -38,6 +43,13 @@ func _physics_process(delta):
 			extents[0], extents[1], extents[2], extents[3], extents[4], extents[5],
 			2, terrain, _spawn_marker_callback
 		)
+		map_scanned.emit()
+
+func _default_passability_check_func(hmNavMesh, src :Vector2, target :Vector2,
+					step_distance, src_height, target_height):
+	#return query_proplayer_max_value("ground", target, step_distance)
+	#return _ground_obstacles.query_position(target)
+	pass
 
 func _spawn_marker(pos):
 	var dm = _debugmarker.instantiate()
@@ -54,6 +66,8 @@ func find_path_with_max_climb_angle(
 		src, dst, costFunc, angle):
 	if not _map_scanned:
 		return []
+	#if not costFunc:
+	#	costFunc = _default_passability_check_func
 	var result = _hmnavmesh.find_path_with_max_climb_angle(
 		costFunc, src, dst, angle)
 	return result

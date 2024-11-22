@@ -31,5 +31,5 @@ func _on_movement_finished():
 func _to_string() -> String:
 	return "{0};{1}".format(["Moving",  Utils.Vec3.serialize(_target_position)])
 
-static func new_from_string(action_string: String):
+static func new_from_string(action_string: String, ctx: ActionContext):
 	return Moving.new(Utils.Vec3.deserialize(action_string.split(";")[1]))

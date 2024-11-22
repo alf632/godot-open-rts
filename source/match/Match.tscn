@@ -408,3 +408,4 @@ visible = false
 [node name="FactionHandler" parent="Handlers" instance=ExtResource("30_1jur7")]
 
 [node name="BaseHandler" parent="Handlers" instance=ExtResource("31_qpjeg")]
+visible = false

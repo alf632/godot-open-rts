@@ -1,4 +1,5 @@
 extends "res://source/match/units/actions/Action.gd"
+class_name CollectingResourcesSequentially
 
 enum State { NULL, MOVING_TO_RESOURCE, COLLECTING, MOVING_TO_CC }
 
@@ -14,6 +15,7 @@ var _state := State.NULL
 var _state_locked = false
 var _resource_unit = null
 var _cc_unit = null
+var _init_unit = null
 var _sub_action = null
 
 @onready var _unit = Utils.NodeEx.find_parent_with_group(self, "units")
@@ -30,22 +32,29 @@ static func is_applicable(source_unit, target_unit):
 
 
 func _init(unit):
-	if unit is ResourceUnit:
-		_set_resource_unit(unit)
-	elif unit is CommandCenter:
-		_set_cc_unit(unit)
+	_init_unit = unit
+	
 
 
 func _ready():
+	if _init_unit is ResourceUnit:
+		_set_resource_unit(_init_unit)
+	elif _init_unit is CommandCenter:
+		_set_cc_unit(_init_unit)
+		
 	if _resource_unit != null:
 		_change_state_to(State.MOVING_TO_RESOURCE)
 	elif _cc_unit != null:
 		_change_state_to(State.MOVING_TO_CC)
 
 
-func _to_string():
-	return "{0}({1})".format([super(), str(_sub_action) if _sub_action != null else ""])
+func _to_string() -> String:
+	var unit_string = func(): if _init_unit: return _init_unit.name else: return ""
+	return "{0};{1}".format(["CollectingResourcesSequentially",  unit_string])
 
+static func new_from_string(action_string: String, ctx ):
+	var unit = action_string.split(";")[1]
+	return CollectingResourcesSequentially.new(unit)
 
 func get_resource_unit():
 	return _resource_unit

@@ -12,7 +12,7 @@ signal passive_movement_finished
 
 @export var altitude = 2.0
 @export var climb_angle = PI * 0.125
-@export var min_target_distance = 2
+@export var min_target_distance = 1.5
 @export var waypoint_reach = 0.1
 
 var target = Vector3()
@@ -73,6 +73,9 @@ func _calculate_path_dir():
 			_moving = true
 		elif _moving:
 			_moving = false
+			if path_visualizer != null:
+				path_visualizer.destroy()
+				path_visualizer = null
 			movement_finished.emit()
 			return dir
 		else:

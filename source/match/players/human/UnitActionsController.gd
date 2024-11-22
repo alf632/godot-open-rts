@@ -11,11 +11,6 @@ class Orders:
 
 
 class Actions:
-	const MovingToUnit = preload("res://source/match/units/actions/MovingToUnit.gd")
-	const Following = preload("res://source/match/units/actions/Following.gd")
-	const CollectingResourcesSequentially = preload(
-		"res://source/match/units/actions/CollectingResourcesSequentially.gd"
-	)
 	const AutoAttacking = preload("res://source/match/units/actions/AutoAttacking.gd")
 	const Constructing = preload("res://source/match/units/actions/Constructing.gd")
 
@@ -86,7 +81,7 @@ func _navigate_selected_units_towards_unit(target_unit):
 	for unit in get_tree().get_nodes_in_group("selected_units"):
 		if not unit.is_in_group("controlled_units"):
 			continue
-		if Actions.CollectingResourcesSequentially.is_applicable(unit, target_unit):
+		if Orders.CollectResource.is_applicable(unit, target_unit):
 			unit.order = Orders.CollectResource.new(target_unit)
 			units_navigated += 1
 		#elif Actions.AutoAttacking.is_applicable(unit, target_unit):
@@ -100,11 +95,11 @@ func _navigate_selected_units_towards_unit(target_unit):
 				target_unit.is_in_group("adversary_units")
 				or target_unit.is_in_group("controlled_units")
 			)
-			and Actions.Following.is_applicable(unit)
+			and Orders.FollowUnit.is_applicable(unit)
 		):
 			unit.order = Orders.FollowUnit.new(target_unit)
 			units_navigated += 1
-		elif Actions.MovingToUnit.is_applicable(unit):
+		elif Orders.FollowUnit.is_applicable(unit):
 			unit.order = Orders.FollowUnit.new(target_unit)
 			units_navigated += 1
 	return units_navigated > 0

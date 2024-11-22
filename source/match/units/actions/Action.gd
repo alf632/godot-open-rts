@@ -1,5 +1,7 @@
 extends Node
 
+class ActionContext:
+	var unit
 
 func _to_string():
 	var action_script_path = get_script().resource_path

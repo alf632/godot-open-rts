@@ -53,6 +53,7 @@ var type:
 	get = _get_type
 
 var groups_str
+var in_base
 
 
 func _setup_unit_groups():
@@ -78,9 +79,6 @@ func _setup_unit_groups():
 					if P.id == Globals.player.id:
 						revealed = true
 						friendly = true
-		
-		
-	
 	if controlled:
 		add_to_group("controlled_units")
 		add_to_group("friendly_units")
@@ -120,11 +118,7 @@ func _set_hp_max(value):
 
 
 func _get_radius():
-	if find_child("Movement") != null:
-		return find_child("Movement").radius
-	if find_child("MovementObstacle") != null:
-		return find_child("MovementObstacle").radius
-	return radius
+	return $CollisionShape3D.shape.radius
 
 
 func _get_movement_domain():
@@ -157,6 +151,8 @@ func _setup_color():
 	)
 
 func _get_order():
+	if not _behavior:
+		return null
 	return _behavior.current_order
 
 func _set_order(new_order):

@@ -11,13 +11,15 @@ const Orders = {
 	"CollectResource" = preload("res://source/match/units/orders/CollectResource.gd"),
 }
 
+const Action = preload("res://source/match/units/actions/Action.gd")
 const Actions = {
 	"Moving" = preload("res://source/match/units/actions/Moving.gd"),
 	"MovingToUnit" = preload("res://source/match/units/actions/MovingToUnit.gd"),
 	"Following" = preload("res://source/match/units/actions/Following.gd"),
-	"CollectingResourcesSequentially" = preload(
-		"res://source/match/units/actions/CollectingResourcesSequentially.gd"
+	"CollectingResource" = preload(
+		"res://source/match/units/actions/CollectingResource.gd"
 	),
+	"UnloadingResource" = preload("res://source/match/units/actions/UnloadingResource.gd"),
 	"AutoAttacking" = preload("res://source/match/units/actions/AutoAttacking.gd"),
 	"Constructing" = preload("res://source/match/units/actions/Constructing.gd"),
 }
@@ -44,18 +46,20 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if current_order and current_action:
+	if current_order and is_instance_valid(current_order) and current_action and is_instance_valid(current_action):
 		# nothing to do
 		return
 	
-	if not current_order:
+	if not current_order or not is_instance_valid(current_order):
 		if len(order_queue) > 0:
 			current_order=order_queue.pop_front()
+		else:
+			current_order = null
 	
 	if not multiplayer.is_server():
 		return
 	
-	if not current_action:
+	if not current_action or not is_instance_valid(current_action):
 		var next_action
 		if current_order:
 			next_action = current_order.get_action(self)
@@ -94,10 +98,13 @@ func _do_set_order(order_string):
 
 
 func set_action(action):
+	var action_string = ""
+	if action:
+		action_string = action.to_string()
 	if multiplayer.is_server():
-		_do_set_action.rpc(action.to_string())
+		_do_set_action.rpc(action_string)
 	else:
-		request_set_action.rpc_id(1, action.to_string())
+		request_set_action.rpc_id(1, action_string)
 
 @rpc("any_peer", "reliable", "call_remote")
 func request_set_action(action_string):
@@ -105,7 +112,13 @@ func request_set_action(action_string):
 
 @rpc("authority", "reliable", "call_local")
 func _do_set_action(action_string):
-	var action_node = Actions[action_string.split(";")[0]].new_from_string(action_string)
+	if not action_string:
+		_teardown_current_action()
+		current_action = null
+		return
+	var ctx := Action.ActionContext.new()
+	ctx.unit = _unit
+	var action_node = Actions[action_string.split(";")[0]].new_from_string(action_string, ctx)
 	
 	if not is_inside_tree() or _action_locked:
 		if action_node != null:

@@ -4,7 +4,7 @@ class_name MoveToPosition
 
 const Moving = preload("res://source/match/units/actions/Moving.gd")
 
-@export var MinDistance := 1
+@export var MinDistance := 2.0
 
 var _target_position :Vector3
 
@@ -24,7 +24,7 @@ static func new_from_string(order_string: String, ctx: OrderContext):
 	return newAction
 
 func get_action(behavior_manager):
-	if behavior_manager._unit.global_position.distance_to(_target_position) < MinDistance:
+	if behavior_manager._unit.global_position_yless.distance_to(_target_position*Vector3(1,0,1)) < MinDistance:
 		queue_free()
 		return null
 	var action = Moving.new(_target_position)
