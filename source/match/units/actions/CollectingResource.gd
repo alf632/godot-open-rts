@@ -5,7 +5,7 @@ class_name CollectingResource
 const Worker = preload("res://source/match/units/Worker.gd")
 const ResourceUnit = preload("res://source/match/units/non-player/ResourceUnit.gd")
 
-@export var collecting_cooldown := 1.0
+@export var collecting_cooldown := 3.0
 var _timer := 0.0
 var _resource_unit = null
 
@@ -29,9 +29,9 @@ func _ready():
 	_resource_unit.tree_exited.connect(queue_free)
 
 func _process(delta: float) -> void:
-	#if Utils.Match.Unit.Movement.units_adhere(_unit, _resource_unit):
+	#if not Utils.Match.Unit.Movement.units_adhere(_unit, _resource_unit):
 	#	queue_free()
-		
+	
 	_timer += delta
 	if _timer >= collecting_cooldown:
 		collect_resource_from_target_unit()
@@ -40,8 +40,10 @@ func _process(delta: float) -> void:
 
 func collect_resource_from_target_unit():
 	_resource_unit.collect_resource(_unit)
+	_unit.play_collect_animation()
 	
 	if _unit.is_full():
+		_unit.reset_animation()
 		queue_free()
 
 

@@ -8,12 +8,10 @@ signal passive_movement_finished
 @onready var _NavHandler = _Match.find_child("NavHandler")
 @onready var _moveTrait = get_parent()
 @onready var _Unit = _moveTrait.get_parent()
-@onready var _Terrain = _Match.find_child("Terrain3D")
 
-@export var altitude = 2.0
 @export var climb_angle = PI * 0.125
 @export var min_target_distance = 1.5
-@export var waypoint_reach = 0.1
+@export var waypoint_reach = 1.0
 
 var target = Vector3()
 var path = []
@@ -21,10 +19,6 @@ var path_index = 0
 var path_visualizer = null
 
 var _moving = false
-
-var piloted: bool:
-	get():
-		return "pilotID" in _moveTrait and _moveTrait.pilotID > 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,19 +38,24 @@ func stop():
 	path = null
 	_moving = false
 
-func _physics_process(delta):
-	if piloted:
-		return
+func _physics_process_disabled(delta):
+	#if piloted:
+	#	return
 		
 	var _dir = Vector3()
 	if _moving:
 		_dir = _calculate_path_dir()
 	
-	if _moveTrait.domain == Constants.Match.Navigation.Domain.AIR:
-		_dir.y = _calculate_hold_altitude_dir().y
-		
+	
 	_Unit.velocity = _dir.normalized() * _Unit.movement_speed * delta
 	_Unit.move_and_slide()
+
+func get_velocity():
+	var _dir = Vector3()
+	if _moving:
+		_dir = _calculate_path_dir()
+
+	return _dir.normalized()
 
 func _calculate_path_dir():
 	var dir = Vector3()
@@ -94,11 +93,3 @@ func _calculate_path_dir():
 		
 	return dir
 	#return 0.1*dir*_Unit.movement_speed + 0.9 * _Unit.velocity
-
-func _calculate_hold_altitude_dir():
-	var t_height = _Terrain.storage.get_height(_Unit.global_position)
-	var u_height = _Unit.global_position.y
-	var power = clampf((t_height+altitude)-u_height, -1.0, 1.0)
-	if abs(power) <= 0.1:
-		return Vector3() 
-	return Vector3.UP * power

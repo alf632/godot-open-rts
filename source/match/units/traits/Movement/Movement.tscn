@@ -6,6 +6,8 @@
 
 [node name="Movement" type="Node3D"]
 script = ExtResource("1_4xcf5")
+altitude = 2.0
+angularForce = 5.0
 
 [node name="DirectMovement" parent="." instance=ExtResource("2_8bhxe")]
 

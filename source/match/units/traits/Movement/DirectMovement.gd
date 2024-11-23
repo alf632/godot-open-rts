@@ -16,11 +16,7 @@ var target: Vector3:
 	get():
 		return _moveTrait.target
 
-var piloted: bool:
-	get():
-		return _moveTrait.pilotID > 0
-
-func _physics_process(delta):
+func _physics_process_disabled(delta):
 	var _interim_speed = _unit.movement_speed * delta
 
 	if _dir_synchronizer.is_multiplayer_authority():
@@ -29,6 +25,11 @@ func _physics_process(delta):
 	_unit.move_and_slide()
 	_UI_pos.text = str(_unit.global_position)
 	_UI_velocity.text = str(_unit.velocity)
+
+func get_velocity():
+	if _dir_synchronizer.is_multiplayer_authority():
+		dir = _calculate_input_dir()
+	return dir
 
 func _calculate_input_dir():
 	var xz_input = Input.get_vector("move_map_left", "move_map_right", "move_map_up", "move_map_down")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://source/match/units/Worker.gd" id="1_hapsg"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="2_bt6lt"]
-[ext_resource type="PackedScene" uid="uid://j5umsiiyb8a7" path="res://assets/models/kenney-spacekit/rover.glb" id="2_ef11q"]
+[ext_resource type="PackedScene" uid="uid://cvggv5okjy22m" path="res://assets/models/units/worker.gltf" id="2_dh3pm"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="3_yl7si"]
 [ext_resource type="PackedScene" uid="uid://c3ssj2p6voauk" path="res://source/match/units/traits/HealthBar.tscn" id="5_50cqd"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="7_i4ri4"]
@@ -18,15 +18,16 @@ properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="Worker" type="CharacterBody3D"]
+[node name="Worker" type="RigidBody3D"]
 collision_layer = 2
 collision_mask = 3
+linear_damp = 1.6
+angular_damp = 6.635
 script = ExtResource("1_hapsg")
 
 [node name="Geometry" type="Node3D" parent="."]
 
-[node name="rover" parent="Geometry" instance=ExtResource("2_ef11q")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -4, 0, -3)
+[node name="blockbench_export" parent="Geometry" instance=ExtResource("2_dh3pm")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
@@ -51,10 +52,12 @@ radius = 0.6
 [node name="Sparkling" parent="." instance=ExtResource("8_pqovx")]
 
 [node name="Movement" parent="." instance=ExtResource("8_8mxw0")]
+altitude = 1.5
+angularForce = 7.0
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3lgqt")
 
 [node name="UnitBehaviorManager" parent="." instance=ExtResource("9_y8qf1")]
 
-[editable path="Geometry/rover"]
+[editable path="Geometry/blockbench_export"]
