@@ -223,6 +223,8 @@ func _initial_pilot():
 						player.piloted_unit = unit
 						if player.id == Globals.player.id:
 							_SH.pilot_unit(unit.name)
+						else:
+							unit.find_child("Movement").piloted = true
 						break
 	else:
 		var playerUnits = get_tree().get_nodes_in_group("units_{0}".format([Globals.player.id]))
@@ -242,7 +244,7 @@ func _move_camera_to_initial_position():
 func _move_camera_to_player_units_crowd_pivot(player):
 	var player_units = get_tree().get_nodes_in_group("units_{0}".format([player.id]))
 	assert(not player_units.is_empty(), "player must have at least one initial unit")
-	var crowd_pivot = Utils.Match.Unit.Movement.calculate_aabb_crowd_pivot_yless(player_units)
+	var crowd_pivot = Utils.Match.UnitUtils.Movement.calculate_aabb_crowd_pivot_yless(player_units)
 	_camera.set_position_safely(crowd_pivot)
 
 

@@ -21,7 +21,7 @@ func _exit_tree():
 
 func _process(delta):
 	if (
-		not Utils.Match.Unit.Movement.units_adhere(_unit, _target_unit)
+		not Utils.Match.UnitUtils.Movement.units_adhere(_unit, _target_unit)
 		or _target_unit.is_constructed()
 	):
 		queue_free()

@@ -131,7 +131,7 @@ func _construct_turret(turret_scene):
 		navigation_rid = find_parent("Match").navigation.get_navigation_map_rid_by_domain(
 			unit_to_spawn.movement_domain
 		)
-	var placement_position = Utils.Match.Unit.Placement.find_valid_position_radially(
+	var placement_position = Utils.Match.UnitUtils.Placement.find_valid_position_radially(
 		ccs[0].global_position,
 		unit_to_spawn.structure_radius + Constants.Match.Units.EMPTY_SPACE_RADIUS_SURROUNDING_STRUCTURE_M,
 		navigation_rid,

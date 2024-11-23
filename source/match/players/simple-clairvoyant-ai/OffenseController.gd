@@ -158,7 +158,7 @@ func _construct_structure(structure_scene):
 		navigation_rid = find_parent("Match").navigation.get_navigation_map_rid_by_domain(
 			unit_to_spawn.movement_domain
 		)
-	var placement_position = Utils.Match.Unit.Placement.find_valid_position_radially(
+	var placement_position = Utils.Match.UnitUtils.Placement.find_valid_position_radially(
 		reference_position_for_placement,
 		unit_to_spawn.structure_radius + Constants.Match.Units.EMPTY_SPACE_RADIUS_SURROUNDING_STRUCTURE_M,
 		navigation_rid,

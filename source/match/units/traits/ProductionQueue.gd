@@ -92,7 +92,7 @@ func _finalize_production(former_queue_element):
 	var placement_position = (
 		Utils
 		. Match
-		. Unit
+		. UnitUtils
 		. Placement
 		. find_valid_position_radially_yet_skip_starting_radius(
 			_unit.global_position,

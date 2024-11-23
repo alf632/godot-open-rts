@@ -1,4 +1,4 @@
-class Unit:
+class UnitUtils:
 	const Movement = preload("res://source/match/utils/UnitMovementUtils.gd")
 	const Placement = preload("res://source/match/utils/UnitPlacementUtils.gd")
 

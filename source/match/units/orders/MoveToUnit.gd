@@ -21,7 +21,7 @@ static func new_from_string(order_string: String, ctx: OrderContext):
 	return MoveToUnit.new(unit)
 
 func get_action(behavior_manager):
-	if Utils.Match.Unit.Movement.units_adhere(behavior_manager._unit, _target_unit):
+	if Utils.Match.UnitUtils.Movement.units_adhere(behavior_manager._unit, _target_unit):
 		queue_free()
 		return null
 	var action = MovingToUnit.new(_target_unit.global_position)

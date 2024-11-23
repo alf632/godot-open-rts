@@ -2,7 +2,9 @@ extends Area3D
 
 const ResourceDecayAnimation = preload("res://source/match/utils/ResourceDecayAnimation.tscn")
 
-@export var radius = 5
+var radius:
+	get = _get_radius
+	
 var global_position_yless:
 	get:
 		return global_position * Vector3(1, 0, 1)
@@ -11,6 +13,8 @@ var in_base
 func _enter_tree():
 	tree_exiting.connect(_animate_decay)
 
+func _get_radius():
+	return $CollisionShape3D.shape.radius
 
 func _animate_decay():
 	var decay_animation = ResourceDecayAnimation.instantiate()

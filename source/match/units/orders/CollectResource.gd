@@ -30,12 +30,12 @@ func get_action(behavior_manager):
 		return null
 	var unit = behavior_manager.get_parent()
 	if unit.is_full():
-		if not Utils.Match.Unit.Movement.units_adhere(unit, _target_unit.in_base.command_center):
+		if not Utils.Match.UnitUtils.Movement.units_adhere(unit, _target_unit.in_base.command_center):
 			return MovingToUnit.new(_target_unit.in_base.command_center)
 		else:
 			return UnloadingResource.new(_target_unit.in_base.command_center)
 	else:
-		if not Utils.Match.Unit.Movement.units_adhere(unit, _target_unit):
+		if not Utils.Match.UnitUtils.Movement.units_adhere(unit, _target_unit):
 			return MovingToUnit.new(_target_unit)
 		else:
 			return CollectingResource.new(_target_unit)

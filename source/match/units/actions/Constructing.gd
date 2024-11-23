@@ -34,7 +34,7 @@ func _ready():
 func _construct_or_move_closer():
 	_sub_action = (
 		MovingToUnit.new(_target_unit)
-		if not Utils.Match.Unit.Movement.units_adhere(_unit, _target_unit)
+		if not Utils.Match.UnitUtils.Movement.units_adhere(_unit, _target_unit)
 		else ConstructingWhileInRange.new(_target_unit)
 	)
 	_sub_action.tree_exited.connect(_on_sub_action_finished)

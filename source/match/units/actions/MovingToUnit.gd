@@ -11,7 +11,7 @@ static func is_applicable(unit):
 	return unit.find_child("Movement") != null
 	
 func _process(_delta):
-	if Utils.Match.Unit.Movement.units_adhere(_unit, _target_unit):
+	if Utils.Match.UnitUtils.Movement.units_adhere(_unit, _target_unit):
 		queue_free()
 
 
@@ -28,7 +28,7 @@ func _ready():
 
 
 func _on_movement_finished():
-	if Utils.Match.Unit.Movement.units_adhere(_unit, _target_unit):
+	if Utils.Match.UnitUtils.Movement.units_adhere(_unit, _target_unit):
 		queue_free()
 	else:
 		_target_position = _target_unit.global_position

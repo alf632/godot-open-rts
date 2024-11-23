@@ -1,5 +1,7 @@
 extends CollisionObject3D
 
+class_name Unit
+
 signal selected
 signal deselected
 signal hp_changed
@@ -9,7 +11,6 @@ signal hp_changed
 
 const Faction = preload("res://source/match/players/faction/Faction.gd")
 const Player = preload("res://source/match/players/Player.gd")
-const Unit = preload("res://source/match/units/Unit.gd")
 
 const MATERIAL_ALBEDO_TO_REPLACE = Color(0.99, 0.81, 0.48)
 const MATERIAL_ALBEDO_TO_REPLACE_EPSILON = 0.05
@@ -104,7 +105,9 @@ func _ready():
 func is_revealing():
 	return is_in_group("revealed_units") and visible
 
-
+func _get_radius():
+	return $CollisionShape3D.shape.radius
+	
 func _set_hp(value):
 	hp = max(0, value)
 	hp_changed.emit()
@@ -115,11 +118,6 @@ func _set_hp(value):
 func _set_hp_max(value):
 	hp_max = value
 	hp_changed.emit()
-
-
-func _get_radius():
-	return $CollisionShape3D.shape.radius
-
 
 func _get_movement_domain():
 	if find_child("Movement") != null:
