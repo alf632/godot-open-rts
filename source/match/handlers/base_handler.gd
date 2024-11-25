@@ -47,7 +47,7 @@ func refresh_overlays():
 		overlay.queue_redraw()
 
 func get_base_at(pos :Vector2):
-	var color = _territories_texture.texture.get_image().get_pixelv(pos)
+	var color = _vp.get_texture().get_image().get_pixelv(pos)
 	for base in _bases.get_children():
 		if base.color == color:
 			return base

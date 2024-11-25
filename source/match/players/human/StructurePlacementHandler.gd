@@ -93,6 +93,7 @@ func switch_player():
 		_player = players[0]
 	else:
 		_player = players[current+1]
+	print("structure placement swtiched to player ", _player)
 
 func _structure_placement_started():
 	return _active_blueprint_node != null

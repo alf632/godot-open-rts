@@ -1,5 +1,7 @@
 extends "res://source/match/units/actions/Action.gd"
 
+class_name Constructing
+
 const Worker = preload("res://source/match/units/Worker.gd")
 const Structure = preload("res://source/match/units/Structure.gd")
 const MovingToUnit = preload("res://source/match/units/actions/MovingToUnit.gd")
@@ -43,8 +45,12 @@ func _construct_or_move_closer():
 
 
 func _to_string():
-	return "{0}({1})".format([super(), str(_sub_action) if _sub_action != null else ""])
+	return "{0};{1}".format(["Constructing", _target_unit.name])
 
+static func new_from_string(action_string: String, ctx: ActionContext):
+	var split = action_string.split(";")
+	var targetUnit = ctx.unit.get_parent().find_child(split[1], false, false)
+	return Constructing.new(targetUnit)
 
 func _on_sub_action_finished():
 	if not is_inside_tree():

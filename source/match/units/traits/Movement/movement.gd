@@ -41,21 +41,7 @@ func _physics_process(delta: float) -> void:
 		_unit.velocity = dir.normalized() * _unit.movement_speed * delta
 		_unit.move_and_slide()
 	
-	elif _unit is RigidBody3D:
-		var dir := Vector3()
-		if piloted:
-			dir = _direct.get_velocity()
-			_unit.apply_central_force(dir * _unit.movement_speed)
-			return
-		else:
-			var altDir = _calculate_hold_altitude_dir()
-			dir = lerp(_nav.get_velocity(), altDir.normalized(), altDir.length())
-			
-			var stablelizing = _calculate_stabilizing_torque()
-			_unit.apply_torque(stablelizing[0] * angularForce)
-			if stablelizing[1]:
-				_unit.apply_torque(_calculate_dir_torque(dir) * angularForce)
-				_unit.apply_central_force(dir * linearForce)
+
 
 func _calculate_hold_altitude_dir():
 	var t_height = _Terrain.storage.get_height(_unit.global_position)
@@ -86,7 +72,7 @@ func _calculate_dir_torque(dir :Vector3) -> Vector3:
 	var torque = Vector3()
 	var dir2 = Vector2(dir.x, dir.z)
 	var currentAngle = global_rotation.y
-	torque.y = dir2.rotated(currentAngle).x
+	torque.y = dir2.rotated(currentAngle+PI).x
 	
 	return torque
 

@@ -1,7 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://bdfx6tk6g336j"]
+[gd_scene load_steps=5 format=3 uid="uid://bdfx6tk6g336j"]
 
 [ext_resource type="Script" path="res://source/match/handlers/base_handler.gd" id="1_vo8te"]
-[ext_resource type="Shader" path="res://source/shaders/3d/territory.gdshader" id="3_6kakv"]
+[ext_resource type="Material" uid="uid://5prerv6jfmv0" path="res://source/shaders/3d/territory_mat.tres" id="2_p18ie"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_hagxg"]
 viewport_path = NodePath("Territories")
@@ -9,15 +9,6 @@ viewport_path = NodePath("Territories")
 [sub_resource type="QuadMesh" id="QuadMesh_sev25"]
 flip_faces = true
 size = Vector2(2, 2)
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_rw8mj"]
-viewport_path = NodePath("Territories")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_cl2c2"]
-resource_local_to_scene = true
-render_priority = 0
-shader = ExtResource("3_6kakv")
-shader_parameter/overlay = SubResource("ViewportTexture_rw8mj")
 
 [node name="BaseHandler" type="Node3D"]
 script = ExtResource("1_vo8te")
@@ -43,6 +34,6 @@ texture = SubResource("ViewportTexture_hagxg")
 stretch_mode = 2
 
 [node name="TerritoriesOverlay" type="MeshInstance3D" parent="."]
+material_overlay = ExtResource("2_p18ie")
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_sev25")
-surface_material_override/0 = SubResource("ShaderMaterial_cl2c2")

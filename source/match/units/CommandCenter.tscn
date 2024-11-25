@@ -1,28 +1,22 @@
-[gd_scene load_steps=14 format=3 uid="uid://ct0ejt0trkhrf"]
+[gd_scene load_steps=12 format=3 uid="uid://ct0ejt0trkhrf"]
 
 [ext_resource type="Script" path="res://source/match/units/CommandCenter.gd" id="1_hpo2s"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="2_c41i5"]
-[ext_resource type="PackedScene" uid="uid://bxx81l3t16rrs" path="res://source/match/units/structure-geometries/CommandCenter.tscn" id="2_hwq4d"]
+[ext_resource type="PackedScene" uid="uid://c7tbiqq2gmdkw" path="res://assets/models/units/command_center.gltf" id="2_pw6lm"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="3_slmue"]
 [ext_resource type="PackedScene" uid="uid://c3ssj2p6voauk" path="res://source/match/units/traits/HealthBar.tscn" id="5_xuulo"]
-[ext_resource type="PackedScene" uid="uid://c471ahpwuxv57" path="res://source/match/units/traits/StaticMovementObstacle.tscn" id="6_5gbe5"]
 [ext_resource type="PackedScene" uid="uid://b8jwlpdvxgrr6" path="res://source/match/units/traits/RallyPoint.tscn" id="8_8qw5y"]
 [ext_resource type="PackedScene" uid="uid://cd3v6508vjcu3" path="res://source/match/units/traits/ProductionQueue.tscn" id="9_y6bg8"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="17_dco2r"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_pav5c"]
-height = 0.8
-radius = 1.8
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_2xy8f"]
-height = 0.8
-radius = 1.4
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mt1cx"]
-size = Vector3(0.1, 5, 0.1)
+radius = 1.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_i8j36"]
 radius = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1v8xe"]
+size = Vector3(1, 2, 1)
 
 [node name="CommandCenter" type="Area3D"]
 collision_layer = 2
@@ -30,10 +24,12 @@ collision_mask = 0
 script = ExtResource("1_hpo2s")
 structure_radius = 3
 
-[node name="Geometry" parent="." instance=ExtResource("2_hwq4d")]
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="blockbench_export" parent="Geometry" instance=ExtResource("2_pw6lm")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CylinderShape3D_pav5c")
 
 [node name="Highlight" parent="." instance=ExtResource("2_c41i5")]
@@ -43,12 +39,6 @@ radius = 2.0
 [node name="Selection" parent="." instance=ExtResource("3_slmue")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 radius = 2.0
-
-[node name="StaticMovementObstacle" parent="." instance=ExtResource("6_5gbe5")]
-shape = SubResource("CylinderShape3D_2xy8f")
-
-[node name="PreventNavmeshIsland" type="CollisionShape3D" parent="StaticMovementObstacle"]
-shape = SubResource("BoxShape3D_mt1cx")
 
 [node name="HealthBar" parent="." instance=ExtResource("5_xuulo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
@@ -70,4 +60,10 @@ input_ray_pickable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="OperatorSeat"]
 shape = SubResource("CylinderShape3D_i8j36")
 
-[editable path="Geometry"]
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_1v8xe")
+
+[editable path="Geometry/blockbench_export"]

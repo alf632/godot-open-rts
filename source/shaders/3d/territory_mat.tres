@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://5prerv6jfmv0"]
+
+[ext_resource type="Shader" path="res://source/shaders/3d/territory.gdshader" id="1_675i7"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_rw8mj"]
+viewport_path = NodePath("Territories")
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_675i7")
+shader_parameter/overlay = SubResource("ViewportTexture_rw8mj")
