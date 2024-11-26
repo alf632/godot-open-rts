@@ -56,6 +56,7 @@ func _calculate_stabilizing_torque():
 	var stable = true
 	
 	var euler = global_rotation
+	
 	# stabilize roll
 	if abs(euler.z) > 0.02:
 		torque.z = clampf(-euler.z, -5, 5)

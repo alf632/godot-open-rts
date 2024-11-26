@@ -17,6 +17,7 @@ script = ExtResource("1_vo8te")
 
 [node name="Territories" type="SubViewport" parent="."]
 size = Vector2i(1024, 1024)
+render_target_update_mode = 4
 
 [node name="Background" type="ColorRect" parent="Territories"]
 anchors_preset = 15

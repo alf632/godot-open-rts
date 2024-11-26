@@ -16,7 +16,9 @@ func _ready():
 	_defeat_tile.hide()
 	_finish_tile.hide()
 	await find_parent("Match").ready
-	MatchSignals.setup_and_spawn_unit.connect(_on_new_unit)
+	#MatchSignals.setup_and_spawn_unit.connect(_on_new_unit)
+	# TODO:
+	# connect signal from spawner
 	for unit in get_tree().get_nodes_in_group("units"):
 		unit.tree_exited.connect(_on_unit_tree_exited)
 

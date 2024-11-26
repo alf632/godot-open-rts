@@ -111,8 +111,8 @@ func _unhandled_input(event):
 			return
 		MatchSignals.deselect_all_units.emit()
 
-func _spawn_unit(unit_to_spawn, target_transform, _player, constructing=true):
-	_player.setup_and_spawn_unit(unit_to_spawn, target_transform, constructing)
+func _spawn_unit(unitType, target_transform, _player, constructing=true):
+	_player.setup_and_spawn_unit(unitType, target_transform, constructing)
 
 func _set_map(a_map):
 	assert(get_node_or_null("Map") == null, "map already set")

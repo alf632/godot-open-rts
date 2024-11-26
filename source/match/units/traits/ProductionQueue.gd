@@ -105,9 +105,10 @@ func _finalize_production(former_queue_element):
 			get_tree()
 		)
 	)
-	MatchSignals.setup_and_spawn_unit.emit(
-		produced_unit, Transform3D(Basis(), placement_position), _unit.player
-	)
+	#MatchSignals.setup_and_spawn_unit.emit(
+	#	produced_unit.kind, Transform3D(Basis(), placement_position), _unit.player
+	#)
+	_unit.player.setup_and_spawn_unit(produced_unit.kind, Transform3D(Basis(), placement_position))
 
 	# Handle rally point
 	if _unit.has_node("RallyPoint") and Moving.is_applicable(produced_unit):
