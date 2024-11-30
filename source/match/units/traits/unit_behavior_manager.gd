@@ -20,7 +20,7 @@ const Actions = {
 		"res://source/match/units/actions/CollectingResource.gd"
 	),
 	"UnloadingResource" = preload("res://source/match/units/actions/UnloadingResource.gd"),
-	"AutoAttacking" = preload("res://source/match/units/actions/AutoAttacking.gd"),
+	"AttackingWhileInRange" = preload("res://source/match/units/actions/AttackingWhileInRange.gd"),
 	"Constructing" = preload("res://source/match/units/actions/Constructing.gd"),
 	"ConstructingWhileInRange" = preload("res://source/match/units/actions/ConstructingWhileInRange.gd"),
 }

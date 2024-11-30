@@ -37,7 +37,11 @@ func _register_in_navmap():
 	marker.position = Vector2(global_position.x, global_position.z)
 	marker.color.r = 1000.0
 	#_ground_obstacles.register_obstacle(marker)
-	_nav_handler.add_to_proplayer("ground", 1000, global_position, self.radius)
+	_nav_handler.add_to_proplayer("ground_obstacle", 1, global_position, self.radius)
+	tree_exiting.connect(_unregister_in_navmap)
+
+func _unregister_in_navmap():
+	_nav_handler.subtract_from_proplayer("ground_obstacle", 1, global_position, self.radius)
 
 func mark_as_under_construction():
 	assert(not is_under_construction(), "structure already under construction")

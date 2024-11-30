@@ -108,11 +108,11 @@ func _finalize_production(former_queue_element):
 	#MatchSignals.setup_and_spawn_unit.emit(
 	#	produced_unit.kind, Transform3D(Basis(), placement_position), _unit.player
 	#)
-	_unit.player.setup_and_spawn_unit(produced_unit.kind, Transform3D(Basis(), placement_position))
+	var spawned_unit = _unit.player.setup_and_spawn_unit(produced_unit.kind, Transform3D(Basis(), placement_position))
 
 	# Handle rally point
-	if _unit.has_node("RallyPoint") and Moving.is_applicable(produced_unit):
+	if _unit.has_node("RallyPoint") and Moving.is_applicable(spawned_unit):
 		var rally_point = _unit.get_node("RallyPoint").global_position
 
 		if rally_point != _unit.global_position:
-			produced_unit.action = Moving.new(rally_point)
+			spawned_unit.action = Moving.new(rally_point)

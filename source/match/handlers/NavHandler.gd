@@ -48,7 +48,10 @@ func _physics_process(delta):
 
 func _default_passability_check_func(hmNavMesh, src :Vector2, target :Vector2,
 					step_distance, src_height, target_height):
-	return query_proplayer_max_value("ground", target, step_distance)
+	if query_proplayer_max_value("ground_obstacle", target, step_distance) > 0:
+		return INF
+	else:
+		return 100
 	#return _ground_obstacles.query_position(target)
 	pass
 
