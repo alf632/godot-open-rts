@@ -6,6 +6,8 @@ var members = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	resource_a = 100
+	resource_b = 100
 	pass # Replace with function body.
 
 

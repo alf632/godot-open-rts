@@ -1,5 +1,10 @@
 extends "res://source/match/units/Unit.gd"
 
+@export var damping_factor := 1.0
+@export var error_factor := 1.0
+@export var stablizing_threshold := 20.0
+@export var y_weight := 1.5
+
 @onready var _movement = $Movement
 
 
@@ -14,12 +19,12 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		state.apply_central_force(dir * movement_speed)
 		return
 	else:
-		dir = _movement._nav.get_velocity()
-		var stablelizing = _movement._calculate_stabilizing_torque()
-		state.apply_torque(stablelizing[0] * _movement.angularForce)
-		if stablelizing[1]:
-			state.apply_torque(_movement._calculate_dir_torque(dir) * _movement.angularForce)
-			var altDir = _movement._calculate_hold_altitude_dir()
-			dir = lerp(dir, altDir.normalized(), altDir.length())
+		var altDir = _movement._calculate_hold_altitude_dir()
+		var navDir = _movement._nav.get_velocity()
+		dir = lerp(navDir, altDir.normalized(), altDir.length())
+		if navDir == Vector3():
+			navDir = -state.transform.basis.z
+		
+		_movement.torque_towards_dir(navDir, state)
 		
 		state.apply_central_force(dir * _movement.linearForce)

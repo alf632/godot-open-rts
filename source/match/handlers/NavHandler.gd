@@ -47,7 +47,7 @@ func _physics_process(delta):
 
 func _default_passability_check_func(hmNavMesh, src :Vector2, target :Vector2,
 					step_distance, src_height, target_height):
-	#return query_proplayer_max_value("ground", target, step_distance)
+	return query_proplayer_max_value("ground", target, step_distance)
 	#return _ground_obstacles.query_position(target)
 	pass
 
@@ -237,7 +237,7 @@ func _do_circular_on_proplayer(
 			var dist = Vector2(
 				abs(found_world_pos.x - world_pos.x),
 				abs(found_world_pos.z - world_pos.z)
-			)
+			).length()
 			if dist <= world_radius:
 				do_callback.call(
 					xi + yi *

@@ -51,31 +51,34 @@ func _calculate_hold_altitude_dir():
 		return Vector3() 
 	return Vector3.UP * power
 
-func _calculate_stabilizing_torque():
-	var torque = Vector3()
-	var stable = true
-	
-	var euler = global_rotation
-	
-	# stabilize roll
-	if abs(euler.z) > 0.02:
-		torque.z = clampf(-euler.z, -5, 5)
-		stable = false
-	
-	#stabilize pitch
-	if abs(euler.x) > 0.02:
-		torque.x = clampf(-euler.x, -5, 5)
-		stable = false
-	
-	return [torque, stable]
+func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
+	# Zielrotation (als Quaternion oder Eulerwinkel)
+	var dir2d = dir * Vector3(1,0,1)
+	var target_rotation = look_there(dir2d.normalized())
+	# Aktuelle Rotation als Quaternion
+	var current_rotation = state.transform.basis.get_rotation_quaternion()
+	# Differenz zwischen Ziel- und aktueller Rotation (als Quaternion)
+	var rotation_error = target_rotation * current_rotation.inverse()
+	if rotation_error.get_angle() < _unit.stablizing_threshold:
+		return
+	# Winkelgeschwindigkeit als Vektor
+	var angular_velocity = state.angular_velocity
+	# Drehmoment berechnen (Proportional zur Winkelgeschwindigkeit und dem Rotationsfehler)
+	var torque = -angular_velocity * _unit.damping_factor - rotation_error.get_euler() * _unit.error_factor
+	# Drehmoment anwenden
+	state.apply_torque(torque * Vector3(1,_unit.y_weight,1))
 
-func _calculate_dir_torque(dir :Vector3) -> Vector3:
-	var torque = Vector3()
-	var dir2 = Vector2(dir.x, dir.z)
-	var currentAngle = global_rotation.y
-	torque.y = dir2.rotated(currentAngle+PI).x
-	
-	return torque
+func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Quaternion:
+	# Berechne den rechten Vektor (rechtshändiges Koordinatensystem)
+	var right = direction.cross(up).normalized()
+	# Berechne den neuen "oben"-Vektor
+	var new_up = right.cross(direction).normalized()
+	# Erstelle eine Rotationsmatrix aus den Basisvektoren
+	var rotation_matrix = Basis(-right, new_up, -direction.normalized())
+	# Konvertiere die Rotationsmatrix in eine Quaternion
+	var rotation = rotation_matrix.get_rotation_quaternion()
+	return rotation
+
 
 func move(movement_target: Vector3):
 	target = movement_target

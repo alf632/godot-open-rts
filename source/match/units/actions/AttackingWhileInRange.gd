@@ -1,5 +1,7 @@
 extends "res://source/match/units/actions/Action.gd"
 
+class_name AttackingWhileInRange
+
 const RANGE_CHECK_INTERVAL = 1.0 / 60.0 * 10.0
 
 var _target_unit = null
@@ -27,6 +29,13 @@ func _ready():
 	_setup_range_check_timer()
 	_schedule_hit()
 
+func _to_string():
+	return "{0};{1}".format(["AttackingWhileInRange", _target_unit.name])
+
+static func new_from_string(action_string: String, ctx: ActionContext):
+	var split = action_string.split(";")
+	var targetUnit = ctx.unit.get_parent().find_child(split[1], false, false)
+	return AttackingWhileInRange.new(targetUnit)
 
 func _physics_process(_delta):
 	if _unit_movement_trait == null:

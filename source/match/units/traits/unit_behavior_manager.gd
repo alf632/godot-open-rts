@@ -64,8 +64,8 @@ func _process(delta: float) -> void:
 		var next_action
 		if current_order:
 			next_action = current_order.get_action(self)
-		elif "default_action" in _unit:
-			next_action = _unit.default_action
+		elif _unit.has_method("_get_idle_action"):
+			next_action = _unit._get_idle_action()
 		
 		if next_action:
 			set_action(next_action)
