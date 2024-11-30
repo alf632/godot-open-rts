@@ -209,7 +209,11 @@ func find_path_ex(passability_check_func,
 			]
 			if passability_check_func == null or \
 					passability_check_func.call(
-					self, Vector2(srcx, srcz), Vector2(target_x, target_z),
+					self, self.offset_to_pos(
+						Vector2(srcx, srcz)
+					), self.offset_to_pos(
+						Vector2(target_x, target_z)
+					),
 					step_distance, src_height, target_height) != INF:
 				if (max_climb_angle == null or
 						abs(Vector2(step_distance,
@@ -264,8 +268,12 @@ func find_path_ex(passability_check_func,
 			cost = INF
 		elif passability_check_func != null:
 			cost = passability_check_func.call(
-				 self, Vector2(startX, startZ), Vector2(tx, tz),
-				 step_distance, src_height, target_height)
+				self, self.offset_to_pos(
+					Vector2(startX, startZ)
+				), self.offset_to_pos(
+					Vector2(tx, tz)
+				),
+				step_distance, src_height, target_height)
 		if cost != INF:
 			var heuristic = (
 				hFactor * cost * (
@@ -279,7 +287,7 @@ func find_path_ex(passability_check_func,
 
 	var maxRuntime = max(
 		100, 0  # FIXME: Make this configurable
-	);
+	)
 	while not openListHeap.is_empty() and maxRuntime > 0:
 		var bestDist = -1.0
 		var bestHeuristic = -1.0
@@ -370,7 +378,8 @@ func find_path_ex(passability_check_func,
 					cost = INF
 				elif passability_check_func != null:
 					cost = passability_check_func.call(
-						 self, Vector2(x, z), Vector2(tx, tz),
+						 self, self.offset_to_pos(Vector2(x, z)),
+						 self.offset_to_pos(Vector2(tx, tz)),
 						 step_distance, src_height, target_height)
 				if cost != INF:
 					var _heuristic = (
@@ -406,7 +415,7 @@ func find_path_ex(passability_check_func,
 			t = (
 				"HeightMapNavMesh.gd: find_path: " +
 				"visitedSet entries -> ["
-			);
+			)
 			var firstEntry = true 
 			for key in visitedSet:
 				if firstEntry:

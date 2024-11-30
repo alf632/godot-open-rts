@@ -46,11 +46,10 @@ func _physics_process(delta):
 		)
 		map_scanned.emit()
 
-func _default_passability_check_func(hmNavMesh, src :Vector2, target :Vector2,
+func _default_passability_check_func(hmNavMesh, src :Vector3, target :Vector3,
 					step_distance, src_height, target_height):
-	return query_proplayer_max_value("ground", target, step_distance)
-	#return _ground_obstacles.query_position(target)
-	pass
+	var value = query_proplayer_max_value("ground", target, step_distance)
+	return value
 
 func _spawn_marker(pos):
 	var dm = _debugmarker.instantiate()
@@ -67,10 +66,11 @@ func find_path_with_max_climb_angle(
 		src, dst, costFunc, angle):
 	if not _map_scanned:
 		return []
-	#if not costFunc:
-	#	costFunc = _default_passability_check_func
+	if not costFunc:
+		costFunc = _default_passability_check_func
 	var result = _hmnavmesh.find_path_with_max_climb_angle(
 		costFunc, src, dst, angle)
+	assert(typeof(result) == TYPE_ARRAY)
 	return result
 
 func enable_proplayer_float(layer_name):
@@ -90,6 +90,7 @@ func query_proplayer_max_value(layer_name, world_pos, world_radius):
 		_proplayers[layer_name] = {
 			"name": layer_name
 		}
+
 	return _query_proplayer_do(layer_name, world_pos, world_radius, false)
 
 func _query_proplayer_do(layer_name, world_pos, world_radius,
@@ -108,6 +109,8 @@ func _query_proplayer_do(layer_name, world_pos, world_radius,
 	if not _map_scanned:
 		return result
 	var query_value = func(idx):
+		#var x = int(idx) % int(_hmnavmesh.get_field_x_width())
+		#var y = (idx - x) / _hmnavmesh.get_field_x_width()
 		if is_get_min_value:
 			result = min(result, layer["data"][idx])
 		else:
@@ -168,6 +171,10 @@ func query_proplayer_rectangle_min_value(layer_name,
 				pos, 0))
 	return min_so_far
 
+func debug_output_proplayers():
+	for key in _proplayers:
+		debug_output_proplayer(key)
+
 func debug_output_proplayer(layer_name):
 	if not _proplayers.has(layer_name):
 		print("NavHandler.gd: debug_output_proplayer(\"" +
@@ -185,8 +192,8 @@ func debug_output_proplayer(layer_name):
 		var x = int(idx) % int(_hmnavmesh.get_field_x_width())
 		var y = (idx - x) / _hmnavmesh.get_field_x_width()
 		print("NavHandler.gd: debug_output_proplayer(\"" +
-			layer_name + "\"): x=" + str(x) + " " +
-			"y=" + str(y)+ " idx=" + str(idx) + " " +
+			layer_name + "\"): prop_layer_x=" + str(x) + " " +
+			"prop_layer_y=" + str(y)+ " idx=" + str(idx) + " " +
 			"value=" + str(value))
 		idx += 1
 
@@ -195,6 +202,16 @@ func add_to_proplayer(layer_name, value, world_pos, world_radius):
 		_proplayers[layer_name] = {
 			"name": layer_name
 		}
+	if debugPropLayers:
+		print("NavHandler.gd: " +
+			"add_to_proplayer(\"" + layer_name +
+			"\"): value=" + str(value) + " " +
+			"world_pos=" +
+				str(world_pos) + " " +
+			"idx=" + str(world_pos_to_proplayer_idx(
+				world_pos
+			)) + " world_radius=" +
+			str(world_radius))
 	if not _map_scanned:
 		OS.alert("add_to_proplayer() cannot be called before " +
 			"first _physics_process() has initialized the " +
@@ -218,20 +235,33 @@ func add_to_proplayer(layer_name, value, world_pos, world_radius):
 		if debugPropLayers:
 			var x = int(idx) % int(_hmnavmesh.get_field_x_width())
 			var y = (idx - x) / _hmnavmesh.get_field_x_width()
-			if debugPropLayers:
-				print("NavHandler.gd: add_to_proplayer(): " +
-					"layer name=" + str(layer_name) + " " +
-					"x=" + str(x) + " y=" + str(y) + " " +
-					"idx=" + str(idx) + " value=" + str(value))
+			print("NavHandler.gd: add_to_proplayer(): " +
+				"layer name=" + str(layer_name) + " " +
+				"prop_layer_x=" + str(x) + " " +
+				"prop_layer_y=" + str(y) + " " +
+				"idx=" + str(idx) + " value=" + str(value))
 		layer["data"][idx] += value
 	_do_circular_on_proplayer(
 		layer, add_value, world_pos, world_radius
 	)
 
+func world_pos_to_proplayer_idx(world_pos):
+	if typeof(world_pos) == TYPE_VECTOR2:
+		world_pos = Vector3(world_pos.x, 0, world_pos.y)
+	assert(typeof(world_pos) == TYPE_VECTOR3)
+	var point_offset = _hmnavmesh.pos_to_offset(
+		Vector3(world_pos.x, 0, world_pos.z)
+	)
+	var idx = (point_offset.x + point_offset.y *
+		_hmnavmesh.get_field_x_width())
+	return int(idx)
+
 func _do_circular_on_proplayer(
 		layer, do_callback, world_pos, world_radius):
 	if not layer.has("data"):
 		return
+	if typeof(world_pos) == TYPE_VECTOR2:
+		world_pos = Vector3(world_pos.x, 0, world_pos.y)
 
 	# In all cases, set this to the closest grid point:
 	var center_offset = _hmnavmesh.pos_to_offset(
@@ -283,6 +313,16 @@ func add_to_proplayer_rectangle(layer_name, value,
 		_proplayers[layer_name] = {
 			"name": layer_name
 		}
+	if debugPropLayers:
+		print("NavHandler.gd: " +
+			"add_to_proplayer_rectangle(\"" + layer_name +
+			"\"): value=" + str(value) + " " +
+			"rectangle_center_world_pos=" +
+				str(rectangle_center_world_pos) + " " +
+			"idx=" + str(world_pos_to_proplayer_idx(
+				rectangle_center_world_pos
+			)) + " rectangle_size=" +
+			str(rectangle_size))
 	if not _map_scanned:
 		OS.alert("add_to_proplayer_rectangle() cannot be called before " +
 			"first _physics_process() has initialized the " +
@@ -366,6 +406,15 @@ func set_on_proplayer(layer_name, value, world_pos, world_radius):
 		_proplayers[layer_name] = {
 			"name": layer_name
 		}
+	if debugPropLayers:
+		print("NavHandler.gd: " +
+			"set_on_proplayer(\"" + layer_name +
+			"\"): value=" + str(value) + " " +
+			"world_pos=" + str(world_pos) + " " +
+			"idx=" + str(world_pos_to_proplayer_idx(
+				world_pos
+			)) + " world_radius=" +
+			str(world_radius))
 	if not _map_scanned:
 		OS.alert("set_on_proplayer() cannot be called before " +
 			"first _physics_process() has initialized the " +
