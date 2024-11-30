@@ -51,16 +51,55 @@ func _calculate_hold_altitude_dir():
 		return Vector3() 
 	return Vector3.UP * power
 
+func normalize_diff_angle(v : float) -> float:
+	return fmod((v) + PI, 2 * PI) - PI
+
 func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
-	# Zielrotation (als Quaternion oder Eulerwinkel)
 	var dir2d = dir * Vector3(1,0,1)
-	var target_rotation = look_there(dir2d.normalized())
-	# Aktuelle Rotation als Quaternion
-	var current_rotation = state.transform.basis.get_rotation_quaternion()
+	
+	var current_rotation = state.transform.basis
+	var target_rotation = Basis.looking_at(dir2d)
 	# Differenz zwischen Ziel- und aktueller Rotation (als Quaternion)
 	var rotation_error = target_rotation * current_rotation.inverse()
-	if rotation_error.get_angle() < _unit.stablizing_threshold:
+	if rotation_error.get_euler().length() < _unit.stablizing_threshold:
 		return
+	
+	var target_angle = target_rotation.get_euler()
+	var source_angle = current_rotation.get_euler()
+	var hori_angle = normalize_diff_angle(target_angle.y - source_angle.y)
+	var verti_angle = normalize_diff_angle(target_angle.x - source_angle.x)
+	var roll_angle = normalize_diff_angle(target_angle.z - source_angle.z)
+	var angular_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
+	var velocity_max = 5.0
+	var velocity_accel_step = 0.1
+	var velocity_accel_step_velocity_diff = 3.0
+	var velocity_accel_step_dir_length = 0.5 * PI  # 45 degrees
+	var hori_step_dir_factor = min(max(hori_angle, -velocity_accel_step_dir_length),
+		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
+	var verti_step_dir_factor = min(max(verti_angle, -velocity_accel_step_dir_length),
+		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
+	var roll_step_dir_factor = min(max(roll_angle, -velocity_accel_step_dir_length),
+		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
+	var wanted_velocity_euler = Vector3(
+		hori_step_dir_factor * velocity_max,
+		verti_step_dir_factor * velocity_max,
+		roll_step_dir_factor * velocity_max
+	)
+	var damp : float = _unit.damping_factor
+	var given_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
+	var accel_velocity_euler = Vector3(
+		(min(max(wanted_velocity_euler.x - given_velocity_euler.x,
+			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
+			velocity_accel_step_velocity_diff) * velocity_accel_step * damp,
+		(min(max(wanted_velocity_euler.y - given_velocity_euler.y,
+			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
+			velocity_accel_step_velocity_diff) * velocity_accel_step * damp,
+		(min(max(wanted_velocity_euler.z - given_velocity_euler.z,
+			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
+			velocity_accel_step_velocity_diff) * velocity_accel_step * damp
+	)
+	state.apply_torque(accel_velocity_euler)
+	return
 	# Winkelgeschwindigkeit als Vektor
 	var angular_velocity = state.angular_velocity
 	# Drehmoment berechnen (Proportional zur Winkelgeschwindigkeit und dem Rotationsfehler)
@@ -68,16 +107,14 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 	# Drehmoment anwenden
 	state.apply_torque(torque * Vector3(1,_unit.y_weight,1))
 
-func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Quaternion:
+func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 	# Berechne den rechten Vektor (rechtshändiges Koordinatensystem)
 	var right = direction.cross(up).normalized()
 	# Berechne den neuen "oben"-Vektor
 	var new_up = right.cross(direction).normalized()
 	# Erstelle eine Rotationsmatrix aus den Basisvektoren
-	var rotation_matrix = Basis(-right, new_up, -direction.normalized())
-	# Konvertiere die Rotationsmatrix in eine Quaternion
-	var rotation = rotation_matrix.get_rotation_quaternion()
-	return rotation
+	return Basis(-right, new_up, -direction.normalized())
+	
 
 
 func move(movement_target: Vector3):
