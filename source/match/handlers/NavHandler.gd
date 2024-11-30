@@ -48,10 +48,10 @@ func _physics_process(delta):
 
 func _default_passability_check_func(hmNavMesh, src: Vector3, target: Vector3,
 					step_distance, src_height, target_height):
-	var value = query_proplayer_max_value("ground", target, step_distance)
-	if value > 0:
+	if query_proplayer_max_value("ground_obstacle", target, step_distance) > 0:
 		return INF
-	return 1.0
+	else:
+		return 1.0
 
 func _spawn_marker(pos):
 	var dm = _debugmarker.instantiate()

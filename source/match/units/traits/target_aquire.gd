@@ -28,6 +28,9 @@ func get_enemy_unit() -> Unit:
 	return null
 
 func _on_node_entered(node: Node3D) -> void:
+	if node == _unit:
+		return
+		
 	if node is Unit:
 		if node.is_friendly_towards(_unit.player):
 			friendly_in_range.append(node)

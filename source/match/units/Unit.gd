@@ -219,21 +219,34 @@ func is_friendly_towards(entity):
 	
 	var players = []
 	if entity is Unit:
-		players.append(entity.player)
-	elif entity is Faction:
+		entity = entity.player
+	
+	if entity is Faction:
+		if player is Faction and entity == player:
+			return true
 		for p in entity.members:
 			players.append(p)
 	elif entity is Player:
+		if player is Player and entity == player:
+			return true
 		players.append(entity)
 	else:
 		printerr("unexpected flow")
 		return
 	
 	var friendly = false
-	for p in players:
-		if p.id == player.id:
-			friendly = true
-			break
+	
+	if player is Faction:
+		for p in players:
+			for p_self in player.members:
+				if p == p_self:
+					friendly = true
+					break
+	else:
+		for p in players:
+			if p == player:
+				friendly = true
+				break
 
 	return friendly
 

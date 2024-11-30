@@ -18,7 +18,7 @@ func _to_string() -> String:
 
 static func new_from_string(order_string: String, ctx: OrderContext):
 	var split = order_string.split(";")
-	var targetUnit = ctx.unit.get_parent().find_child(split[1])
+	var targetUnit = ctx.unit.get_parent().find_child(split[1], false, false)
 	return FollowUnit.new(targetUnit)
 
 func get_action(behavior_manager):
