@@ -46,10 +46,12 @@ func _physics_process(delta):
 		)
 		map_scanned.emit()
 
-func _default_passability_check_func(hmNavMesh, src :Vector3, target :Vector3,
+func _default_passability_check_func(hmNavMesh, src: Vector3, target: Vector3,
 					step_distance, src_height, target_height):
 	var value = query_proplayer_max_value("ground", target, step_distance)
-	return value
+	if value > 0:
+		return INF
+	return 1.0
 
 func _spawn_marker(pos):
 	var dm = _debugmarker.instantiate()
@@ -69,7 +71,7 @@ func find_path_with_max_climb_angle(
 	if not costFunc:
 		costFunc = _default_passability_check_func
 	var result = _hmnavmesh.find_path_with_max_climb_angle(
-		costFunc, src, dst, angle)
+		costFunc, src, dst, angle, null)
 	assert(typeof(result) == TYPE_ARRAY)
 	return result
 

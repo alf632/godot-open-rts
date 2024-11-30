@@ -143,15 +143,80 @@ static func dir_to_offset(dir):
 func find_path(passability_check_func,
 		start, target):
 	return find_path_ex(passability_check_func,
-		start, target, true, null)
+		start, target, true, {})
 
 func find_path_with_max_climb_angle(passability_check_func,
-		start, target, angle):
+		start, target, angle, options):
+	var options_copy = {}
+	if options != null:
+		options_copy = options.duplicate()
+	if angle != null:
+		options_copy["maxClimbAngle"] = float(angle)
 	return find_path_ex(passability_check_func,
-		start, target, true, angle)
+		start, target, true, options_copy)
+
+func is_point_considered_passable(
+		passability_check_func, fieldX, fieldZ, options):
+	if options == null:
+		options = {}
+	if fieldX < 0 or fieldX >= _field_size_x:
+		return false
+	if fieldZ < 0 or fieldZ >= _field_size_z:
+		return false
+	var max_climb_angle = null
+	if options.has("maxClimbAngle"):
+		var value = options["maxClimbAngle"]
+		if (typeof(value) == TYPE_FLOAT or typeof(value) == TYPE_INT):
+			max_climb_angle = float(value)
+	var mapWidth = float(_field_size_x)
+	var step_distance = _slices_width
+	var x : int
+	var z : int
+	var pointIsPassable = false
+	x = -1
+	while x <= 1:
+		z = -1
+		while z <= 1:
+			if z == 0 and x == 0:
+				z += 1
+				continue
+			var checkx = x + fieldX
+			var checkz = z + fieldZ
+			if checkx < 0 or checkx >= _field_size_x:
+				z += 1
+				continue
+			if checkz < 0 or checkz >= _field_size_z:
+				z += 1
+				continue
+			var src_height = _height_field[
+				fieldX + fieldZ * mapWidth
+			]
+			var target_height = _height_field[
+				checkx + checkz * mapWidth
+			]
+			if passability_check_func == null or \
+					passability_check_func.call(
+					self, self.offset_to_pos(
+						Vector2(fieldX, fieldZ)
+					), self.offset_to_pos(
+						Vector2(checkx, checkz)
+					),
+					step_distance,
+					src_height, target_height) != INF:
+				if (max_climb_angle == null or
+						abs(Vector2(step_distance,
+							target_height - src_height).angle()) <
+							max_climb_angle):
+					pointIsPassable = true
+					break
+			z += 1
+		x += 1
+	return pointIsPassable
 
 func find_path_ex(passability_check_func,
-		start, target, get_world_coords, max_climb_angle):
+		start, target, get_world_coords, options):
+	if options == null:
+		options = {}
 	if typeof(start) == TYPE_VECTOR2:
 		start = Vector3(start.x, 0, start.y)
 	if typeof(target) == TYPE_VECTOR2:
@@ -159,6 +224,16 @@ func find_path_ex(passability_check_func,
 	var checkobj = passability_check_func
 	const hFactor = 0.7
 
+	var autoUseNeighborIfStartImpassable : bool = true
+	if options.has("autoUseNeighborIfStartImpassable"):
+		var value = options["autoUseNeighborIfStartImpassable"]
+		if (typeof(value) == TYPE_BOOL and value == false):
+			autoUseNeighborIfStartImpassable = false
+	var max_climb_angle = null
+	if options.has("maxClimbAngle"):
+		var value = options["maxClimbAngle"]
+		if (typeof(value) == TYPE_FLOAT or typeof(value) == TYPE_INT):
+			max_climb_angle = float(value)
 	var x
 	var z
 	var _startoffset = pos_to_offset(start)
@@ -182,48 +257,60 @@ func find_path_ex(passability_check_func,
 	# Set up a few variables:
 	var step_distance = _slices_width
 	var _goalIsNonpassableResult = true
-	var _passablesrcx = -1
-	var _passablesrcy = -1
 	var startX = int(_startoffset[0])
 	var startZ = int(_startoffset[1])
-	x = -1
-	while x <= 1:
-		z = -1
-		while z <= 1:
-			if x == z:
-				z += 1
-				continue
-			var srcx = _passablesrcx + target_x
-			var srcz = _passablesrcy + target_z
-			if srcx < 0 or srcx >= _field_size_x:
-				z += 1
-				continue
-			if srcz < 0 or srcz >= _field_size_z:
-				z += 1
-				continue
-			var src_height = _height_field[
-				srcx + srcz * mapWidth
-			]
-			var target_height = _height_field[
-				target_x + target_z * mapWidth
-			]
-			if passability_check_func == null or \
-					passability_check_func.call(
-					self, self.offset_to_pos(
-						Vector2(srcx, srcz)
-					), self.offset_to_pos(
-						Vector2(target_x, target_z)
-					),
-					step_distance, src_height, target_height) != INF:
-				if (max_climb_angle == null or
-						abs(Vector2(step_distance,
-							target_height - src_height).angle()) <
-							max_climb_angle):
-					_goalIsNonpassableResult = false
-					break
-			z += 1
-		x += 1
-	var goalIsNonpassable = _goalIsNonpassableResult
+	if autoUseNeighborIfStartImpassable:
+		var startIsPassable = is_point_considered_passable(
+			passability_check_func, startX, startZ, options
+		)
+		if not startIsPassable:
+			var nearestAlternateStartX = null
+			var nearestAlternateStartZ = null
+			var nearestAlternateStartDist = null
+			var _x = -1
+			while _x <= 1:
+				var _z = -1
+				while z <= 1:
+					if x == 0 and z == 0:
+						z += 1
+						continue
+					var newStartX = startX + _x
+					var newStartZ = startZ + _z
+					var isPassable = is_point_considered_passable(
+						passability_check_func,
+						newStartX, newStartZ, options
+					)
+					if not isPassable:
+						z += 1
+						continue
+					var newStartWorldPos = offset_to_pos(
+						Vector2i(newStartX, newStartZ)
+					)
+					var distToRealWorldStartPos = Vector3(
+						start.x - newStartWorldPos.x,
+						0,
+						start.z - newStartWorldPos.z
+					)
+					if (nearestAlternateStartDist == null or
+							distToRealWorldStartPos <
+								nearestAlternateStartDist):
+						nearestAlternateStartX = newStartX
+						nearestAlternateStartZ = newStartZ
+						nearestAlternateStartDist = (
+							distToRealWorldStartPos
+						)
+						break
+					_z += 1
+				_x += 1
+			if nearestAlternateStartDist != null:
+				startX = nearestAlternateStartX
+				startZ = nearestAlternateStartZ
+
+	# Check target field passability:
+	var goalIsPassable = is_point_considered_passable(
+		passability_check_func, target_x, target_z, options
+	)
+	var goalIsNonpassable = not goalIsPassable
 	if debugPathSearch:
 		print(
 			"HeightMapNavMesh.gd: " +
