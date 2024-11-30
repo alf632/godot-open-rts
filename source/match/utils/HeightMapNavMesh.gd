@@ -1,5 +1,5 @@
 
-var _debug = false
+@export var debugPathSearch = false
 
 var _dimensions = []
 var _slices_width
@@ -34,7 +34,7 @@ func initialize_by_scanning_ex(
 		slices_width, terrain_3d_node,
 		debug_point_spawn_callback
 		):
-	if _debug:
+	if debugPathSearch:
 		print("HeightMapNavMesh.gd: initialize_by_scanning(): " +
 			"will scan now")
 	var use_physics_ray = false
@@ -42,7 +42,7 @@ func initialize_by_scanning_ex(
 	var slices_x = ceil(abs(max_x - min_x) / slices_width)
 	var slices_z = ceil(abs(max_z - min_z) / slices_width)
 	var space_state = world_3d.direct_space_state
-	if _debug:
+	if debugPathSearch:
 		print("HeightMapNavMesh.gd: initialize_by_scanning(): " +
 			"slice count: " + str(slices_x) + "," + str(slices_z))
 	_height_field = PackedFloat32Array()
@@ -53,7 +53,7 @@ func initialize_by_scanning_ex(
 	var posx = min_x
 	i = 0
 	while i < slices_x:
-		if _debug:
+		if debugPathSearch:
 			var percentage = i / slices_x
 			print("HeightMapNavMesh.gd: initialize_by_scanning(): " +
 				"Scan percentage: " + str(percentage))
@@ -170,7 +170,7 @@ func find_path_ex(passability_check_func,
 	var _targetoffset = pos_to_offset(target)
 	target_x = max(0, min(_field_size_x - 1, _targetoffset[0]))
 	target_z = max(0, min(_field_size_z - 1, _targetoffset[1]))
-	if _debug:
+	if debugPathSearch:
 		print(
 			"HeightMapNavMesh.gd: " +
 			"find_path: Will find " +
@@ -220,7 +220,7 @@ func find_path_ex(passability_check_func,
 			z += 1
 		x += 1
 	var goalIsNonpassable = _goalIsNonpassableResult
-	if _debug:
+	if debugPathSearch:
 		print(
 			"HeightMapNavMesh.gd: " +
 			"find_path: " +
@@ -285,7 +285,7 @@ func find_path_ex(passability_check_func,
 		var bestHeuristic = -1.0
 		var prevCount = null
 		var _bestItemDebugScore = null
-		if _debug:
+		if debugPathSearch:
 			prevCount = openListHeap.count()
 			var heapAsList = openListHeap.to_list()
 			var i2 = 0
@@ -300,7 +300,7 @@ func find_path_ex(passability_check_func,
 		var openListEntry = openListEntryPair[0]
 		bestHeuristic = -openListEntryPair[1] * 1.0
 		bestDist = openListEntry[2]
-		if _debug:
+		if debugPathSearch:
 			if openListHeap.count() != prevCount - 1:
 				OS.alert("heap pop didn't remove exactly one item! " +
 					"old heap size: " + str(prevCount) + ", " +
@@ -309,7 +309,7 @@ func find_path_ex(passability_check_func,
 					> 0.00001):
 				OS.alert("heap pop didn't yield best scored item")
 		maxRuntime -= 1
-		if _debug:
+		if debugPathSearch:
 			print(
 				"HeightMapNavMesh.gd: " +
 				"find_path: " +
@@ -378,7 +378,7 @@ func find_path_ex(passability_check_func,
 							Vector2(target_x - tx, target_z - tz).length()) +
 						1
 					)
-					if _debug:
+					if debugPathSearch:
 						print("HeightMapNavMesh..gd: " +
 							"Adding point to initial open list: " +
 							str([tx, tx]))
@@ -387,7 +387,7 @@ func find_path_ex(passability_check_func,
 						x, z], -_heuristic
 					)
 				i2 += 1
-		if _debug:
+		if debugPathSearch:
 			var t = ("HeightMapNavMesh.gd: " +
 				"find_path: openList entries -> [")
 			var heapEntries = openListHeap.to_list()
@@ -447,7 +447,7 @@ func find_path_ex(passability_check_func,
 	var bestNodeFromZ = (
 		visitedSet[bestNodeX + bestNodeZ * mapWidth][4]
 	)
-	if _debug:
+	if debugPathSearch:
 		print(
 			"HeightMapNavMesh.gd: find_path: " +
 			"going to best node at x: " +
@@ -479,7 +479,7 @@ func find_path_ex(passability_check_func,
 		path.append(reverse_path[i3])
 		i3 -= 1
 
-	if _debug:
+	if debugPathSearch:
 		print(
 			"HeightMapNavMesh.gd: find_path: " +
 			"extracted result: path=" + str(path)

@@ -3,6 +3,7 @@ extends Node3D
 signal map_scanned
 
 @export var debugNavMesh = false
+@export var debugPropLayers = false
 
 const HeightMapNavMeshClass = preload("res://source/match/utils/HeightMapNavMesh.gd")
 const NavHandlerPathVisualizerClass = preload("res://source/match/handlers/NavHandlerPathVisualizer.gd")
@@ -167,6 +168,28 @@ func query_proplayer_rectangle_min_value(layer_name,
 				pos, 0))
 	return min_so_far
 
+func debug_output_proplayer(layer_name):
+	if not _proplayers.has(layer_name):
+		print("NavHandler.gd: debug_output_proplayer(\"" +
+			layer_name + "\"): layer empty")
+		return
+	var had_contents = false
+	var idx = 0
+	var max_idx = (int(_hmnavmesh.get_field_x_width()) *
+		int(_hmnavmesh.get_field_z_width()))
+	while idx < max_idx:
+		var value = _proplayers[layer_name]["data"][idx]
+		if abs(value) < 0.001:
+			idx += 1
+			continue
+		var x = int(idx) % int(_hmnavmesh.get_field_x_width())
+		var y = (idx - x) / _hmnavmesh.get_field_x_width()
+		print("NavHandler.gd: debug_output_proplayer(\"" +
+			layer_name + "\"): x=" + str(x) + " " +
+			"y=" + str(y)+ " idx=" + str(idx) + " " +
+			"value=" + str(value))
+		idx += 1
+
 func add_to_proplayer(layer_name, value, world_pos, world_radius):
 	if not _proplayers.has(layer_name):
 		_proplayers[layer_name] = {
@@ -192,6 +215,14 @@ func add_to_proplayer(layer_name, value, world_pos, world_radius):
 			i += 1
 		layer["data"] = data
 	var add_value = func(idx):
+		if debugPropLayers:
+			var x = int(idx) % int(_hmnavmesh.get_field_x_width())
+			var y = (idx - x) / _hmnavmesh.get_field_x_width()
+			if debugPropLayers:
+				print("NavHandler.gd: add_to_proplayer(): " +
+					"layer name=" + str(layer_name) + " " +
+					"x=" + str(x) + " y=" + str(y) + " " +
+					"idx=" + str(idx) + " value=" + str(value))
 		layer["data"][idx] += value
 	_do_circular_on_proplayer(
 		layer, add_value, world_pos, world_radius
