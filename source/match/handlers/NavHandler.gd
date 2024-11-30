@@ -48,7 +48,8 @@ func _physics_process(delta):
 
 func _default_passability_check_func(hmNavMesh, src: Vector3, target: Vector3,
 					step_distance, src_height, target_height):
-	if query_proplayer_max_value("ground_obstacle", target, step_distance) > 0:
+	var value = query_proplayer_max_value("ground_obstacle", target, step_distance)
+	if value > 0:
 		return INF
 	else:
 		return 1.0
@@ -110,16 +111,20 @@ func _query_proplayer_do(layer_name, world_pos, world_radius,
 		result = 0.0
 	if not _map_scanned:
 		return result
-	var query_value = func(idx):
-		#var x = int(idx) % int(_hmnavmesh.get_field_x_width())
-		#var y = (idx - x) / _hmnavmesh.get_field_x_width()
+	var userdata = {"result": result}
+	var query_value = func(idx, userdata):
+		result = userdata["result"]
+		var x = int(idx) % int(_hmnavmesh.get_field_x_width())
+		var y = (idx - x) / _hmnavmesh.get_field_x_width()
 		if is_get_min_value:
 			result = min(result, layer["data"][idx])
 		else:
 			result = max(result, layer["data"][idx])
+		userdata["result"] = result
 	_do_circular_on_proplayer(
-		layer, query_value, world_pos, world_radius
+		layer, query_value, userdata, world_pos, world_radius
 	)
+	result = userdata["result"]
 	return result
 
 func query_proplayer_min_value(layer_name, world_pos, world_radius):
@@ -233,7 +238,7 @@ func add_to_proplayer(layer_name, value, world_pos, world_radius):
 			data.append(0)
 			i += 1
 		layer["data"] = data
-	var add_value = func(idx):
+	var add_value = func(idx, userdata):
 		if debugPropLayers:
 			var x = int(idx) % int(_hmnavmesh.get_field_x_width())
 			var y = (idx - x) / _hmnavmesh.get_field_x_width()
@@ -244,7 +249,7 @@ func add_to_proplayer(layer_name, value, world_pos, world_radius):
 				"idx=" + str(idx) + " value=" + str(value))
 		layer["data"][idx] += value
 	_do_circular_on_proplayer(
-		layer, add_value, world_pos, world_radius
+		layer, add_value, null, world_pos, world_radius
 	)
 
 func world_pos_to_proplayer_idx(world_pos):
@@ -259,7 +264,8 @@ func world_pos_to_proplayer_idx(world_pos):
 	return int(idx)
 
 func _do_circular_on_proplayer(
-		layer, do_callback, world_pos, world_radius):
+		layer, do_callback, userdata_for_callback,
+		world_pos, world_radius):
 	if not layer.has("data"):
 		return
 	if typeof(world_pos) == TYPE_VECTOR2:
@@ -272,7 +278,8 @@ func _do_circular_on_proplayer(
 	assert(typeof(center_offset) == TYPE_VECTOR2I)
 	do_callback.call(
 		center_offset.x + center_offset.y *
-		_hmnavmesh.get_field_x_width()
+		_hmnavmesh.get_field_x_width(),
+		userdata_for_callback
 	)
 	if world_radius == 0:
 		# If we have no radius, don't touch anything further.
@@ -304,7 +311,8 @@ func _do_circular_on_proplayer(
 			if dist <= world_radius:
 				do_callback.call(
 					xi + yi *
-					_hmnavmesh.get_field_x_width()
+					_hmnavmesh.get_field_x_width(),
+					userdata_for_callback
 				)
 			yi += 1
 		xi += 1
@@ -423,10 +431,10 @@ func set_on_proplayer(layer_name, value, world_pos, world_radius):
 			"path finding map")
 		return
 	var layer = _proplayers[layer_name]
-	var set_value = func(idx):
+	var set_value = func(idx, userdata):
 		layer["data"][idx] = value
 	_do_circular_on_proplayer(
-		layer, set_value, world_pos, world_radius
+		layer, set_value, null, world_pos, world_radius
 	)
 
 func set_on_proplayer_rectangle(layer_name, value,
