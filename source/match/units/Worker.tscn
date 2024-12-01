@@ -12,6 +12,7 @@
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hiufi"]
 height = 0.6
+radius = 1.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3lgqt"]
 properties/0/path = NodePath(".:position")

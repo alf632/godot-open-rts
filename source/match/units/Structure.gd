@@ -33,7 +33,7 @@ func is_revealing():
 
 func _register_in_navmap():
 	var marker = GroundObstacleMarker.new()
-	marker.radius = self.radius
+	marker.radius = self.radius/2
 	marker.position = Vector2(global_position.x, global_position.z)
 	marker.color.r = 1000.0
 	#_ground_obstacles.register_obstacle(marker)
