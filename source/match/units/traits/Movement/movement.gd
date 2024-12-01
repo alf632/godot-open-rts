@@ -40,7 +40,7 @@ func _physics_process(delta: float) -> void:
 		
 		_unit.velocity = dir.normalized() * _unit.movement_speed * delta
 		_unit.move_and_slide()
-	
+
 
 
 func _calculate_hold_altitude_dir():
@@ -103,6 +103,9 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 	state.angular_velocity = (
 		damp * state.angular_velocity + (1.0 - damp) * want_velocity_rotated_vec
 	)
+
+func calculate_nearby_dir():
+	pass
 
 func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 	# Berechne den rechten Vektor (rechtshändiges Koordinatensystem)

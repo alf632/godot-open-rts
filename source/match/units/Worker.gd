@@ -2,6 +2,8 @@ extends "res://source/match/units/Unit.gd"
 
 const kind = "Worker"
 
+const MovingToUnit = preload("res://source/match/units/actions/MovingToUnit.gd")
+
 var resource_a = 0
 var resource_b = 0
 var resources_max = null
@@ -38,9 +40,16 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	else:
 		var altDir = _movement._calculate_hold_altitude_dir()
 		var navDir = _movement._nav.get_velocity()
-		dir = lerp(navDir, altDir.normalized(), altDir.length())
+		
+		if navDir == Vector3() and is_instance_valid(action) and action is MovingToUnit:
+			if not Utils.Match.UnitUtils.Movement.units_adhere(self, action._target_unit):
+				navDir = (action._target_unit.global_position_yless - global_position_yless).normalized()
+		
 		if navDir == Vector3():
 			navDir = -state.transform.basis.z
+		
+		dir = lerp(navDir, altDir.normalized(), altDir.length())
+		
 		
 		_movement.torque_towards_dir(navDir, state)
 		
