@@ -26,10 +26,12 @@ properties/1/replication_mode = 1
 collision_layer = 2
 collision_mask = 3
 linear_damp = 1.6
+angular_damp = 2.0
 script = ExtResource("1_hapsg")
-damping_factor = 2.0
-error_factor = 0.3
-stablizing_threshold = 1.0
+damping_factor = 0.0
+error_factor = 0.2
+stablizing_threshold = 0.2
+stablilizing_altitude_addition = 1.0
 
 [node name="Geometry" type="Node3D" parent="."]
 

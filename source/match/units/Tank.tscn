@@ -25,6 +25,10 @@ collision_layer = 2
 collision_mask = 3
 linear_damp = 1.6
 script = ExtResource("1_npbka")
+damping_factor = 5.0
+error_factor = 1.5
+stablizing_threshold = 0.7
+stablilizing_altitude_addition = 1.0
 
 [node name="Geometry" type="Node3D" parent="."]
 transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)

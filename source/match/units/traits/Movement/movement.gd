@@ -14,6 +14,7 @@ signal passive_movement_finished
 @export var altitude = 0.2
 @export var linearForce = 12.0
 @export var angularForce = 1.0
+@export var stablizing_threshold = 0.2
 
 var domain = Constants.Match.Navigation.Domain.TERRAIN
 var radius = 0.5
@@ -54,11 +55,46 @@ func _calculate_hold_altitude_dir():
 func normalize_diff_angle(v : float) -> float:
 	return fmod((v) + PI, 2 * PI) - PI
 
-func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
-	var dir2d = dir * Vector3(1,0,1)
+func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> bool:
+	var stable = true
+	var updiff = Vector3.UP.angle_to(state.transform.basis.y)
+	if updiff > _unit.stablizing_threshold:
+		stable = false
+	
+	
+	var dir2d = (dir * Vector3(1,0,1)).normalized()
 	
 	var current_rotation = state.transform.basis
-	var target_rotation = Basis.looking_at(dir2d)
+	var target_rotation = Basis.looking_at(dir2d, Vector3.UP, false)
+	
+	var correcting_rotation = target_rotation * current_rotation.inverse()
+	var correcting_euler = correcting_rotation.get_euler()
+	
+	var correcting_force_roll = clampf(correcting_euler.z, -PI/4, PI/4)/PI/4
+	var torque = Vector3(0,0,correcting_force_roll)
+	state.apply_torque(torque * angularForce)
+	
+	if true:
+		var correcting_force_pitch = clampf(correcting_euler.x, -PI/4, PI/4)/PI/4
+		torque = Vector3(correcting_force_pitch,0,0)
+		state.apply_torque(torque * angularForce)
+	
+	if dir != Vector3() and stable:
+		var correcting_force_yaw = clampf(correcting_euler.y, -PI/4, PI/4)/PI/4
+		torque = Vector3(0,correcting_force_yaw,0)
+		state.apply_torque(torque * angularForce * _unit.y_weight)
+		
+	return stable
+	
+	
+	var correcting_rotation_yless = correcting_rotation.get_euler()*Vector3(1,0,1)
+	if (updiff) < _unit.stablizing_threshold:
+		stable = true
+	
+	#var torque = -state.angular_velocity * _unit.damping_factor - correcting_rotation.get_euler() * _unit.error_factor
+	state.apply_torque(torque * Vector3(1,_unit.y_weight,1))
+	return stable
+	
 	
 	var target_angle = target_rotation.get_euler()
 	var source_angle = current_rotation.get_euler()
@@ -67,8 +103,8 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 	var roll_angle = normalize_diff_angle(target_angle.z - source_angle.z)
 	if (abs(hori_angle) < _unit.stablizing_threshold and
 			abs(verti_angle) < _unit.stablizing_threshold and
-			abs(roll_angle) < _unit.stablizing_threshold) and false:
-		return
+			abs(roll_angle) < _unit.stablizing_threshold):
+		stable = true
 	var angular_velocity_euler = Vector3(0,0,0)
 	if state.angular_velocity.length() > 0.001:
 		var norm_vel = state.angular_velocity.normalized()
@@ -103,6 +139,8 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 	state.angular_velocity = (
 		damp * state.angular_velocity + (1.0 - damp) * want_velocity_rotated_vec
 	)
+	
+	return stable
 
 func calculate_nearby_dir():
 	pass

@@ -12,6 +12,9 @@ const AttackingWhileInRange = preload("res://source/match/units/actions/Attackin
 @onready var _movement = $Movement
 @onready var _ta = $TargetAquire
 
+@export var stablilizing_altitude_addition = 2.0
+@onready var _original_altitude = _movement.altitude
+
 func _get_idle_action():
 	var enemy = _ta.get_enemy_unit()
 	if enemy:
@@ -26,12 +29,15 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		state.apply_central_force(dir * movement_speed)
 		return
 	else:
-		var altDir = _movement._calculate_hold_altitude_dir()
 		var navDir = _movement._nav.get_velocity()
-		dir = lerp(navDir, altDir.normalized(), altDir.length())
-		if navDir == Vector3():
-			navDir = -state.transform.basis.z
+		var stable = _movement.torque_towards_dir(navDir, state)
 		
-		_movement.torque_towards_dir(navDir, state)
+		if not stable:
+			_movement.altitude = _original_altitude + stablilizing_altitude_addition
+			dir = _movement._calculate_hold_altitude_dir()
+		else:
+			_movement.altitude = _original_altitude
+			var altDir = _movement._calculate_hold_altitude_dir()
+			dir = lerp(navDir, altDir.normalized(), altDir.length())
 		
 		state.apply_central_force(dir * _movement.linearForce)

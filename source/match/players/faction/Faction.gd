@@ -23,9 +23,9 @@ func spawn_base_units(spawn_transform):
 	setup_and_spawn_unit(
 		"Worker", spawn_transform.translated(Vector3(-3, 0, 3))
 	)
-	setup_and_spawn_unit(
-		"Worker", spawn_transform.translated(Vector3(3, 0, 3))
-	)
+	#setup_and_spawn_unit(
+	#	"Worker", spawn_transform.translated(Vector3(3, 0, 3))
+	#)
 
 @rpc("authority", "call_local", "reliable")
 func join_by_id(playerID):
