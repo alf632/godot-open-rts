@@ -69,7 +69,13 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 			abs(verti_angle) < _unit.stablizing_threshold and
 			abs(roll_angle) < _unit.stablizing_threshold) and false:
 		return
-	var angular_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
+	var angular_velocity_euler = Vector3(0,0,0)
+	if state.angular_velocity.length() > 0.001:
+		var norm_vel = state.angular_velocity.normalized()
+		if (norm_vel - Vector3(0, 1, 0)).length() < 0.01:
+			angular_velocity_euler = Vector3(PI, 0, 0)
+		else:
+			angular_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
 	var angular_velocity_quat = Quaternion.from_euler(angular_velocity_euler)
 	var velocity_max = 5.0
 	var velocity_accel_step = 0.1
@@ -87,66 +93,16 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> void:
 		roll_step_dir_factor * velocity_max
 	)
 	var wanted_velocity_quat = Quaternion.from_euler(wanted_velocity_euler)
-	var damp : float = _unit.damping_factor
-	var given_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
-	var accel_velocity_euler = Vector3(
-		(min(max(wanted_velocity_euler.x - given_velocity_euler.x,
-			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
-			velocity_accel_step_velocity_diff) * velocity_accel_step * damp,
-		(min(max(wanted_velocity_euler.y - given_velocity_euler.y,
-			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
-			velocity_accel_step_velocity_diff) * velocity_accel_step * damp,
-		(min(max(wanted_velocity_euler.z - given_velocity_euler.z,
-			-velocity_accel_step_velocity_diff), velocity_accel_step_velocity_diff) /
-			velocity_accel_step_velocity_diff) * velocity_accel_step * damp
-	)
-	var rotation_accel = Quaternion.from_euler(accel_velocity_euler)
-	
-	#var forward_vec = Vector3(1.0, 0, 0)
-	#var test_vec = Vector3(0.0, accel_velocity_euler.y, 0)
-	#var axis = Vector3(rotation_accel.x, rotation_accel.y, rotation_accel.z).normalized()
-	#state.apply_torque(accel_velocity_euler)
-	#state.apply_torque(axis)
-	#var a = wanted_velocity_quat
-	#var b = angular_velocity_quat
-	# Interpolate using spherical-linear interpolation (SLERP).
-	#var c = a.slerp(b,0.5) # find halfway point between a and b
-	#var c_axis = Vector3(c.x, c.y, c.z).normalized()
-	# Apply back
-	#state.angular_velocity = c_axis
-	var want_velocity_vec = Vector3(
+	var damp : float = 0.5 + max(0.0, min(0.95, _unit.damping_factor)) * 0.5
+
+	var want_velocity_rotated_vec = Vector3(
 		wanted_velocity_euler.x, wanted_velocity_euler.y,
 		wanted_velocity_euler.z
 	)
-	want_velocity_vec *= state.transform.basis.get_rotation_quaternion().inverse()
-	state.angular_velocity = 0.9 * state.angular_velocity + 0.1 * want_velocity_vec
-	return
-	var rotation_target = Quaternion.from_euler(Vector3(
-		target_angle.x
-		#source_angle.x + wanted_velocity_euler.x * 10
-		,
-		target_angle.y
-		#source_angle.y + wanted_velocity_euler.y * 10
-		,
-		target_angle.z
-		#source_angle.z + wanted_velocity_euler.z * 10
-	))
-	var forward_vec = Vector3(1, 0, 0)
-	forward_vec *= rotation_target
-	rotation = forward_vec
-	return
-	
-	
-	# Differenz zwischen Ziel- und aktueller Rotation (als Quaternion)
-	var rotation_error = target_rotation * current_rotation.inverse()
-	if rotation_error.get_euler().length() < _unit.stablizing_threshold:
-		return
-	# Winkelgeschwindigkeit als Vektor
-	var angular_velocity = state.angular_velocity
-	# Drehmoment berechnen (Proportional zur Winkelgeschwindigkeit und dem Rotationsfehler)
-	var torque = -angular_velocity * _unit.damping_factor - rotation_error.get_euler() * _unit.error_factor
-	# Drehmoment anwenden
-	state.apply_torque(torque * Vector3(1,_unit.y_weight,1))
+	want_velocity_rotated_vec *= state.transform.basis.get_rotation_quaternion().inverse()
+	state.angular_velocity = (
+		damp * state.angular_velocity + (1.0 - damp) * want_velocity_rotated_vec
+	)
 
 func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 	# Berechne den rechten Vektor (rechtshändiges Koordinatensystem)
