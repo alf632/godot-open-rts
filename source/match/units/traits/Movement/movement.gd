@@ -65,85 +65,41 @@ func torque_towards_dir(dir: Vector3, state: PhysicsDirectBodyState3D) -> bool:
 	var dir2d = (dir * Vector3(1,0,1)).normalized()
 	
 	var current_rotation = state.transform.basis
-	var target_rotation = Basis.looking_at(dir2d, Vector3.UP, false)
+	var target_rotation :Basis
+	if stable and dir != Vector3():
+		target_rotation = Basis.looking_at(dir2d, Vector3.UP, false)
+	else:
+		target_rotation = Basis.looking_at((-state.transform.basis.z * Vector3(1,0,1)).normalized(), Vector3.UP, false)
 	
 	var correcting_rotation = target_rotation * current_rotation.inverse()
 	var correcting_euler = correcting_rotation.get_euler()
 	
-	var correcting_force_roll = clampf(correcting_euler.z, -PI/4, PI/4)/PI/4
+	var correcting_force_roll = clampf(correcting_euler.z, -PI/2, PI/2)/PI/2
 	var torque = Vector3(0,0,correcting_force_roll)
 	state.apply_torque(torque * angularForce)
 	
-	if true:
-		var correcting_force_pitch = clampf(correcting_euler.x, -PI/4, PI/4)/PI/4
-		torque = Vector3(correcting_force_pitch,0,0)
-		state.apply_torque(torque * angularForce)
+	var correcting_force_pitch = clampf(correcting_euler.x, -PI/2, PI/2)/PI/2
+	torque = Vector3(correcting_force_pitch,0,0)
+	state.apply_torque(torque * angularForce)
 	
 	if dir != Vector3() and stable:
-		var correcting_force_yaw = clampf(correcting_euler.y, -PI/4, PI/4)/PI/4
+		var correcting_force_yaw = clampf(correcting_euler.y, -PI/2, PI/2)/PI/2
 		torque = Vector3(0,correcting_force_yaw,0)
 		state.apply_torque(torque * angularForce * _unit.y_weight)
 		
 	return stable
 	
-	
-	var correcting_rotation_yless = correcting_rotation.get_euler()*Vector3(1,0,1)
-	if (updiff) < _unit.stablizing_threshold:
-		stable = true
-	
-	#var torque = -state.angular_velocity * _unit.damping_factor - correcting_rotation.get_euler() * _unit.error_factor
-	state.apply_torque(torque * Vector3(1,_unit.y_weight,1))
-	return stable
-	
-	
-	var target_angle = target_rotation.get_euler()
-	var source_angle = current_rotation.get_euler()
-	var hori_angle = normalize_diff_angle(target_angle.y - source_angle.y)
-	var verti_angle = normalize_diff_angle(target_angle.x - source_angle.x)
-	var roll_angle = normalize_diff_angle(target_angle.z - source_angle.z)
-	if (abs(hori_angle) < _unit.stablizing_threshold and
-			abs(verti_angle) < _unit.stablizing_threshold and
-			abs(roll_angle) < _unit.stablizing_threshold):
-		stable = true
-	var angular_velocity_euler = Vector3(0,0,0)
-	if state.angular_velocity.length() > 0.001:
-		var norm_vel = state.angular_velocity.normalized()
-		if (norm_vel - Vector3(0, 1, 0)).length() < 0.01:
-			angular_velocity_euler = Vector3(PI, 0, 0)
-		else:
-			angular_velocity_euler = Basis.looking_at(state.angular_velocity).get_euler()
-	var angular_velocity_quat = Quaternion.from_euler(angular_velocity_euler)
-	var velocity_max = 5.0
-	var velocity_accel_step = 0.1
-	var velocity_accel_step_velocity_diff = 3.0
-	var velocity_accel_step_dir_length = 0.75 * PI  # 45 degrees
-	var hori_step_dir_factor = min(max(hori_angle, -velocity_accel_step_dir_length),
-		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
-	var verti_step_dir_factor = min(max(verti_angle, -velocity_accel_step_dir_length),
-		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
-	var roll_step_dir_factor = min(max(roll_angle, -velocity_accel_step_dir_length),
-		velocity_accel_step_dir_length) / velocity_accel_step_dir_length
-	var wanted_velocity_euler = Vector3(
-		verti_step_dir_factor * velocity_max,
-		hori_step_dir_factor * velocity_max,
-		roll_step_dir_factor * velocity_max
-	)
-	var wanted_velocity_quat = Quaternion.from_euler(wanted_velocity_euler)
-	var damp : float = 0.5 + max(0.0, min(0.95, _unit.damping_factor)) * 0.5
 
-	var want_velocity_rotated_vec = Vector3(
-		wanted_velocity_euler.x, wanted_velocity_euler.y,
-		wanted_velocity_euler.z
-	)
-	want_velocity_rotated_vec *= state.transform.basis.get_rotation_quaternion().inverse()
-	state.angular_velocity = (
-		damp * state.angular_velocity + (1.0 - damp) * want_velocity_rotated_vec
-	)
+func calculate_nearby_dir(units):
+	if not units or len(units) == 0:
+		return Vector3()
+		
+	var dir = Vector3()
+	for otherUnit in units:
+		var unitdir =   _unit.global_position_yless - otherUnit.global_position_yless
+		dir = lerp(dir, unitdir.normalized(), 1 - clampf(unitdir.length()+_unit.radius, 0.0, 4.0)/4.0)
 	
-	return stable
-
-func calculate_nearby_dir():
-	pass
+	return dir
 
 func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 	# Berechne den rechten Vektor (rechtshändiges Koordinatensystem)
@@ -157,6 +113,9 @@ func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 
 func move(movement_target: Vector3):
 	target = movement_target
+	var t_height = _Terrain.storage.get_height(movement_target)
+	if target.y < t_height + + altitude:
+		target.y = t_height + + altitude
 	_nav.move(target)
 	return
 	

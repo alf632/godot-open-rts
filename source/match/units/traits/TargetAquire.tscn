@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bydwevlor5kxe"]
+
+[ext_resource type="Script" path="res://source/match/units/traits/target_aquire.gd" id="1_wi665"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_mtk3g"]
+radius = 10.0
+
+[node name="TargetAquire" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_wi665")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_mtk3g")
+
+[connection signal="body_entered" from="." to="." method="_on_node_entered"]
+[connection signal="body_exited" from="." to="." method="_on_node_exited"]

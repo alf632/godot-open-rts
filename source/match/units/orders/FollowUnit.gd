@@ -14,11 +14,13 @@ func _init(target_unit :Unit) -> void:
 	_target_unit = target_unit
 
 func _to_string() -> String:
-	return "{0};{1}".format(["FollowUnit", _target_unit])
+	return "{0};{1}".format(["FollowUnit", _target_unit.name])
 
 static func new_from_string(order_string: String, ctx: OrderContext):
 	var split = order_string.split(";")
 	var targetUnit = ctx.unit.get_parent().find_child(split[1], false, false)
+	if not targetUnit:
+		printerr("FollowUnit-new_from_string: unit ", split[1], " not found!")
 	return FollowUnit.new(targetUnit)
 
 func get_action(behavior_manager):

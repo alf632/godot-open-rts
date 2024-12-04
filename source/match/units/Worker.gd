@@ -1,4 +1,5 @@
 extends "res://source/match/units/Unit.gd"
+class_name Worker
 
 const kind = "Worker"
 
@@ -10,6 +11,7 @@ var resources_max = null
 
 @onready var _animation_player = find_child("AnimationPlayer")
 @onready var _movement = $Movement
+@onready var _ta = $TargetAquire
 @export var damping_factor := 1.0
 @export var error_factor := 1.0
 @export var stablizing_threshold := 20.0
@@ -17,6 +19,7 @@ var resources_max = null
 
 @export var stablilizing_altitude_addition = 2.0
 @onready var _original_altitude = _movement.altitude
+
 
 func is_full():
 	assert(resource_a + resource_b <= resources_max, "worker capacity was exceeded somehow")
@@ -52,6 +55,8 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			dir = _movement._calculate_hold_altitude_dir()
 		else:
 			_movement.altitude = _original_altitude
+			var nearbyDir = _movement.calculate_nearby_dir(_ta.friendly_in_range.filter(func(unit): return unit is Worker))
+			navDir = lerp(navDir, nearbyDir.normalized(), nearbyDir.length())
 			var altDir = _movement._calculate_hold_altitude_dir()
 			dir = lerp(navDir, altDir.normalized(), altDir.length())
 		

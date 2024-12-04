@@ -109,6 +109,8 @@ func _finalize_production(former_queue_element):
 	#	produced_unit.kind, Transform3D(Basis(), placement_position), _unit.player
 	#)
 	var spawned_unit = _unit.player.setup_and_spawn_unit(produced_unit.kind, Transform3D(Basis(), placement_position))
+	if "home_unit" in spawned_unit:
+		spawned_unit.home_unit = _unit
 
 	# Handle rally point
 	if _unit.has_node("RallyPoint") and Moving.is_applicable(spawned_unit):

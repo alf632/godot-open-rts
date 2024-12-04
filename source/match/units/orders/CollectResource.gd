@@ -11,6 +11,8 @@ const ResourceUnit = preload("res://source/match/units/non-player/ResourceUnit.g
 var _target_unit :ResourceUnit
 
 static func is_applicable(unit, _target_unit):
+	if not _target_unit is ResourceUnit:
+		return false
 	return CollectingResourcesSequentially.is_applicable(unit, _target_unit)
 
 func _init(target_unit :ResourceUnit) -> void:

@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://source/match/units/traits/base_terrain.gd" id="1_md34c"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_387u2"]
+height = 10.0
 
 [node name="BaseTerrain" type="Node3D"]
 script = ExtResource("1_md34c")

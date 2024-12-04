@@ -37,6 +37,8 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			dir = _movement._calculate_hold_altitude_dir()
 		else:
 			_movement.altitude = _original_altitude
+			var nearbyDir = _movement.calculate_nearby_dir(_ta.friendly_in_range)
+			navDir = lerp(navDir, nearbyDir.normalized(), nearbyDir.length())
 			var altDir = _movement._calculate_hold_altitude_dir()
 			dir = lerp(navDir, altDir.normalized(), altDir.length())
 		
