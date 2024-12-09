@@ -25,4 +25,6 @@ func _unhandled_input(event):
 		var camera_pos: Vector3 = p_viewport_camera.project_ray_origin(event.position)
 		var camera_dir: Vector3 = p_viewport_camera.project_ray_normal(event.position)
 		var target_point = terrain.get_intersection(camera_pos,camera_dir)
+		await RenderingServer.frame_post_draw
+		target_point = terrain.get_intersection(camera_pos,camera_dir)
 		MatchSignals.terrain_targeted.emit(target_point)

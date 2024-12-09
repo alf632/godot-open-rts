@@ -76,7 +76,7 @@ func _finish():
 	if not _selecting():
 		return
 	_rect_on_screen.end = get_viewport().get_mouse_position()
-	finished.emit(_screen_rect_2d_to_topdown_polygon_2d(_rect_on_screen.abs()))
+	finished.emit(await _screen_rect_2d_to_topdown_polygon_2d(_rect_on_screen.abs()))
 	_rect_on_screen = null
 
 
@@ -94,7 +94,7 @@ func _update():
 	if not _selecting():
 		return
 	_rect_on_screen.end = get_viewport().get_mouse_position()
-	changed.emit(_screen_rect_2d_to_topdown_polygon_2d(_rect_on_screen.abs()))
+	changed.emit(await _screen_rect_2d_to_topdown_polygon_2d(_rect_on_screen.abs()))
 
 
 func _screen_rect_2d_to_topdown_polygon_2d(rect_2d):
@@ -112,5 +112,7 @@ func _screen_rect_2d_to_topdown_polygon_2d(rect_2d):
 		var camera_pos: Vector3 = p_viewport_camera.project_ray_origin(rect_point_2d)
 		var camera_dir: Vector3 = p_viewport_camera.project_ray_normal(rect_point_2d)
 		var polygon_point_3d = terrain.get_intersection(camera_pos,camera_dir)
+		await RenderingServer.frame_post_draw
+		polygon_point_3d = terrain.get_intersection(camera_pos,camera_dir)
 		polygon_points_2d.append(Vector2(polygon_point_3d.x, polygon_point_3d.z))
 	return polygon_points_2d

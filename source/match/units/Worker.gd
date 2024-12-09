@@ -52,7 +52,9 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		
 		if not stable:
 			_movement.altitude = _original_altitude + stablilizing_altitude_addition
-			dir = _movement._calculate_hold_altitude_dir()
+			var altDir = _movement._calculate_hold_altitude_dir()
+			var nearbyDir = _movement.calculate_nearby_dir(_ta.friendly_in_range.filter(func(unit): return unit is Worker))
+			dir = lerp(nearbyDir, altDir.normalized(), altDir.length())
 		else:
 			_movement.altitude = _original_altitude
 			var nearbyDir = _movement.calculate_nearby_dir(_ta.friendly_in_range.filter(func(unit): return unit is Worker))
