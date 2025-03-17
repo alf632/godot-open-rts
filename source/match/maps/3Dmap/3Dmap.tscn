@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dmlef1nchuam4"]
 
 [ext_resource type="PackedScene" uid="uid://b7c1crf36x1li" path="res://source/match/Map.tscn" id="1_tv8fs"]
-[ext_resource type="Script" path="res://source/match/maps/3Dmap/3Dmap.gd" id="2_24vdh"]
+[ext_resource type="Script" uid="uid://c3jh3j8jb340a" path="res://source/match/maps/3Dmap/3Dmap.gd" id="2_24vdh"]
 [ext_resource type="Terrain3DStorage" uid="uid://lalq1xnmbjdl" path="res://assets/terrain_storage.res" id="3_bkbrs"]
 [ext_resource type="PackedScene" uid="uid://bf3jjdafqvh0w" path="res://source/match/units/non-player/ResourceA.tscn" id="3_uixp0"]
 [ext_resource type="Terrain3DMaterial" uid="uid://1qf0ffebhg2v" path="res://assets/maps/demo/material.tres" id="4_1jknq"]

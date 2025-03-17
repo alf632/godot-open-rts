@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ds57esabi07np"]
 
 [ext_resource type="Theme" uid="uid://c2kgsk4ffhbwo" path="res://source/resources/main_menu.theme" id="1_7ubwb"]
-[ext_resource type="Script" path="res://source/main-menu/Credits.gd" id="1_33n17"]
+[ext_resource type="Script" uid="uid://wwtvs3bgon43" path="res://source/main-menu/Credits.gd" id="1_33n17"]
 [ext_resource type="PackedScene" uid="uid://dij5xr8swlfdx" path="res://source/main-menu/Background.tscn" id="2_txygx"]
 
 [node name="Credits" type="Control"]

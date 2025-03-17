@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://1qlllsy6h5tc"]
 
-[ext_resource type="Script" path="res://source/match/players/simple-clairvoyant-ai/SimpleClairvoyantAI.gd" id="1_shcx6"]
+[ext_resource type="Script" uid="uid://ctn15j8r4kicm" path="res://source/match/players/simple-clairvoyant-ai/SimpleClairvoyantAI.gd" id="1_shcx6"]
 [ext_resource type="PackedScene" uid="uid://coufpkev4rxwe" path="res://source/match/players/simple-clairvoyant-ai/ai.tscn" id="2_o84eu"]
 
 [node name="SimpleClairvoyantAI" type="Node3D"]

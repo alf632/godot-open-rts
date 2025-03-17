@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://pawymiv0p8ab"]
 
-[ext_resource type="Script" path="res://source/match/hud/unit-menus/GenericMenu.gd" id="1_i7s8m"]
+[ext_resource type="Script" uid="uid://c7bhhgif5b0nw" path="res://source/match/hud/unit-menus/GenericMenu.gd" id="1_i7s8m"]
 
 [node name="GenericMenu" type="GridContainer"]
 columns = 4

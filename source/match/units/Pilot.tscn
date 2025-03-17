@@ -1,13 +1,13 @@
 [gd_scene load_steps=13 format=3 uid="uid://bmrlqm21kb1v7"]
 
-[ext_resource type="Script" path="res://source/match/units/Pilot.gd" id="1_irnbs"]
+[ext_resource type="Script" uid="uid://cjdba3y14g8g7" path="res://source/match/units/Pilot.gd" id="1_irnbs"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="3_hn016"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="4_fugyd"]
 [ext_resource type="PackedScene" uid="uid://c3ssj2p6voauk" path="res://source/match/units/traits/HealthBar.tscn" id="6_u5bbk"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="8_7oqft"]
 [ext_resource type="PackedScene" uid="uid://ccwgdcyfg8job" path="res://source/match/units/traits/Pilotable.tscn" id="8_lcav2"]
 [ext_resource type="PackedScene" uid="uid://c7keq2sgw7dew" path="res://source/match/units/traits/Movement/Movement.tscn" id="8_ofg4u"]
-[ext_resource type="Script" path="res://source/match/FpsCamera3D.gd" id="9_lj8hp"]
+[ext_resource type="Script" uid="uid://ntn6rfcdlkhf" path="res://source/match/FpsCamera3D.gd" id="9_lj8hp"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sgfwt"]
 properties/0/path = NodePath(".:position")

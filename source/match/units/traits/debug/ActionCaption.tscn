@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b80lnni2yfdyd"]
 
-[ext_resource type="Script" path="res://source/match/units/traits/debug/ActionCaption.gd" id="1_a3ucc"]
+[ext_resource type="Script" uid="uid://crq0cde0tj181" path="res://source/match/units/traits/debug/ActionCaption.gd" id="1_a3ucc"]
 
 [node name="ActionCaption" type="Label3D"]
 pixel_size = 0.0006

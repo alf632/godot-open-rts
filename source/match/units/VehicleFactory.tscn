@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://h5lqor1xl2sf"]
 
-[ext_resource type="Script" path="res://source/match/units/VehicleFactory.gd" id="1_1a20j"]
+[ext_resource type="Script" uid="uid://bcrxhoiucyixn" path="res://source/match/units/VehicleFactory.gd" id="1_1a20j"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="1_8fcgb"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="2_h27kt"]
 [ext_resource type="PackedScene" uid="uid://inepf56pyube" path="res://source/match/units/structure-geometries/VehicleFactory.tscn" id="2_j6xs6"]

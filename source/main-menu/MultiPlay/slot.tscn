@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dx5riv64xnbk6"]
 
-[ext_resource type="Script" path="res://source/main-menu/MultiPlay/slot.gd" id="1_aei1p"]
+[ext_resource type="Script" uid="uid://dnodyvlx2ncth" path="res://source/main-menu/MultiPlay/slot.gd" id="1_aei1p"]
 
 [node name="Slot" type="HBoxContainer"]
 script = ExtResource("1_aei1p")

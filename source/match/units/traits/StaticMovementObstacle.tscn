@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c471ahpwuxv57"]
 
-[ext_resource type="Script" path="res://source/match/units/traits/StaticMovementObstacle.gd" id="1_yolf4"]
+[ext_resource type="Script" uid="uid://qjqs82kaxlf2" path="res://source/match/units/traits/StaticMovementObstacle.gd" id="1_yolf4"]
 
 [node name="StaticMovementObstacle" type="StaticBody3D"]
 collision_layer = 6

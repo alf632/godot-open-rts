@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dh8dedilkhuoy"]
 
-[ext_resource type="Script" path="res://source/match/players/human/Human.gd" id="1_7iu1j"]
+[ext_resource type="Script" uid="uid://2aky8aw774el" path="res://source/match/players/human/Human.gd" id="1_7iu1j"]
 [ext_resource type="PackedScene" uid="uid://dl8b86e0ms3f8" path="res://source/match/players/human/human_handler.tscn" id="2_7dssx"]
 
 [node name="Human" type="Node3D"]

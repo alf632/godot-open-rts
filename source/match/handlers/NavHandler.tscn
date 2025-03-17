@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b373fjcto1l4h"]
 
-[ext_resource type="Script" path="res://source/match/handlers/NavHandler.gd" id="1_6yf1x"]
-[ext_resource type="Script" path="res://source/match/handlers/ground_obstacles.gd" id="2_tja6d"]
+[ext_resource type="Script" uid="uid://b0l4rescj65u7" path="res://source/match/handlers/NavHandler.gd" id="1_6yf1x"]
+[ext_resource type="Script" uid="uid://b2ofycdircuk" path="res://source/match/handlers/ground_obstacles.gd" id="2_tja6d"]
 
 [node name="NavHandler" type="Node3D"]
 script = ExtResource("1_6yf1x")

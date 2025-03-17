@@ -1,22 +1,23 @@
 [gd_scene load_steps=15 format=3 uid="uid://c54pjqg0defrj"]
 
 [ext_resource type="PackedScene" uid="uid://camns8fqod8d4" path="res://source/match/Match.tscn" id="1_e8lxh"]
-[ext_resource type="Script" path="res://tests/manual/Match.gd" id="2_2ib5j"]
-[ext_resource type="Script" path="res://source/data-model/MatchSettings.gd" id="3_52248"]
-[ext_resource type="Script" path="res://source/data-model/PlayerSettings.gd" id="3_eliam"]
-[ext_resource type="Shader" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="5_arsbx"]
+[ext_resource type="Script" uid="uid://dny45kwixenct" path="res://tests/manual/Match.gd" id="2_2ib5j"]
+[ext_resource type="Script" uid="uid://c5046dcxvpye7" path="res://source/data-model/MatchSettings.gd" id="3_52248"]
+[ext_resource type="Script" uid="uid://dj6l306gmte3y" path="res://source/data-model/PlayerSettings.gd" id="3_eliam"]
+[ext_resource type="Shader" uid="uid://comxld0b1dj45" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="5_arsbx"]
 [ext_resource type="PackedScene" uid="uid://d8wcem3ievht" path="res://tests/manual/maps/NonQuadratic.tscn" id="5_jtm1l"]
-[ext_resource type="Shader" path="res://source/shaders/2d/white_transparent.gdshader" id="6_2nbfa"]
+[ext_resource type="Shader" uid="uid://dymki8i1761hn" path="res://source/shaders/2d/white_transparent.gdshader" id="6_2nbfa"]
 
 [sub_resource type="Resource" id="Resource_vkdak"]
 script = ExtResource("3_eliam")
 color = Color(0.4, 0.694118, 1, 1)
 controller = 1
-spawn_index_offset = 0
+spawn = 0
 
 [sub_resource type="Resource" id="Resource_qgn77"]
 script = ExtResource("3_52248")
-players = Array[Resource]([SubResource("Resource_vkdak")])
+players = Array[ExtResource("3_eliam")]([SubResource("Resource_vkdak")])
+player_slot_mapping = {}
 visibility = 0
 visible_player = 0
 
@@ -28,9 +29,9 @@ resource_local_to_scene = true
 render_priority = 2
 shader = ExtResource("5_arsbx")
 shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/world_visibility_texture = SubResource("ViewportTexture_x0ak8")
 shader_parameter/texture_units_per_world_unit = 2
 shader_parameter/debug_texture_view = false
-shader_parameter/world_visibility_texture = SubResource("ViewportTexture_x0ak8")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_pww1d"]
 viewport_path = NodePath("FogOfWar/CombinedViewport")

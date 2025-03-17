@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dk7sa3fkyxks5"]
 
-[ext_resource type="Script" path="res://source/generic-scenes-and-nodes/control/RectangularSelection2D.gd" id="1_588rg"]
+[ext_resource type="Script" uid="uid://dh0gfsthm1tqt" path="res://source/generic-scenes-and-nodes/control/RectangularSelection2D.gd" id="1_588rg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t80q7"]
 bg_color = Color(0.6, 0.6, 0.6, 0)

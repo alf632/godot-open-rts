@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://nnsih72ih7qr"]
 
-[ext_resource type="Script" path="res://source/match/hud/ProductionQueue.gd" id="1_iis45"]
+[ext_resource type="Script" uid="uid://ofrvcu2h8pka" path="res://source/match/hud/ProductionQueue.gd" id="1_iis45"]
 
 [node name="ProductionQueue" type="MarginContainer"]
 theme_override_constants/margin_right = 5

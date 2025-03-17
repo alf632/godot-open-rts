@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c3xjdp2yrr1fu"]
 
-[ext_resource type="Script" path="res://source/match/debug/DiagnosticHud.gd" id="1_pw8aa"]
+[ext_resource type="Script" uid="uid://ff6ll2grkdds" path="res://source/match/debug/DiagnosticHud.gd" id="1_pw8aa"]
 
 [node name="DiagnosticHUD" type="CanvasLayer"]
 script = ExtResource("1_pw8aa")

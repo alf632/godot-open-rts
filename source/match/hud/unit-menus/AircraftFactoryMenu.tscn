@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dk3no87nfpp8i"]
 
-[ext_resource type="Script" path="res://source/match/hud/unit-menus/AircraftFactoryMenu.gd" id="1_l3uuu"]
+[ext_resource type="Script" uid="uid://sj5vhq63eqw0" path="res://source/match/hud/unit-menus/AircraftFactoryMenu.gd" id="1_l3uuu"]
 
 [node name="AircraftFactoryMenu" type="GridContainer"]
 columns = 4

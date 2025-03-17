@@ -4,6 +4,9 @@ const Unit = preload("res://source/match/units/Unit.gd")
 
 @onready var _unit = get_parent()
 
+@export var predict_trajectory := false
+var last_terrain_hit = Vector3()
+
 var enemy_in_range = []
 var friendly_in_range = []
 

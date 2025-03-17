@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://dvqwcc562qxs5"]
+[gd_scene load_steps=25 format=3 uid="uid://dvqwcc562qxs5"]
 
 [ext_resource type="PackedScene" uid="uid://camns8fqod8d4" path="res://source/match/Match.tscn" id="1_cpaaw"]
-[ext_resource type="Script" path="res://tests/manual/Match.gd" id="2_mi5ae"]
+[ext_resource type="Script" uid="uid://dny45kwixenct" path="res://tests/manual/Match.gd" id="2_mi5ae"]
+[ext_resource type="Script" uid="uid://dj6l306gmte3y" path="res://source/data-model/PlayerSettings.gd" id="3_cgy0l"]
 [ext_resource type="PackedScene" uid="uid://ct0ejt0trkhrf" path="res://source/match/units/CommandCenter.tscn" id="3_oqrnv"]
 [ext_resource type="PackedScene" uid="uid://cxilu6668nda6" path="res://source/match/units/AircraftFactory.tscn" id="4_a0u57"]
-[ext_resource type="Script" path="res://source/data-model/MatchSettings.gd" id="4_kwjav"]
+[ext_resource type="Script" uid="uid://c5046dcxvpye7" path="res://source/data-model/MatchSettings.gd" id="4_kwjav"]
 [ext_resource type="PackedScene" uid="uid://dh8dedilkhuoy" path="res://source/match/players/human/Human.tscn" id="5_4gwgf"]
 [ext_resource type="PackedScene" uid="uid://h5lqor1xl2sf" path="res://source/match/units/VehicleFactory.tscn" id="5_imqfl"]
 [ext_resource type="PackedScene" uid="uid://cbe63rdjw7y4p" path="res://source/match/maps/PlainAndSimple.tscn" id="5_rbjbk"]
@@ -14,13 +15,14 @@
 [ext_resource type="PackedScene" uid="uid://e7tko4kpeiau" path="res://source/match/units/Helicopter.tscn" id="9_52a3q"]
 [ext_resource type="PackedScene" uid="uid://i58ffvwxbbwm" path="res://source/match/units/Tank.tscn" id="10_60e5v"]
 [ext_resource type="PackedScene" uid="uid://bf0r3fovbvf1m" path="res://source/match/units/Worker.tscn" id="11_mhynl"]
-[ext_resource type="Shader" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="12_cnst8"]
+[ext_resource type="Shader" uid="uid://comxld0b1dj45" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="12_cnst8"]
 [ext_resource type="PackedScene" uid="uid://1qlllsy6h5tc" path="res://source/match/players/simple-clairvoyant-ai/SimpleClairvoyantAI.tscn" id="15_6w32d"]
-[ext_resource type="Shader" path="res://source/shaders/2d/white_transparent.gdshader" id="16_0dnxm"]
+[ext_resource type="Shader" uid="uid://dymki8i1761hn" path="res://source/shaders/2d/white_transparent.gdshader" id="16_0dnxm"]
 
 [sub_resource type="Resource" id="Resource_tnmkt"]
 script = ExtResource("4_kwjav")
-players = Array[Resource]([])
+players = Array[ExtResource("3_cgy0l")]([])
+player_slot_mapping = {}
 visibility = 0
 visible_player = 0
 
@@ -32,9 +34,9 @@ resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource("12_cnst8")
 shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/world_visibility_texture = SubResource("ViewportTexture_v46ss")
 shader_parameter/texture_units_per_world_unit = 2
 shader_parameter/debug_texture_view = false
-shader_parameter/world_visibility_texture = SubResource("ViewportTexture_v46ss")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_26xhd"]
 viewport_path = NodePath("FogOfWar/CombinedViewport")

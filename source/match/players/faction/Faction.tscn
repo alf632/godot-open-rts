@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://55it64eriff7"]
 
-[ext_resource type="Script" path="res://source/match/players/faction/Faction.gd" id="1_ufgax"]
+[ext_resource type="Script" uid="uid://y4gvcc8qptae" path="res://source/match/players/faction/Faction.gd" id="1_ufgax"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nrdw0"]
 properties/0/path = NodePath(".:resource_a")

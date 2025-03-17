@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://rq0e1gkndx6l"]
 
-[ext_resource type="Script" path="res://source/match/utils/SparklingAnimation.gd" id="1_yxgnt"]
+[ext_resource type="Script" uid="uid://bssls5vjjcpiw" path="res://source/match/utils/SparklingAnimation.gd" id="1_yxgnt"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eymln"]
 transparency = 1

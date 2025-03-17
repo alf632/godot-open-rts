@@ -1,6 +1,6 @@
 [gd_scene load_steps=18 format=3 uid="uid://e7tko4kpeiau"]
 
-[ext_resource type="Script" path="res://source/match/units/Helicopter.gd" id="1_4fna5"]
+[ext_resource type="Script" uid="uid://med775sqt606" path="res://source/match/units/Helicopter.gd" id="1_4fna5"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="1_nqs7t"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="2_lki1x"]
 [ext_resource type="PackedScene" uid="uid://c3ssj2p6voauk" path="res://source/match/units/traits/HealthBar.tscn" id="4_fmrjm"]
@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://b1r67ex7h3veu" path="res://source/match/units/traits/AirToTerrainMarker.tscn" id="7_5wh2l"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="8_ib4xd"]
 [ext_resource type="PackedScene" uid="uid://ccwgdcyfg8job" path="res://source/match/units/traits/Pilotable.tscn" id="8_jk6e0"]
-[ext_resource type="Script" path="res://source/match/FpsCamera3D.gd" id="9_sbnro"]
+[ext_resource type="Script" uid="uid://ntn6rfcdlkhf" path="res://source/match/FpsCamera3D.gd" id="9_sbnro"]
 [ext_resource type="PackedScene" uid="uid://bydwevlor5kxe" path="res://source/match/units/traits/TargetAquire.tscn" id="10_61n3c"]
 [ext_resource type="PackedScene" uid="uid://c7keq2sgw7dew" path="res://source/match/units/traits/Movement/Movement.tscn" id="10_gxl0u"]
 

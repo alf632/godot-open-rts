@@ -10,8 +10,11 @@ const Impact = preload("res://source/generic-scenes-and-nodes/3d/Impact.tscn")
 
 @onready var Particles = $GPUParticles3D
 
+var _gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
+
 class Projectile:
 	var pos :Vector3
+	var vel :Vector3
 	var normal :Vector3
 	var damage :int
 	var speed :float
@@ -32,6 +35,7 @@ var _projectile_active_mask:PackedInt32Array = PackedInt32Array()
 var _projectile_speed:PackedFloat32Array = PackedFloat32Array()
 var _projectile_damage:PackedInt32Array = PackedInt32Array()
 var _projectile_pos:PackedVector3Array = PackedVector3Array()
+var _projectile_vel:PackedVector3Array = PackedVector3Array()
 var _projectile_normals:PackedVector3Array = PackedVector3Array()
 var _projectile_eol:PackedInt64Array = PackedInt64Array()
 var _projectile_synced:PackedFloat32Array = PackedFloat32Array()
@@ -46,6 +50,7 @@ func _ready():
 	for i in range(0,projectiles_num):
 		_projectile_queue[i]=i
 	_projectile_pos.resize(projectiles_num)
+	_projectile_vel.resize(projectiles_num)
 	_projectile_speed.resize(projectiles_num)
 	_projectile_damage.resize(projectiles_num)
 	_projectile_eol.resize(projectiles_num)
@@ -76,6 +81,7 @@ func _register_Projectile(projectile):
 	_projectile_active_mask[idx] = 1
 	
 	_projectile_pos[idx] = projectile.pos
+	_projectile_vel[idx] = projectile.vel
 	_projectile_normals[idx] = projectile.normal
 	_projectile_speed[idx] = projectile.speed
 	_projectile_damage[idx] = projectile.damage
@@ -92,13 +98,15 @@ func _work_active_projectiles(delta):
 	var unregister_marked = []
 	for proj in range(0, _projectile_active.size()):
 		var idx = _projectile_active[proj]
-		var collition = _check_collision(idx, delta)
-		if not collition:
-			_projectile_pos[idx] += _projectile_normals[idx] * _projectile_speed[idx] * delta
+		var collision = _check_collision(idx, delta)
+		if not collision:
+			_projectile_vel[idx] += Vector3.DOWN * _gravity * delta
+			_projectile_pos[idx] += _projectile_vel[idx] * delta
+			_projectile_normals[idx] = _projectile_vel[idx].normalized()
 			_projectile_synced[idx] = _now
 		else:
 			unregister_marked.append(idx)
-			_handle_collision(collition, idx)
+			_handle_collision(collision, idx)
 	
 	for idx in unregister_marked:
 		_unregister_Projectile(idx)
@@ -143,6 +151,7 @@ func _miss(pos):
 
 func _update_shader(delta):
 	Particles.process_material.set_shader_parameter("projectile_pos", _projectile_pos)
+	Particles.process_material.set_shader_parameter("projectile_vel", _projectile_vel)
 	Particles.process_material.set_shader_parameter("projectile_normals", _projectile_normals)
 	Particles.process_material.set_shader_parameter("projectile_active_mask", _projectile_active_mask)
 	Particles.process_material.set_shader_parameter("projectile_synced", _projectile_synced)

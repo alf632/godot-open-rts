@@ -37,7 +37,7 @@ var movement_domain:
 	get = _get_movement_domain
 var movement_speed = null
 var sight_range = null
-var player
+@export var player :Player
 var color:
 	get:
 		return player.color
@@ -55,6 +55,7 @@ var type:
 
 var groups_str
 var in_base
+var action_dir :Vector3
 
 
 func _setup_unit_groups():

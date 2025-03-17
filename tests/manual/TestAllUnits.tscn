@@ -1,14 +1,15 @@
-[gd_scene load_steps=27 format=3 uid="uid://b65yuqx0iw62f"]
+[gd_scene load_steps=28 format=3 uid="uid://b65yuqx0iw62f"]
 
 [ext_resource type="PackedScene" uid="uid://camns8fqod8d4" path="res://source/match/Match.tscn" id="1_oiu0k"]
-[ext_resource type="Script" path="res://tests/manual/Match.gd" id="2_ghr3h"]
+[ext_resource type="Script" uid="uid://dny45kwixenct" path="res://tests/manual/Match.gd" id="2_ghr3h"]
 [ext_resource type="PackedScene" uid="uid://ct0ejt0trkhrf" path="res://source/match/units/CommandCenter.tscn" id="2_rm00b"]
 [ext_resource type="PackedScene" uid="uid://e7tko4kpeiau" path="res://source/match/units/Helicopter.tscn" id="3_0s0q8"]
+[ext_resource type="Script" uid="uid://dj6l306gmte3y" path="res://source/data-model/PlayerSettings.gd" id="3_m04e1"]
 [ext_resource type="PackedScene" uid="uid://cxilu6668nda6" path="res://source/match/units/AircraftFactory.tscn" id="3_rq1vh"]
 [ext_resource type="PackedScene" uid="uid://0gow0ughqu8u" path="res://source/match/units/Drone.tscn" id="4_3o35x"]
-[ext_resource type="Script" path="res://source/data-model/MatchSettings.gd" id="4_bf0h3"]
+[ext_resource type="Script" uid="uid://c5046dcxvpye7" path="res://source/data-model/MatchSettings.gd" id="4_bf0h3"]
 [ext_resource type="PackedScene" uid="uid://h5lqor1xl2sf" path="res://source/match/units/VehicleFactory.tscn" id="4_m1xri"]
-[ext_resource type="Shader" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="5_f2ny6"]
+[ext_resource type="Shader" uid="uid://comxld0b1dj45" path="res://source/shaders/3d/simple_fog_of_war.gdshader" id="5_f2ny6"]
 [ext_resource type="PackedScene" uid="uid://b8pckq1xn44ss" path="res://source/match/units/AntiGroundTurret.tscn" id="5_g67iu"]
 [ext_resource type="Material" uid="uid://co8vfcoqqs5i8" path="res://source/match/resources/materials/terrain.material.tres" id="5_q15cp"]
 [ext_resource type="PackedScene" uid="uid://cbe63rdjw7y4p" path="res://source/match/maps/PlainAndSimple.tscn" id="5_t3ibh"]
@@ -18,11 +19,12 @@
 [ext_resource type="PackedScene" uid="uid://bufgjfa3ne3uk" path="res://source/match/units/non-player/ResourceB.tscn" id="7_g0wbf"]
 [ext_resource type="PackedScene" uid="uid://i58ffvwxbbwm" path="res://source/match/units/Tank.tscn" id="9_csgr3"]
 [ext_resource type="PackedScene" uid="uid://bf0r3fovbvf1m" path="res://source/match/units/Worker.tscn" id="10_c3eov"]
-[ext_resource type="Shader" path="res://source/shaders/2d/white_transparent.gdshader" id="16_mqpbu"]
+[ext_resource type="Shader" uid="uid://dymki8i1761hn" path="res://source/shaders/2d/white_transparent.gdshader" id="16_mqpbu"]
 
 [sub_resource type="Resource" id="Resource_rpdec"]
 script = ExtResource("4_bf0h3")
-players = Array[Resource]([])
+players = Array[ExtResource("3_m04e1")]([])
+player_slot_mapping = {}
 visibility = 1
 visible_player = 0
 
@@ -40,9 +42,9 @@ resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource("5_f2ny6")
 shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/world_visibility_texture = SubResource("ViewportTexture_v46ss")
 shader_parameter/texture_units_per_world_unit = 2
 shader_parameter/debug_texture_view = false
-shader_parameter/world_visibility_texture = SubResource("ViewportTexture_v46ss")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_cmtt0"]
 viewport_path = NodePath("FogOfWar/CombinedViewport")

@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var draw_trajectory := false
+@export var draw_trajectory := true
 @export var max_points := 20
 @export var marker_radius := 0.05
 
@@ -9,7 +9,7 @@ extends Node3D
 @onready var _turret = _unit.find_child("Geometry").find_child("turret", true, false)
 @onready var _origin = _turret.find_child("ProjectileOrigin", true, false) if _turret != null else null
 @onready var _match = find_parent("Match")
-@onready var _terrain = _match.map.find_child("Terrain3D")
+var _terrain
 
 var _down = ProjectSettings.get_setting("physics/3d/default_gravity_vector")
 var _gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -18,11 +18,12 @@ var pos = null
 var last_pos = null
 var vel = null
 var current_point = 0
-var last_terrain_hit = Vector3()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	if not _match.is_node_ready():
+		await _match.ready
+	_terrain = _match.map.find_child("Terrain3D")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -30,7 +31,7 @@ func _process(delta: float) -> void:
 	pass
 
 func _physics_process(delta: float) -> void:
-	if draw_trajectory and _turret != null:
+	if _ta.predict_trajectory and _turret != null:
 		if current_point >= max_points:
 			pos = null
 		
@@ -39,13 +40,14 @@ func _physics_process(delta: float) -> void:
 			pos = _origin.global_position
 			vel = -_origin.global_transform.basis.z * 15
 
-		draw_point(pos, marker_radius, Color.WHITE_SMOKE, 1)
+		if draw_trajectory:
+			draw_point(pos, marker_radius, Color.WHITE_SMOKE, 1)
 		vel += _down * _gravity * delta
 		last_pos = pos
 		pos += vel * delta
 		current_point += 1
 		if pos.y <= _terrain.storage.get_height(pos):
-			last_terrain_hit = last_pos
+			_ta.last_terrain_hit = last_pos
 			pos = null
 
 func draw_point(pos: Vector3, radius = 0.05, color = Color.WHITE_SMOKE, persist_ms = 0):

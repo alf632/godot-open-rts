@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bqdvfvr3qyoom"]
 
-[ext_resource type="Script" path="res://source/Logos.gd" id="1_28asr"]
+[ext_resource type="Script" uid="uid://cr2redaoqiecx" path="res://source/Logos.gd" id="1_28asr"]
 [ext_resource type="Texture2D" uid="uid://r35n8o1kyt7j" path="res://assets/logos/godot_logo_vertical_monochrome_dark_312x357.png" id="1_y46e5"]
 [ext_resource type="Texture2D" uid="uid://blwo4c26d4vt5" path="res://assets/logos/lampe_games_white.svg" id="2_nxxy3"]
 
@@ -85,8 +85,8 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6b2kl"]
 _data = {
-"RESET": SubResource("Animation_ld0tj"),
-"animate_logos": SubResource("Animation_q53tl")
+&"RESET": SubResource("Animation_ld0tj"),
+&"animate_logos": SubResource("Animation_q53tl")
 }
 
 [node name="Logos" type="Control"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://cfa8cpnpk5pcb"]
 
-[ext_resource type="Script" path="res://source/match/units/AntiAirTurret.gd" id="1_ec2s5"]
+[ext_resource type="Script" uid="uid://c5ewfisu0ygo" path="res://source/match/units/AntiAirTurret.gd" id="1_ec2s5"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="1_tbjvv"]
 [ext_resource type="PackedScene" uid="uid://cm3iqdsdeo625" path="res://source/match/units/structure-geometries/AntiAirTurret.tscn" id="2_bhouy"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="2_ookx0"]

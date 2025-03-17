@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dpccgqxuja2b1"]
 
-[ext_resource type="Script" path="res://source/generic-scenes-and-nodes/3d/MouseClickAnimation3D.gd" id="1_igx3f"]
+[ext_resource type="Script" uid="uid://86nbthbqrbkx" path="res://source/generic-scenes-and-nodes/3d/MouseClickAnimation3D.gd" id="1_igx3f"]
 
 [sub_resource type="Animation" id="Animation_u21qe"]
 length = 0.001
@@ -35,8 +35,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mryvw"]
 _data = {
-"RESET": SubResource("Animation_u21qe"),
-"fade_out": SubResource("Animation_2qki2")
+&"RESET": SubResource("Animation_u21qe"),
+&"fade_out": SubResource("Animation_2qki2")
 }
 
 [node name="MouseClickAnimation" type="Node3D"]

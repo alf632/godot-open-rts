@@ -1,7 +1,13 @@
 extends Node
 
+const Directive = preload("res://source/match/units/actions/directives/directive.gd")
+var directives: get = get_directives
+
 class ActionContext:
 	var unit
+
+func get_directives():
+	return []
 
 func _to_string():
 	var action_script_path = get_script().resource_path

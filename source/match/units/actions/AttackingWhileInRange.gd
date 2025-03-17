@@ -2,6 +2,8 @@ extends "res://source/match/units/actions/Action.gd"
 
 class_name AttackingWhileInRange
 
+const FireDirective = preload("res://source/match/units/actions/directives/fire_directive.gd")
+
 const RANGE_CHECK_INTERVAL = 1.0 / 60.0 * 10.0
 
 var _target_unit = null
@@ -10,6 +12,7 @@ var _range_check_timer = null
 
 @onready var _unit = Utils.NodeEx.find_parent_with_group(self, "units")
 @onready var _unit_movement_trait = _unit.find_child("Movement")
+@onready var _unit_ta = _unit.find_child("TargetAquire")
 @onready var _PSH = _unit.find_parent("Match").find_child("ProjectileSystemHandler")
 
 
@@ -29,6 +32,9 @@ func _ready():
 	_setup_range_check_timer()
 	_schedule_hit()
 
+func get_directives():
+	return [FireDirective.new(_target_unit)]
+
 func _to_string():
 	return "{0};{1}".format(["AttackingWhileInRange", _target_unit.name])
 
@@ -38,8 +44,7 @@ static func new_from_string(action_string: String, ctx: ActionContext):
 	return AttackingWhileInRange.new(targetUnit)
 
 func _physics_process(_delta):
-	if _unit_movement_trait == null:
-		_rotate_unit_towards_target()  # stationary units can rotate every frame
+	_rotate_unit_towards_target()  # stationary units can rotate every frame
 
 
 func _setup_one_shot_timer():
@@ -57,13 +62,7 @@ func _setup_range_check_timer():
 
 
 func _rotate_unit_towards_target():
-	_unit.global_transform = _unit.global_transform.looking_at(
-		Vector3(
-			_target_unit.global_position.x, _unit.global_position.y, _target_unit.global_position.z
-		),
-		Vector3(0, 1, 0)
-	)
-
+	_unit.action_dir = _target_unit.global_position - _unit.global_position
 
 func _schedule_hit():
 	var now = Time.get_ticks_msec()
@@ -92,10 +91,11 @@ func _hit_target():
 	#projectile.target_unit = _target_unit
 	#_unit.add_child(projectile)
 	var projectile_origin = _unit.find_child("ProjectileOrigin")
-	var dir = ( (_target_unit.global_position + Vector3.UP*0.25) - projectile_origin.global_position ).normalized()
+	var dir = -projectile_origin.global_transform.basis.z
 	var lifetime = float(_unit.attack_range) / float(_unit.projectile_speed) + 0.1
 	var new_projectile = _PSH.Projectile.new_with_pos(projectile_origin.global_position, dir, lifetime*1000)
 	new_projectile.speed = _unit.projectile_speed
+	new_projectile.vel = dir*15
 	new_projectile.damage = _unit.attack_damage
 	_PSH._register_Projectile(new_projectile)
 	
@@ -103,10 +103,7 @@ func _hit_target():
 
 
 func _teardown_if_out_of_range():
-	if (
-		_unit.global_position_yless.distance_to(_target_unit.global_position_yless)
-		> _unit.attack_range
-	):
+	if _target_unit not in _unit_ta.enemy_in_range:
 		queue_free()
 		return true
 	return false

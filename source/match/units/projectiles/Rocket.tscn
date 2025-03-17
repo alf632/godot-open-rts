@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://bjatf4aos6ec3"]
 
-[ext_resource type="Script" path="res://source/match/units/projectiles/Rocket.gd" id="1_dy0dc"]
+[ext_resource type="Script" uid="uid://b0t14pbfa8ubp" path="res://source/match/units/projectiles/Rocket.gd" id="1_dy0dc"]
 
 [sub_resource type="Curve3D" id="Curve3D_n2fv6"]
 resource_local_to_scene = true
@@ -154,8 +154,8 @@ tracks/4/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_omaxx"]
 _data = {
-"RESET": SubResource("Animation_ud13x"),
-"animate": SubResource("Animation_vcktp")
+&"RESET": SubResource("Animation_ud13x"),
+&"animate": SubResource("Animation_vcktp")
 }
 
 [node name="Rocket" type="Node3D"]

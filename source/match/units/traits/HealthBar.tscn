@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c3ssj2p6voauk"]
 
-[ext_resource type="Script" path="res://source/match/units/traits/HealthBar.gd" id="1_md17c"]
+[ext_resource type="Script" uid="uid://bxeejnxmg0wtj" path="res://source/match/units/traits/HealthBar.gd" id="1_md17c"]
 
 [sub_resource type="Gradient" id="Gradient_gked8"]
 resource_local_to_scene = true

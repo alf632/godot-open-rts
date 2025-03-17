@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://wux8ntui6krn"]
 
-[ext_resource type="Script" path="res://source/match/players/remote/remote_player.gd" id="2_6jm32"]
+[ext_resource type="Script" uid="uid://crl5ucjujvkeu" path="res://source/match/players/remote/remote_player.gd" id="2_6jm32"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_yit1q"]
 properties/0/path = NodePath(".:resource_a")

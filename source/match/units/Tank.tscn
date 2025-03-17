@@ -1,12 +1,12 @@
 [gd_scene load_steps=13 format=3 uid="uid://i58ffvwxbbwm"]
 
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="1_n4t54"]
-[ext_resource type="Script" path="res://source/match/units/Tank.gd" id="1_npbka"]
+[ext_resource type="Script" uid="uid://ucnm85ou6taf" path="res://source/match/units/Tank.gd" id="1_npbka"]
 [ext_resource type="PackedScene" uid="uid://b57rmi3mf3cs1" path="res://assets/models/units/tank.gltf" id="2_kl1ci"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="2_mbcqe"]
 [ext_resource type="PackedScene" uid="uid://c3ssj2p6voauk" path="res://source/match/units/traits/HealthBar.tscn" id="4_7l0rt"]
 [ext_resource type="PackedScene" uid="uid://d4cm4yhtf11ur" path="res://source/match/units/traits/Targetability.tscn" id="8_ca2nt"]
-[ext_resource type="Script" path="res://source/match/FpsCamera3D.gd" id="9_qyt8g"]
+[ext_resource type="Script" uid="uid://ntn6rfcdlkhf" path="res://source/match/FpsCamera3D.gd" id="9_qyt8g"]
 [ext_resource type="PackedScene" uid="uid://c7keq2sgw7dew" path="res://source/match/units/traits/Movement/Movement.tscn" id="10_6b5of"]
 [ext_resource type="PackedScene" uid="uid://ccwgdcyfg8job" path="res://source/match/units/traits/Pilotable.tscn" id="10_6okqq"]
 [ext_resource type="PackedScene" uid="uid://d07itsj511nk8" path="res://source/match/units/traits/UnitBehaviorManager.tscn" id="11_27fm3"]
@@ -70,4 +70,5 @@ angularForce = 18.0
 
 [node name="UnitBehaviorManager" parent="." instance=ExtResource("11_27fm3")]
 
+[editable path="TargetAquire"]
 [editable path="Geometry/blockbench_export"]

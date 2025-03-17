@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cquvvwb41prcm"]
 
-[ext_resource type="Script" path="res://source/main-menu/play_player.gd" id="1_18n4o"]
+[ext_resource type="Script" uid="uid://cwqprmkvytvjj" path="res://source/main-menu/play_player.gd" id="1_18n4o"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nh3kq"]
 properties/0/path = NodePath("Container/Index:text")

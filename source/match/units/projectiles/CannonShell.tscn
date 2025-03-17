@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://fprgooo87y83"]
 
-[ext_resource type="Script" path="res://source/match/units/projectiles/CannonShell.gd" id="1_hyk5q"]
+[ext_resource type="Script" uid="uid://bsv88br5d3kpq" path="res://source/match/units/projectiles/CannonShell.gd" id="1_hyk5q"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_te2m4"]
 transparency = 1

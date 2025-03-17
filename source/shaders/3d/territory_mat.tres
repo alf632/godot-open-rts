@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://5prerv6jfmv0"]
 
-[ext_resource type="Shader" path="res://source/shaders/3d/territory.gdshader" id="1_675i7"]
+[ext_resource type="Shader" uid="uid://cqsu2bux22wq7" path="res://source/shaders/3d/territory.gdshader" id="1_675i7"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_rw8mj"]
 viewport_path = NodePath("Territories")

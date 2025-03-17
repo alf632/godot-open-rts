@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://cxilu6668nda6"]
 
-[ext_resource type="Script" path="res://source/match/units/AircraftFactory.gd" id="1_n6n1v"]
+[ext_resource type="Script" uid="uid://6g6wnmf4knqi" path="res://source/match/units/AircraftFactory.gd" id="1_n6n1v"]
 [ext_resource type="PackedScene" uid="uid://cgsi062w5fjia" path="res://source/match/units/traits/Highlight.tscn" id="1_r5i7t"]
 [ext_resource type="PackedScene" uid="uid://3c1h14nqdumt" path="res://source/match/units/traits/Selection.tscn" id="2_56ml3"]
 [ext_resource type="PackedScene" uid="uid://bklfapayb1ryk" path="res://source/match/units/structure-geometries/AircraftFactory.tscn" id="2_mlisu"]

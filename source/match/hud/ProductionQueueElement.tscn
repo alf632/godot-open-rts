@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://rtkiiletj253"]
 
-[ext_resource type="Script" path="res://source/match/hud/ProductionQueueElement.gd" id="1_yaio2"]
+[ext_resource type="Script" uid="uid://x6y8q7j2xfhe" path="res://source/match/hud/ProductionQueueElement.gd" id="1_yaio2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ar725"]
 

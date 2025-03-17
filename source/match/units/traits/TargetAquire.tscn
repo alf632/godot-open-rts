@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bydwevlor5kxe"]
 
-[ext_resource type="Script" path="res://source/match/units/traits/target_aquire.gd" id="1_wi665"]
-[ext_resource type="Script" path="res://source/match/units/traits/trajectory.gd" id="2_3md5w"]
+[ext_resource type="Script" uid="uid://3vnx2clhy1xr" path="res://source/match/units/traits/target_aquire.gd" id="1_wi665"]
+[ext_resource type="Script" uid="uid://dnuasdr5o64o2" path="res://source/match/units/traits/trajectory.gd" id="2_3md5w"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mtk3g"]
 radius = 10.0
