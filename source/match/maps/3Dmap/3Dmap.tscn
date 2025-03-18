@@ -1,22 +1,23 @@
-[gd_scene load_steps=8 format=3 uid="uid://dmlef1nchuam4"]
+[gd_scene load_steps=7 format=3 uid="uid://dmlef1nchuam4"]
 
 [ext_resource type="PackedScene" uid="uid://b7c1crf36x1li" path="res://source/match/Map.tscn" id="1_tv8fs"]
 [ext_resource type="Script" uid="uid://c3jh3j8jb340a" path="res://source/match/maps/3Dmap/3Dmap.gd" id="2_24vdh"]
-[ext_resource type="Terrain3DStorage" uid="uid://lalq1xnmbjdl" path="res://assets/terrain_storage.res" id="3_bkbrs"]
 [ext_resource type="PackedScene" uid="uid://bf3jjdafqvh0w" path="res://source/match/units/non-player/ResourceA.tscn" id="3_uixp0"]
 [ext_resource type="Terrain3DMaterial" uid="uid://1qf0ffebhg2v" path="res://assets/maps/demo/material.tres" id="4_1jknq"]
+[ext_resource type="Terrain3DAssets" uid="uid://dal3jhw6241qg" path="res://assets/maps/demo/assets.tres" id="4_gb6s6"]
 [ext_resource type="PackedScene" uid="uid://bufgjfa3ne3uk" path="res://source/match/units/non-player/ResourceB.tscn" id="4_lrggj"]
-[ext_resource type="Terrain3DAssets" uid="uid://dal3jhw6241qg" path="res://assets/assets.tres" id="5_33x37"]
 
 [node name="Map" instance=ExtResource("1_tv8fs")]
 script = ExtResource("2_24vdh")
 size = Vector2(1024, 1024)
 
 [node name="Terrain3D" type="Terrain3D" parent="Geometry" index="0"]
-storage = ExtResource("3_bkbrs")
+data_directory = "res://assets/maps/demo/terrainData"
 material = ExtResource("4_1jknq")
-assets = ExtResource("5_33x37")
+assets = ExtResource("4_gb6s6")
 mesh_size = 64
+top_level = true
+metadata/_edit_lock_ = true
 
 [node name="Marker3D" type="Marker3D" parent="SpawnPoints" index="0"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 141.479, 0, 263.493)

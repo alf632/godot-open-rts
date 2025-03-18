@@ -12,7 +12,7 @@ func _process(delta):
 	pass
 
 func get_pos_floored(pos: Vector3):
-	var h = terrain.storage.get_height(pos)
+	var h = terrain.data.get_height(pos)
 	return Vector3(pos.x,h,pos.z)
 
 func _unhandled_input(event):

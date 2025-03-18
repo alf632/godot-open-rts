@@ -64,7 +64,7 @@ func initialize_by_scanning_ex(
 			var target = Vector3(posx, min(min_z - 1.0, -999999), posz)
 			var height
 			if not use_physics_ray:
-				height = terrain_3d_node.storage.get_height(
+				height = terrain_3d_node.data.get_height(
 					Vector3(posx, 0, posz)
 				)
 			else:

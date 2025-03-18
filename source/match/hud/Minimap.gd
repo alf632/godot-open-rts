@@ -166,7 +166,7 @@ func _issue_movement_action(position_2d_within_texture_rect):
 	if world_position_2d == null:
 		return
 	var world_position_3d = Vector3(world_position_2d.x, 0, world_position_2d.y)
-	var target_point_on_colliding_surface = Vector3(world_position_3d.x, _terrain.storage.get_height(world_position_3d), world_position_3d.z)
+	var target_point_on_colliding_surface = Vector3(world_position_3d.x, _terrain.data.get_height(world_position_3d), world_position_3d.z)
 	MatchSignals.terrain_targeted.emit(target_point_on_colliding_surface)
 
 

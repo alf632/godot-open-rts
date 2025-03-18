@@ -2,7 +2,7 @@
 
 static func compute_terrain_extent(map):
 	var terrain = map.find_child("Terrain3D")
-	var m = terrain.bake_mesh(4, Terrain3DStorage.HEIGHT_FILTER_NEAREST)
+	var m = terrain.bake_mesh(4, Terrain3DData.HEIGHT_FILTER_NEAREST)
 	var box = m.get_aabb()  # FIXME: Investigate if this leaks.
 	var min_x = min(box.position.x, box.end.x)
 	var max_x = max(box.position.x, box.end.x)

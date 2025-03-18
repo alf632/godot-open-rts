@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		last_pos = pos
 		pos += vel * delta
 		current_point += 1
-		if pos.y <= _terrain.storage.get_height(pos):
+		if pos.y <= _terrain.data.get_height(pos):
 			_ta.last_terrain_hit = last_pos
 			pos = null
 

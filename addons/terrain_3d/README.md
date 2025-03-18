@@ -1,4 +1,4 @@
-<img src="doc/docs/images/terrain3d.png">
+![Terrain3D Logo](/doc/docs/images/terrain3d.jpg)
 
 # Terrain3D
 A high performance, editable terrain system for Godot 4.
@@ -7,7 +7,7 @@ A high performance, editable terrain system for Godot 4.
 * Written in C++ as a GDExtension addon, which works with official engine builds
 * Can be accessed by GDScript, C#, and any language Godot supports
 * Geometric Clipmap Mesh Terrain, as used in The Witcher 3. See [System Architecture](https://terrain3d.readthedocs.io/en/stable/docs/system_architecture.html) 
-* Up to 16k x 16k in 1k regions (imagine multiple islands without paying for 16k^2 vram)
+* Terrains as small as 64x64m up to 65.5x65.5km (4295km^2) in variable sized regions
 * Up to 32 textures
 * Up to 10 levels of detail
 * Foliage instancing
@@ -20,17 +20,9 @@ See [Project Status](https://terrain3d.readthedocs.io/en/stable/docs/project_sta
 
 1. Read the [Installation & Upgrades](https://terrain3d.readthedocs.io/en/stable/docs/installation.html) instructions.
 
-2. For support, read [Getting Help](https://terrain3d.readthedocs.io/en/stable/docs/getting_help.html) or join our [Discord server](https://tokisan.com/discord).
+2. For support, read [Getting Help](https://terrain3d.readthedocs.io/en/stable/docs/getting_help.html) and join our [Discord server](https://tokisan.com/discord).
 
-3. Watch the tutorial videos:
-
-**Installation, Setup, Basic Usage**
-
-[![Using Terrain3D - Part 1](https://i.ytimg.com/vi/oV8c9alXVwU/hqdefault.jpg)](https://youtu.be/oV8c9alXVwU)
-
-**Texture Painting, Holes, Navigation, Advanced Usage**
-
-[![Using Terrain3D - Part 2](https://i.ytimg.com/vi/YtiAI2F6Xkk/hqdefault.jpg)](https://youtu.be/YtiAI2F6Xkk)
+3. Watch the [tutorial videos](https://terrain3d.readthedocs.io/en/stable/docs/tutorial_videos.html).
 
 
 ## Credit

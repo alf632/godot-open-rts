@@ -39,7 +39,7 @@ func spawn_unit(data):
 	if unit is Structure and data.constructing:
 		unit.mark_as_under_construction()
 	
-	unit.global_transform = data.transform.translated(Vector3(0, _match.map.terrain.storage.get_height(data.transform.origin)+1, 0))
+	unit.global_transform = data.transform.translated(Vector3(0, _match.map.terrain.data.get_height(data.transform.origin)+1, 0))
 	unit.player = _players.get_child(data.playerID)
 	if not unit.player:
 		print("no player")

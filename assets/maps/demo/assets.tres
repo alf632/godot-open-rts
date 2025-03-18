@@ -13,7 +13,6 @@ backlight = Color(0.5, 0.5, 0.5, 1)
 
 [sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_xqljq"]
 height_offset = 0.5
-density = 10.0
 material_override = SubResource("StandardMaterial3D_6fvgb")
 generated_type = 1
 

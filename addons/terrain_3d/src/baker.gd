@@ -44,11 +44,14 @@ func bake_mesh_popup() -> void:
 	if plugin.terrain:
 		bake_method = _bake_mesh
 		bake_lod_dialog.description = BAKE_MESH_DESCRIPTION
-		plugin.get_editor_interface().popup_dialog_centered(bake_lod_dialog)
+		EditorInterface.popup_dialog_centered(bake_lod_dialog)
 
 
 func _bake_mesh() -> void:
-	var mesh: Mesh = plugin.terrain.bake_mesh(bake_lod_dialog.lod, Terrain3DStorage.HEIGHT_FILTER_NEAREST)
+	if plugin.terrain.data.get_region_count() == 0:
+		push_error("Terrain3D has no active regions to bake")
+		return
+	var mesh: Mesh = plugin.terrain.bake_mesh(bake_lod_dialog.lod, Terrain3DData.HEIGHT_FILTER_NEAREST)
 	if !mesh:
 		push_error("Failed to bake mesh from Terrain3D")
 		return
@@ -65,7 +68,7 @@ func _bake_mesh() -> void:
 		
 		undo.add_do_method(plugin.terrain, &"add_child", mesh_instance, true)
 		undo.add_undo_method(plugin.terrain, &"remove_child", mesh_instance)
-		undo.add_do_property(mesh_instance, &"owner", plugin.terrain.owner)
+		undo.add_do_property(mesh_instance, &"owner", EditorInterface.get_edited_scene_root())
 		undo.add_do_reference(mesh_instance)
 	
 	else:
@@ -86,11 +89,14 @@ func bake_occluder_popup() -> void:
 	if plugin.terrain:
 		bake_method = _bake_occluder
 		bake_lod_dialog.description = BAKE_OCCLUDER_DESCRIPTION
-		plugin.get_editor_interface().popup_dialog_centered(bake_lod_dialog)
+		EditorInterface.popup_dialog_centered(bake_lod_dialog)
 
 
 func _bake_occluder() -> void:
-	var mesh: Mesh = plugin.terrain.bake_mesh(bake_lod_dialog.lod, Terrain3DStorage.HEIGHT_FILTER_MINIMUM)
+	if plugin.terrain.data.get_region_count() == 0:
+		push_error("Terrain3D has no active regions to bake")
+		return
+	var mesh: Mesh = plugin.terrain.bake_mesh(bake_lod_dialog.lod, Terrain3DData.HEIGHT_FILTER_MINIMUM)
 	if !mesh:
 		push_error("Failed to bake mesh from Terrain3D")
 		return
@@ -113,7 +119,7 @@ func _bake_occluder() -> void:
 
 		undo.add_do_method(plugin.terrain, &"add_child", occluder_instance, true)
 		undo.add_undo_method(plugin.terrain, &"remove_child", occluder_instance)
-		undo.add_do_property(occluder_instance, &"owner", plugin.terrain.owner)
+		undo.add_do_property(occluder_instance, &"owner", EditorInterface.get_edited_scene_root())
 		undo.add_do_reference(occluder_instance)
 	
 	else:
@@ -153,7 +159,7 @@ func find_nav_region_terrains(p_nav_region: NavigationRegion3D) -> Array[Terrain
 
 func find_terrain_nav_regions(p_terrain: Terrain3D) -> Array[NavigationRegion3D]:
 	var result: Array[NavigationRegion3D] = []
-	var root: Node = plugin.get_editor_interface().get_edited_scene_root()
+	var root: Node = EditorInterface.get_edited_scene_root()
 	if not root:
 		return result
 	for nav_region in root.find_children("", "NavigationRegion3D", true, true):
@@ -169,6 +175,9 @@ func bake_nav_mesh() -> void:
 		print("Terrain3DNavigation: Finished baking 1 NavigationMesh.")
 	
 	elif plugin.terrain:
+		if plugin.terrain.data.get_region_count() == 0:
+			push_error("Terrain3D has no active regions to bake")
+			return
 		# A Terrain3D is selected. There are potentially multiple navmeshes to bake and we need to
 		# find them all. (The multiple navmesh use-case is likely on very large scenes with lots of
 		# geometry. Each navmesh in this case would define its own, non-overlapping, baking AABB, to
@@ -329,11 +338,17 @@ func set_up_navigation_popup() -> void:
 	if plugin.terrain:
 		bake_method = _set_up_navigation
 		confirm_dialog.dialog_text = SET_UP_NAVIGATION_DESCRIPTION
-		plugin.get_editor_interface().popup_dialog_centered(confirm_dialog)
+		EditorInterface.popup_dialog_centered(confirm_dialog)
 
 
 func _set_up_navigation() -> void:
 	assert(plugin.terrain)
+	if plugin.terrain == EditorInterface.get_edited_scene_root():
+		push_error("Terrain3D Navigation setup not possible if Terrain3D node is scene root")
+		return
+	if plugin.terrain.data.get_region_count() == 0:
+		push_error("Terrain3D has no active regions")
+		return
 	var terrain: Terrain3D = plugin.terrain
 	
 	var nav_region := NavigationRegion3D.new()
@@ -348,7 +363,7 @@ func _set_up_navigation() -> void:
 	undo_redo.add_do_reference(nav_region)
 	undo_redo.commit_action()
 
-	plugin.get_editor_interface().inspect_object(nav_region)
+	EditorInterface.inspect_object(nav_region)
 	assert(plugin.nav_region == nav_region)
 	
 	bake_nav_mesh()
@@ -359,10 +374,8 @@ func _do_set_up_navigation(p_nav_region: NavigationRegion3D, p_terrain: Terrain3
 	var index: int = p_terrain.get_index()
 	var t_owner: Node = p_terrain.owner
 	
-	parent.remove_child(p_terrain)
-	p_nav_region.add_child(p_terrain)
-	
 	parent.add_child(p_nav_region, true)
+	p_terrain.reparent(p_nav_region)
 	parent.move_child(p_nav_region, index)
 	
 	p_nav_region.owner = t_owner
@@ -376,10 +389,8 @@ func _undo_set_up_navigation(p_nav_region: NavigationRegion3D, p_terrain: Terrai
 	var index: int = p_nav_region.get_index()
 	var t_owner: Node = p_nav_region.get_owner()
 	
+	p_terrain.reparent(parent)
 	parent.remove_child(p_nav_region)
-	p_nav_region.remove_child(p_terrain)
-	
-	parent.add_child(p_terrain, true)
 	parent.move_child(p_terrain, index)
 	
 	p_terrain.owner = t_owner

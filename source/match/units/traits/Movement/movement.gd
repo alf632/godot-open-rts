@@ -45,7 +45,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _calculate_hold_altitude_dir():
-	var t_height = _Terrain.storage.get_height(_unit.global_position)
+	var t_height = _Terrain.data.get_height(_unit.global_position)
 	var u_height = _unit.global_position.y
 	var power = clampf((t_height+altitude)-u_height, -1.0, 1.0)
 	if abs(power) <= 0.1:
@@ -113,7 +113,7 @@ func look_there(direction: Vector3, up: Vector3 = Vector3.UP) -> Basis:
 
 func move(movement_target: Vector3):
 	target = movement_target
-	var t_height = _Terrain.storage.get_height(movement_target)
+	var t_height = _Terrain.data.get_height(movement_target)
 	if target.y < t_height + + altitude:
 		target.y = t_height + + altitude
 	_nav.move(target)
